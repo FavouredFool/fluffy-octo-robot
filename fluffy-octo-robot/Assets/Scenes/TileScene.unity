@@ -210,7 +210,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1236132221}
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 0, y: 3, z: 0}
+  m_LocalPosition: {x: 0, y: 43.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -294,7 +294,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1496090767}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalPosition: {x: 0, y: 1, z: -60.74}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -308,9 +308,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1994300927, guid: 1d76812737c807846b5894124d5ce617, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 341504086632604920, guid: 1d76812737c807846b5894124d5ce617, type: 3}
       propertyPath: m_Name
       value: HexGrid
+      objectReference: {fileID: 0}
+    - target: {fileID: 1419833093248718662, guid: 1d76812737c807846b5894124d5ce617, type: 3}
+      propertyPath: width
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1419833093248718662, guid: 1d76812737c807846b5894124d5ce617, type: 3}
+      propertyPath: height
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4104382372064449832, guid: 1d76812737c807846b5894124d5ce617, type: 3}
       propertyPath: m_RootOrder

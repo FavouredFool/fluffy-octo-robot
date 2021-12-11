@@ -11,16 +11,12 @@ public class HexGrid : MonoBehaviour
 
     public HexCell cellPrefab;
 
-    public TMP_Text cellLabelPrefab;
-
     HexCell[] cells;
 
-    Canvas gridCanvas;
+    
 
     private void Awake()
     {
-        gridCanvas = GetComponentInChildren<Canvas>();
-
         cells = new HexCell[height * width];
 
         for (int z=0, i=0; z<height; z++)
@@ -43,13 +39,8 @@ public class HexGrid : MonoBehaviour
         position.z = z * (HexMetrics.outerRadius * 1.5f);
 
         HexCell cell = cells[i] = Instantiate<HexCell>(cellPrefab);
+        cell.GetComponent<HexCell>().coordinates = new Vector2(x, z);
         cell.transform.SetParent(transform, false);
         cell.transform.localPosition = position;
-
-        TMP_Text label = Instantiate<TMP_Text>(cellLabelPrefab);
-        label.rectTransform.SetParent(gridCanvas.transform, false);
-        label.rectTransform.anchoredPosition = new Vector2(position.x, position.z);
-        label.text = x.ToString() + "\n" + z.ToString();
-        label.color = Color.black;
     }
 }
