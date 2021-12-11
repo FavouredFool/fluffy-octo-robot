@@ -33,8 +33,6 @@ public class HexCell : MonoBehaviour
         hexStack = new List<GameObject>();
 
         AddTile();
-        AddTile();
-        AddTile();
 
     }
 

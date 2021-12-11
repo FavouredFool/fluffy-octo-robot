@@ -6,8 +6,8 @@ using TMPro;
 
 public class HexGrid : MonoBehaviour
 {
-    public int width = 6;
-    public int height = 6;
+    public int width = 5;
+    public int height = 5;
 
     public HexCell cellPrefab;
 
@@ -17,14 +17,96 @@ public class HexGrid : MonoBehaviour
 
     private void Awake()
     {
-        cells = new HexCell[height * width];
+        cells = new HexCell[1000];
+        int middle;
+        int line;
 
-        for (int z=0, i=0; z<height; z++)
+        for (int z = -height / 2, i = 0, lineCounter = 0; z <= height / 2; z++, lineCounter++)
         {
-            for (int x=0; x<width; x++)
+            if (lineCounter > (int)(height/2))
             {
-                CreateCell(x, z, i++);
+                line = height-1 - lineCounter;
             }
+            else
+            {
+                line = lineCounter;
+            }
+            Debug.Log(line);
+
+            if (height % 2 != 0)
+            {
+                // Berechnung ob die aktive Zeile eine gerade oder ungerade Menge an Tiles hat
+                if (((height - 1) % 4 == 0 && line % 2 == 0) || ((height -1) % 4 != 0 && line % 2 != 0))
+                {
+                    middle = 0;
+                } else
+                {
+                        if ((line - (int)(height / 2f) + 1) % 4 == 0)
+                        {
+                            middle = -1;
+                        } else
+                        {
+                            middle = 1;
+                        }
+                }
+                    
+                if (middle == 0)
+                {
+                    for (int x = Mathf.CeilToInt(-height / 4f) - Mathf.CeilToInt(line / 2f); x <= Mathf.FloorToInt(height / 4f) + Mathf.CeilToInt(line/2f); x++)
+                    {
+                        CreateCell(x, z, i++);
+                    }
+                } else
+                {
+
+                    if (lineCounter <= (int)height / 2)
+                    {
+                        if ((height - 1) % 4 == 0)
+                        {
+
+                            for (int x = Mathf.CeilToInt(-height / 4f) - Mathf.FloorToInt(line / 2f); x <= Mathf.CeilToInt(height / 4f) + Mathf.FloorToInt(line / 2f); x++)
+                            {
+                                CreateCell(x, z, i++);
+                            }
+                        }
+                        else
+                        {
+                            for (int x = Mathf.CeilToInt(-height / 4f) - Mathf.FloorToInt(line / 2f); x <= Mathf.CeilToInt(height / 4f) + Mathf.CeilToInt(line / 2f); x++)
+                            {
+                                CreateCell(x, z, i++);
+                            }
+                        }
+                    } else
+                    {
+                        if ((height - 1) % 4 == 0)
+                        {
+
+                            for (int x = Mathf.FloorToInt(-height / 4f) - Mathf.FloorToInt(line / 2f); x <= Mathf.FloorToInt(height / 4f) + Mathf.FloorToInt(line / 2f); x++)
+                            {
+                                CreateCell(x, z, i++);
+                            }
+                        }
+                        else
+                        {
+                            for (int x = Mathf.FloorToInt(-height / 4f) - Mathf.FloorToInt(line / 2f); x <= Mathf.FloorToInt(height / 4f) + Mathf.CeilToInt(line / 2f); x++)
+                            {
+                                CreateCell(x, z, i++);
+                            }
+                        }
+                    }
+
+                    
+                }
+
+
+            } else
+            {
+                Debug.Log("FEHLER: KEINE UNGERADE HÖHE MITGEGEBEN");
+            }
+            
+
+
+            
         }
     }
 
