@@ -11,9 +11,6 @@ public class HexCell : MonoBehaviour
     public TMP_Text cellLabelPrefab;
 
     [HideInInspector]
-    public Vector2 coordinates;
-
-    [HideInInspector]
     public int height = 0;
 
     [HideInInspector]
@@ -21,6 +18,8 @@ public class HexCell : MonoBehaviour
 
     Canvas gridCanvas;
     TMP_Text label;
+
+    public HexCoordinates coordinates;
 
     
 
@@ -39,7 +38,7 @@ public class HexCell : MonoBehaviour
     protected void DefineLabel()
     {
         label = GetComponentInChildren<TMP_Text>();
-        label.text = coordinates.x.ToString() + "\n" + coordinates.y.ToString();
+        label.text = coordinates.ToStringOnSeperateLines();
         label.color = Color.black;
     }
 
