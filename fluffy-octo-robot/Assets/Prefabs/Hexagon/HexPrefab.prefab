@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8418273788797545584}
   - component: {fileID: -6657664041620205582}
   - component: {fileID: 545514351444132979}
+  - component: {fileID: 2904292658497691344}
   m_Layer: 0
   m_Name: HexPrefab
   m_TagString: Untagged
@@ -96,3 +97,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc076954a9a71584085cc754ff414688, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!64 &2904292658497691344
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3524458371709084534}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -2432090755550338912, guid: 12a2b503852987047b74f6c9fa78eb20, type: 3}

@@ -44,6 +44,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ad8c6773df508640972f3f9021a6ef4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  width: 5
-  height: 5
+  size: 15
   cellPrefab: {fileID: 1498622557011609434, guid: 9a1f1e9fdb37e7b4589bf4b9af03664c, type: 3}

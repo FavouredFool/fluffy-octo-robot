@@ -7,7 +7,6 @@ using System;
 
 public class HexGrid : MonoBehaviour
 {
-
     public int size = 5;
 
     public HexCell cellPrefab;
@@ -16,13 +15,14 @@ public class HexGrid : MonoBehaviour
 
 
 
-    private void Awake()
+
+    protected void Awake()
     {
         cells = new HexCell[TriangleNumber(size) + TriangleNumber(size - 1) - 2 * TriangleNumber(size / 2)];
         int line;
 
         if (size % 2 == 0)
-            Debug.Log("FEHLER: KEINE UNGERADE HÖHE MITGEGEBEN");
+            Debug.LogWarning("FEHLER: Keine ungerade Höhe mitgegeben");
         else
         {
             Func<float, int> floor_ceil_1;
@@ -98,6 +98,44 @@ public class HexGrid : MonoBehaviour
         }
     }
 
+    protected void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            HandleInput();
+        }
+    }
+
+    void HandleInput()
+    {
+        Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        if (Physics.Raycast(inputRay, out hit))
+        {
+            TouchCell(hit.point);
+        }
+    }
+
+    void TouchCell(Vector3 position)
+    {
+        position = transform.InverseTransformPoint(position);
+        
+        HexCoordinates coordinates = HexCoordinates.FromPosition(position);
+        HexCell foundHexCell = null;
+        
+
+        // Für effiziente Lösung statt durchiterieren über alle Cells den korrekten Index mathematisch über die Coordinates finden.
+        foreach (HexCell activeCell in cells)
+        {
+            if (activeCell.coordinates.Equals(coordinates))
+            {
+                foundHexCell = activeCell;
+                break;
+            }
+        }
+
+        Debug.Log(foundHexCell + " " + foundHexCell.coordinates);
+    }
 
     void CreateCell(int x, int z, int i)
     {
