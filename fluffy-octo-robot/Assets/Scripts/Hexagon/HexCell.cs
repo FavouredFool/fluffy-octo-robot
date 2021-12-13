@@ -19,7 +19,7 @@ public class HexCell : MonoBehaviour
     [HideInInspector]
     public List<GameObject> hexStack;
 
-    GameObject hexPreviewObj;
+    GameObject hexPreviewObj = null;
 
     Canvas gridCanvas;
     TMP_Text label;
@@ -39,7 +39,11 @@ public class HexCell : MonoBehaviour
 
         hexStack = new List<GameObject>();
 
-        AddTile();
+        for (int i = 0; i < Random.Range(1, 5); i++)
+        {
+            AddTile();
+        }
+        
 
     }
 
@@ -55,13 +59,20 @@ public class HexCell : MonoBehaviour
         label.color = Color.black;
     }
 
-    protected void AddTile()
+    public void AddTile()
     {
         // Tile in Stack auf korrekter Höhe hinzufügen
         hexStack.Add(Instantiate(hexPrefab, transform.position + new Vector3(0f, height * HexMetrics.hexHeight, 0f), Quaternion.identity, transform));
 
         // Height des Konstrukts erhöhen
         SetHeight(height + 1);
+
+        // Wenn vorher eine Tilepreview auf der Cell gezeigt wurde, soll diese geupdated werden
+        if (hexPreviewObj)
+        {
+            ShowTilePreview(true);
+        }
+        
     }
 
     public void ShowTilePreview(bool active)
@@ -72,6 +83,11 @@ public class HexCell : MonoBehaviour
             if (!hexPreviewObj)
             {
                 hexPreviewObj = Instantiate(hexPreviewPrefab, transform.position + new Vector3(0f, height * HexMetrics.hexHeight, 0f), Quaternion.identity, transform);
+            } else
+            {
+                // Falls ShowTilePreview aufgerufen wird obwohl das hex schon exitiert, update die Hexposition
+                ShowTilePreview(false);
+                ShowTilePreview(true);
             }
             
         } else

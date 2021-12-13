@@ -25,7 +25,11 @@ public class MouseInteraction : MonoBehaviour
             HexCell activeHex = SelectedHexCell();
             if (activeHex)
             {
-                Debug.Log(activeHex + " " + activeHex.coordinates);
+                Debug.Log("Place Tile on: " + activeHex.coordinates);
+
+                activeHex.AddTile();
+
+
             }
             
         }
@@ -37,7 +41,7 @@ public class MouseInteraction : MonoBehaviour
         while(true)
         {
             // Refresh jeden zweiten Frame
-            yield return new WaitForSeconds(Time.deltaTime*2);
+            yield return new WaitForSeconds(Time.deltaTime*4);
 
             // berührte Cell finden
             hoveredHex = SelectedHexCell();
@@ -66,7 +70,8 @@ public class MouseInteraction : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(inputRay, out hit))
         {
-            return GetHexFromPos(hit.point);
+            // Fix den Raycast noch leicht zu verlängern, damit man auch die Wände berühren kann um eine Tile auszuwählen
+            return GetHexFromPos(hit.point + inputRay.direction.normalized * 0.1f);
         }
         return null;
     }
