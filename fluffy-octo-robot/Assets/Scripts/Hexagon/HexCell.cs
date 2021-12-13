@@ -10,8 +10,10 @@ public class HexCell : MonoBehaviour
 
     public GameObject hexPrefab;
     public GameObject hexPreviewPrefab;
+    public GameObject hexCellPreviewPrefab;
 
     public TMP_Text cellLabelPrefab;
+    public HexCoordinates coordinates;
 
     [HideInInspector]
     public int height = 0;
@@ -20,12 +22,14 @@ public class HexCell : MonoBehaviour
     public List<GameObject> hexStack;
 
     GameObject hexPreviewObj = null;
+    GameObject hexCellPreviewObj = null;
 
     Canvas gridCanvas;
     TMP_Text label;
 
-    public HexCoordinates coordinates;
-    
+    bool propagating;
+
+
 
     protected void Start()
     {
@@ -39,7 +43,14 @@ public class HexCell : MonoBehaviour
         {
             AddTile();
         }*/
-        AddTile();
+
+        if (!propagating)
+        {
+            // Add Preview Prefab
+            hexCellPreviewObj = Instantiate(hexCellPreviewPrefab, transform.position + new Vector3(0f, height * HexMetrics.hexHeight, 0f), Quaternion.identity, transform);
+        }
+        
+
     }
 
     protected void Update()
@@ -67,8 +78,31 @@ public class HexCell : MonoBehaviour
         {
             ShowTilePreview(true);
         }
+
+        // Propagating-Boolean abändern wenn nötig
+        propagating = true;
+        UpdatePropagating();
+
         
     }
+
+    void UpdatePropagating()
+    {
+        // Propagating-Boolean abändern wenn nötig
+
+        if (height == 0 && propagating)
+        {
+            propagating = false;
+            hexCellPreviewObj = Instantiate(hexCellPreviewPrefab, transform.position + new Vector3(0f, height * HexMetrics.hexHeight, 0f), Quaternion.identity, transform);
+        } else if (height != 0 && !propagating)
+        {
+            propagating = true;
+            Destroy(hexCellPreviewObj);
+            hexCellPreviewObj = null;
+
+        }
+    }
+
 
     public void ShowTilePreview(bool active)
     {

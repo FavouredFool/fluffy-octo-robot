@@ -6,7 +6,6 @@ public class MouseInteraction : MonoBehaviour
 {
     public HexGrid hexGrid;
 
-
     HexCell hoveredHex;
     HexCell previouslyhoveredHex;
 
@@ -68,10 +67,13 @@ public class MouseInteraction : MonoBehaviour
     {
         Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
+
         if (Physics.Raycast(inputRay, out hit))
         {
+            
             // Fix den Raycast noch leicht zu verlängern, damit man auch die Wände berühren kann um eine Tile auszuwählen
             return GetHexFromPos(hit.point + inputRay.direction.normalized * 0.1f);
+            
         }
         return null;
     }

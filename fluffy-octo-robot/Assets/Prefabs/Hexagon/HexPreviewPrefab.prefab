@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6241410427650719761}
   - component: {fileID: 8418273788797545584}
   - component: {fileID: -6657664041620205582}
-  - component: {fileID: 545514351444132979}
+  - component: {fileID: -4965951205711964180}
   m_Layer: 0
   m_Name: HexPreviewPrefab
   m_TagString: Untagged
@@ -84,7 +84,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &545514351444132979
+--- !u!114 &-4965951205711964180
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

@@ -47,12 +47,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hexPrefab: {fileID: 3524458371709084534, guid: e24252590ef3b9040a3799703dda2c7c, type: 3}
   hexPreviewPrefab: {fileID: 3524458371709084534, guid: cb72ca3b71b26504fad3b9b258409ae9, type: 3}
+  hexCellPreviewPrefab: {fileID: 3524458371709084534, guid: 6f4dc7ae943786549ba7109e4d844a05, type: 3}
   cellLabelPrefab: {fileID: 6694183529702686237}
-  height: 0
-  hexStack: []
   coordinates:
     x: 0
     z: 0
+  height: 0
+  hexStack: []
 --- !u!1 &2145266928309682356
 GameObject:
   m_ObjectHideFlags: 0
