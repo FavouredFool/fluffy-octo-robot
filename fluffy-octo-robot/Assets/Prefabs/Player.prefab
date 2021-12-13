@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1749758150611961611}
   - component: {fileID: 2444425093119981776}
   - component: {fileID: -5519769554790323104}
-  - component: {fileID: 2314860634743861027}
+  - component: {fileID: 7808357922056248893}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -101,7 +101,7 @@ MonoBehaviour:
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &2314860634743861027
+--- !u!114 &7808357922056248893
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -113,7 +113,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9813e57d7effe45fc8302eae359f429f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkSpeed: 0.1
+  walkSpeed: 0.05
   defaultPositionRange: {x: -4, y: 4}
   forwardBackPosition:
     m_InternalValue: 0
