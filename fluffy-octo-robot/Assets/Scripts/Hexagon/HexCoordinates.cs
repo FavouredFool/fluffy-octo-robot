@@ -82,10 +82,12 @@ public struct HexCoordinates
         return X.ToString() + "\n" + Y.ToString() + "\n" + Z.ToString();
     }
 
+    
     public override int GetHashCode()
     {
-        return X * Y * Z;
+        return X;
     }
+    
 
     public override bool Equals(object obj)
     {

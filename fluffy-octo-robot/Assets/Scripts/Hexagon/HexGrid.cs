@@ -100,41 +100,7 @@ public class HexGrid : MonoBehaviour
 
     protected void Update()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            HandleInput();
-        }
-    }
-
-    void HandleInput()
-    {
-        Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        if (Physics.Raycast(inputRay, out hit))
-        {
-            TouchCell(hit.point);
-        }
-    }
-
-    void TouchCell(Vector3 position)
-    {
-        position = transform.InverseTransformPoint(position);
         
-        HexCoordinates coordinates = HexCoordinates.FromPosition(position);
-        HexCell foundHexCell = null;
-        
-
-        // Für effiziente Lösung statt durchiterieren über alle Cells den korrekten Index mathematisch über die Coordinates finden.
-        foreach (HexCell activeCell in cells)
-        {
-            if (activeCell.coordinates.Equals(coordinates))
-            {
-                foundHexCell = activeCell;
-                break;
-            }
-        }
-
-        Debug.Log(foundHexCell + " " + foundHexCell.coordinates);
     }
 
     void CreateCell(int x, int z, int i)
@@ -148,11 +114,20 @@ public class HexGrid : MonoBehaviour
         cell.coordinates = HexCoordinates.FromOffsetCoordinates(x, z);
         cell.transform.SetParent(transform, false);
         cell.transform.localPosition = position;
-        
+
     }
+
+
 
     protected int TriangleNumber(int i)
     {
         return (i*i +i) / 2;
     }
+
+
+    public HexCell[] GetCells()
+    {
+        return cells;
+    }
+
 }

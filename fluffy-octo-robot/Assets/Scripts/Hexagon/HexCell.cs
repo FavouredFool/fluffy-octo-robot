@@ -8,8 +8,6 @@ using UnityEngine.UI;
 public class HexCell : MonoBehaviour
 {
 
-    public Color color;
-
     public GameObject hexPrefab;
     public TMP_Text cellLabelPrefab;
 
