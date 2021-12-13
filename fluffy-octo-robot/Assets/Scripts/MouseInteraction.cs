@@ -6,6 +6,10 @@ public class MouseInteraction : MonoBehaviour
 {
     public HexGrid hexGrid;
 
+
+    HexCell hoveredHex;
+    HexCell previouslyhoveredHex;
+
     // Start is called before the first frame update
     protected void Start()
     {
@@ -32,15 +36,27 @@ public class MouseInteraction : MonoBehaviour
     {
         while(true)
         {
-            yield return new WaitForSeconds(1f);
-            HexCell activeHex = SelectedHexCell();
-            if (activeHex)
+            // Refresh jeden zweiten Frame
+            yield return new WaitForSeconds(Time.deltaTime*2);
+
+            // berührte Cell finden
+            hoveredHex = SelectedHexCell();
+
+            if (hoveredHex != previouslyhoveredHex)
             {
-                Debug.Log(activeHex + " " + activeHex.coordinates);
+                // auf Cell Preview-Tile zeigen
+                if (previouslyhoveredHex)
+                {
+                    previouslyhoveredHex.ShowTilePreview(false);
+                }
+                if (hoveredHex)
+                {
+                    hoveredHex.ShowTilePreview(true);
+                }
+
+                previouslyhoveredHex = hoveredHex;
             }
-            
         }
-        
     }
 
 

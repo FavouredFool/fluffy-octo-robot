@@ -46,6 +46,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hexPrefab: {fileID: 3524458371709084534, guid: e24252590ef3b9040a3799703dda2c7c, type: 3}
+  hexPreviewPrefab: {fileID: 3524458371709084534, guid: cb72ca3b71b26504fad3b9b258409ae9, type: 3}
   cellLabelPrefab: {fileID: 6694183529702686237}
   height: 0
   hexStack: []
