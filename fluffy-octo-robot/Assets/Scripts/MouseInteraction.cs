@@ -81,7 +81,7 @@ public class MouseInteraction : MonoBehaviour
         position = transform.InverseTransformPoint(position);
 
         HexCoordinates coordinates = HexCoordinates.FromPosition(position);
-        HexCell foundHexCell = null;
+        HexCell foundHexCell;
 
 
         // Für effiziente Lösung statt durchiterieren über alle Cells den korrekten Index mathematisch über die Coordinates finden.

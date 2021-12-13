@@ -25,10 +25,6 @@ public class HexCell : MonoBehaviour
     TMP_Text label;
 
     public HexCoordinates coordinates;
-
-    float showTilePreviewDuration = 0f;
-    float showTilePreviewStarttime = float.NegativeInfinity;
-
     
 
     protected void Start()
@@ -38,13 +34,12 @@ public class HexCell : MonoBehaviour
         DefineLabel();
 
         hexStack = new List<GameObject>();
-
+        /*
         for (int i = 0; i < Random.Range(1, 5); i++)
         {
             AddTile();
-        }
-        
-
+        }*/
+        AddTile();
     }
 
     protected void Update()
@@ -108,7 +103,7 @@ public class HexCell : MonoBehaviour
         height = newHeight;
 
         // Change CanvasPosition
-        gridCanvas.transform.localPosition = new Vector3(0f, newHeight * HexMetrics.hexHeight, 0f);
+        gridCanvas.transform.localPosition = new Vector3(0f, (newHeight - 1/2f) * HexMetrics.hexHeight, 0f);
     }
 
 }
