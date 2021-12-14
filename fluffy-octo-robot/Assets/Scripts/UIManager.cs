@@ -16,6 +16,8 @@ public class UIManager : MonoBehaviour {
     [SerializeField]
     private TextMeshProUGUI playerInGameText;
 
+    private BattleSystem battleSystem;
+
     private void Awake() {
         Cursor.visible = true;
     }
@@ -25,9 +27,11 @@ public class UIManager : MonoBehaviour {
     }
 
     private void Start() {
+        battleSystem = FindObjectOfType<BattleSystem>();
+
         startHostButton.onClick.AddListener(() => {
             if (NetworkManager.Singleton.StartHost()) {
-                Debug.Log("Host started ...");
+                StartGame("Host Started ...");
             } else {
                 Debug.Log("Host could not be started ...");
             }
@@ -35,7 +39,7 @@ public class UIManager : MonoBehaviour {
 
         startServerButton.onClick.AddListener(() => {
             if (NetworkManager.Singleton.StartServer()) {
-                Debug.Log("Server started ...");
+                StartGame("Server Started ...");
             } else {
                 Debug.Log("Server could not be started ...");
             }
@@ -43,10 +47,21 @@ public class UIManager : MonoBehaviour {
 
         startClientButton.onClick.AddListener(() => {
             if (NetworkManager.Singleton.StartClient()) {
-                Debug.Log("Client started ...");
+                StartGame("Client Started ...");
             } else {
                 Debug.Log("Client could not be started ...");
             }
         });
+    }
+
+    private void StartGame(string message)
+    {
+        Debug.Log(message);
+
+        startClientButton.gameObject.SetActive(false);
+        startHostButton.gameObject.SetActive(false);
+        startServerButton.gameObject.SetActive(false);
+
+        battleSystem.SetupBattle();
     }
 }

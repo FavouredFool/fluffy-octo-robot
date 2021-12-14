@@ -15,12 +15,15 @@ public class PlayerControl : NetworkBehaviour
     [SerializeField]
     private NetworkVariable<float> leftRightPosition = new NetworkVariable<float>();
 
+    private BattleSystem battleSystem;
+
     // client caching
     private float oldForwardBackPosition;
     private float oldLeftRightPosition;
 
     private void Start()
     {
+        battleSystem = FindObjectOfType<BattleSystem>();
         transform.position = new Vector3(
             Random.Range(defaultPositionRange.x, defaultPositionRange.y),
             0,
@@ -30,12 +33,12 @@ public class PlayerControl : NetworkBehaviour
 
     private void Update()
     {
-        if (IsServer)
+        if (IsServer && battleSystem.GetState().Equals(GameState.PLAYERTURN))
         {
             UpdateServer();
         }
 
-        if (IsClient)
+        if (IsClient && battleSystem.GetState().Equals(GameState.PLAYERTURN))
         {
             UpdateClient();
         }
