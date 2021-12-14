@@ -18,21 +18,23 @@ public class MouseInteraction : MonoBehaviour
     // Update is called once per frame
     protected void Update()
     {
-
         if (Input.GetMouseButtonDown(0))
         {
             HexCell activeHex = SelectedHexCell();
             if (activeHex)
             {
-                Debug.Log("Place Tile on: " + activeHex.coordinates);
-
                 activeHex.AddTile();
-
-
             }
-            
         }
 
+        if (Input.GetMouseButtonDown(1))
+        {
+            HexCell activeHex = SelectedHexCell();
+            if (activeHex)
+            {
+                activeHex.RemoveTile();
+            }
+        }
     }
 
     protected IEnumerator HandleHover()

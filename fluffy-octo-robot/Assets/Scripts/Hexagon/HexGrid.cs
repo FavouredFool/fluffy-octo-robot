@@ -11,14 +11,13 @@ public class HexGrid : MonoBehaviour
 
     public HexCell cellPrefab;
 
-    HexCell[] cells;
-
-
-
+    List<HexCell> cells = new();
 
     protected void Awake()
     {
-        cells = new HexCell[TriangleNumber(size) + TriangleNumber(size - 1) - 2 * TriangleNumber(size / 2)];
+
+
+        //cells = new HexCell[TriangleNumber(size) + TriangleNumber(size - 1) - 2 * TriangleNumber(size / 2)];
         int line;
 
         if (size % 2 == 0)
@@ -93,7 +92,7 @@ public class HexGrid : MonoBehaviour
 
                 // Die Methode, die die Cells erstellt. floor_ceil kann entweder CeilToInt oder FloorToInt sein und wird je nach Spalte - wie oben zu sehen - bestimmt.
                 for (int x = floor_ceil_1(-size / 4f) - floor_ceil_2(line / 2f); x <= floor_ceil_3(size / 4f) + floor_ceil_4(line / 2f); x++)
-                    CreateCell(x, z, i++);
+                    CreateCell(x, z);
             }
         }
     }
@@ -103,31 +102,51 @@ public class HexGrid : MonoBehaviour
         
     }
 
-    void CreateCell(int x, int z, int i)
+    public void CreateCell(int x, int z)
     {
         Vector3 position;
         position.x = (x + z / 2f - z / 2) * (HexMetrics.innerRadius * 2f);
         position.y = 0f;
         position.z = z * (HexMetrics.outerRadius * 1.5f);
 
-        HexCell cell = cells[i] = Instantiate<HexCell>(cellPrefab);
+        HexCell cell = Instantiate<HexCell>(cellPrefab);
         cell.coordinates = HexCoordinates.FromOffsetCoordinates(x, z);
         cell.transform.SetParent(transform, false);
         cell.transform.localPosition = position;
+        cells.Add(cell);
 
     }
-
 
 
     protected int TriangleNumber(int i)
     {
-        return (i*i +i) / 2;
+        return (i*i + i) / 2;
     }
 
 
-    public HexCell[] GetCells()
+    public List<HexCell> GetCells()
     {
         return cells;
+    }
+
+    public HexCell GetCell(HexCoordinates searchCoordinates)
+    {
+
+        // Für effiziente Lösung statt durchiterieren über alle Cells den korrekten Index mathematisch über die Coordinates finden.
+        // Hier ggf. das Cells-Array zentralisieren um nicht auf's HexGrid zugreifen zu müssen (?)
+
+        HexCell foundHexCell;
+
+        foreach (HexCell activeCell in GetCells())
+        {
+            if (activeCell.coordinates.Equals(searchCoordinates))
+            {
+                foundHexCell = activeCell;
+                return activeCell;
+            }
+        }
+
+        return null;
     }
 
 }
