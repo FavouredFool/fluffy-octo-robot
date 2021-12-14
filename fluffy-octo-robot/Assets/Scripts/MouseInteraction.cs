@@ -5,6 +5,7 @@ using UnityEngine;
 public class MouseInteraction : MonoBehaviour
 {
     public HexGrid hexGrid;
+    private BattleSystem battleSystem;
 
     HexCell hoveredHex;
     HexCell previouslyhoveredHex;
@@ -12,29 +13,35 @@ public class MouseInteraction : MonoBehaviour
     // Start is called before the first frame update
     protected void Start()
     {
+        battleSystem = FindObjectOfType<BattleSystem>();
         StartCoroutine(HandleHover());
     }
 
     // Update is called once per frame
     protected void Update()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            HexCell activeHex = SelectedHexCell();
-            if (activeHex)
-            {
-                activeHex.AddTile();
-            }
-        }
 
-        if (Input.GetMouseButtonDown(1))
+        if (battleSystem.GetState().Equals(GameState.GODTURN))
         {
-            HexCell activeHex = SelectedHexCell();
-            if (activeHex)
+            if (Input.GetMouseButtonDown(0))
             {
-                activeHex.RemoveTile();
+                HexCell activeHex = SelectedHexCell();
+                if (activeHex)
+                {
+                    activeHex.AddTile();
+                }
+            }
+
+            if (Input.GetMouseButtonDown(1))
+            {
+                HexCell activeHex = SelectedHexCell();
+                if (activeHex)
+                {
+                    activeHex.RemoveTile();
+                }
             }
         }
+        
     }
 
     protected IEnumerator HandleHover()
@@ -42,25 +49,30 @@ public class MouseInteraction : MonoBehaviour
         while(true)
         {
             // Refresh jeden zweiten Frame
-            yield return new WaitForSeconds(Time.deltaTime*4);
+            yield return new WaitForSeconds(Time.deltaTime * 4);
 
-            // berührte Cell finden
-            hoveredHex = SelectedHexCell();
-
-            if (hoveredHex != previouslyhoveredHex)
+            if (battleSystem.GetState().Equals(GameState.GODTURN))
             {
-                // auf Cell Preview-Tile zeigen
-                if (previouslyhoveredHex)
-                {
-                    previouslyhoveredHex.ShowTilePreview(false);
-                }
-                if (hoveredHex)
-                {
-                    hoveredHex.ShowTilePreview(true);
-                }
 
-                previouslyhoveredHex = hoveredHex;
+                // berührte Cell finden
+                hoveredHex = SelectedHexCell();
+
+                if (hoveredHex != previouslyhoveredHex)
+                {
+                    // auf Cell Preview-Tile zeigen
+                    if (previouslyhoveredHex)
+                    {
+                        previouslyhoveredHex.ShowTilePreview(false);
+                    }
+                    if (hoveredHex)
+                    {
+                        hoveredHex.ShowTilePreview(true);
+                    }
+
+                    previouslyhoveredHex = hoveredHex;
+                }
             }
+               
         }
     }
 

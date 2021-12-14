@@ -13,6 +13,8 @@ public class HexCell : MonoBehaviour
     public GameObject hexCellPreviewPrefab;
 
     public TMP_Text cellLabelPrefab;
+
+    [HideInInspector]
     public HexCoordinates coordinates;
 
     [HideInInspector]
@@ -43,16 +45,18 @@ public class HexCell : MonoBehaviour
         hexGrid = transform.parent.GetComponent<HexGrid>();
 
         // Falls man bereits bestehendes Terrain möchte
+        
         /*
-        for (int i = 0; i < Random.Range(1, 5); i++)
+        for (int i = 0; i < Random.Range(0, 5); i++)
         {
             AddTile();
         }
         */
+        
 
         // Falls man kein bestehendes Terrain möchte
         propagating = false;
-
+        
         if (!propagating)
         {
             // Add Preview Prefab
