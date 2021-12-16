@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class MouseInteraction : MonoBehaviour
 {
+
     public HexGrid hexGrid;
 
     HexCell hoveredHex;
@@ -18,21 +19,45 @@ public class MouseInteraction : MonoBehaviour
     // Update is called once per frame
     protected void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (TemporaryTurnControl.gameState == TemporaryTurnControl.GameState.GOD)
         {
-            HexCell activeHex = SelectedHexCell();
-            if (activeHex)
+            if (Input.GetMouseButtonDown(0))
             {
-                activeHex.AddTile();
+                HexCell activeHex = SelectedHexCell();
+                if (activeHex)
+                {
+                    activeHex.AddTile();
+                }
+            }
+
+            if (Input.GetMouseButtonDown(1))
+            {
+                HexCell activeHex = SelectedHexCell();
+                if (activeHex)
+                {
+                    activeHex.RemoveTile();
+                }
             }
         }
 
-        if (Input.GetMouseButtonDown(1))
+        if (TemporaryTurnControl.gameState == TemporaryTurnControl.GameState.HUMAN)
         {
-            HexCell activeHex = SelectedHexCell();
-            if (activeHex)
+            if (Input.GetMouseButtonDown(0))
             {
-                activeHex.RemoveTile();
+                HexCell pressedCell = SelectedHexCell();
+
+                // Move Towards that Tile if possible
+
+                foreach (HexCoordinates activeCoordinates in Player.Instance.activeCell.GenerateCellCoordinatesInRadius(1))
+                {
+                    HexCell activeCell = hexGrid.GetCell(activeCoordinates);
+                    if (pressedCell == activeCell)
+                    {
+                        activeCell.RemovePlayer();
+                        pressedCell.PlacePlayer();
+                    }
+
+                }
             }
         }
     }
@@ -44,22 +69,25 @@ public class MouseInteraction : MonoBehaviour
             // Refresh jeden zweiten Frame
             yield return new WaitForSeconds(Time.deltaTime*4);
 
-            // berührte Cell finden
-            hoveredHex = SelectedHexCell();
-
-            if (hoveredHex != previouslyhoveredHex)
+            if (TemporaryTurnControl.gameState == TemporaryTurnControl.GameState.GOD)
             {
-                // auf Cell Preview-Tile zeigen
-                if (previouslyhoveredHex)
-                {
-                    previouslyhoveredHex.ShowTilePreview(false);
-                }
-                if (hoveredHex)
-                {
-                    hoveredHex.ShowTilePreview(true);
-                }
+                // berührte Cell finden
+                hoveredHex = SelectedHexCell();
 
-                previouslyhoveredHex = hoveredHex;
+                if (hoveredHex != previouslyhoveredHex)
+                {
+                    // auf Cell Preview-Tile zeigen
+                    if (previouslyhoveredHex)
+                    {
+                        previouslyhoveredHex.ShowTilePreview(false);
+                    }
+                    if (hoveredHex)
+                    {
+                        hoveredHex.ShowTilePreview(true);
+                    }
+
+                    previouslyhoveredHex = hoveredHex;
+                }
             }
         }
     }

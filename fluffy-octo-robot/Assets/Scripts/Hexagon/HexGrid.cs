@@ -14,10 +14,12 @@ public class HexGrid : MonoBehaviour
     public Player playerPrefab;
 
     List<HexCell> cells;
+    Player player;
 
     HexCell startCell;
 
     float gridRadius = 0f;
+    
 
     protected void Awake()
     {
@@ -52,8 +54,8 @@ public class HexGrid : MonoBehaviour
         }
 
         // Create Player on Map
-        Player player = Instantiate(playerPrefab, transform);
-        startCell.PlacePlayer(player);
+        player = Instantiate(playerPrefab, transform);
+        startCell.PlacePlayer();
     }
 
     protected void Update()
@@ -138,6 +140,11 @@ public class HexGrid : MonoBehaviour
     public float GetGridRadius()
     {
         return gridRadius;
+    }
+
+    public Player GetPlayer()
+    {
+        return player;
     }
 
 }

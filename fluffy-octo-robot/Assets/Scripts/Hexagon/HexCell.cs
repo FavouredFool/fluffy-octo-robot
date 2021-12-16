@@ -29,8 +29,6 @@ public class HexCell : MonoBehaviour
     Canvas gridCanvas;
     TMP_Text label;
 
-    Player tempPlayerCopy = null;
-
     bool propagating = false;
 
 
@@ -82,11 +80,11 @@ public class HexCell : MonoBehaviour
 
         // Propagating-Boolean abändern wenn nötig
         UpdatePropagating();
-
-        if (tempPlayerCopy)
+        
+        if (Player.Instance && Player.Instance.activeCell == this)
         {
             // set player-character heigher
-            tempPlayerCopy.transform.position = tempPlayerCopy.transform.position + new Vector3(0f, HexMetrics.hexHeight, 0f);
+            Player.Instance.transform.position = Player.Instance.transform.position + new Vector3(0f, HexMetrics.hexHeight, 0f);
         }
         
 
@@ -98,7 +96,7 @@ public class HexCell : MonoBehaviour
         if (hexStack.Count > 0)
         {
             // Can't remove block completely when player is on it
-            if (!tempPlayerCopy || height > 1)
+            if (Player.Instance && (Player.Instance.activeCell != this || height > 1))
             {
                 // Tile in Stack auf korrekter Höhe hinzufügen
                 Destroy(hexStack.Pop());
@@ -113,10 +111,10 @@ public class HexCell : MonoBehaviour
                 // Propagating-Boolean abändern wenn nötig
                 UpdatePropagating();
 
-                if (tempPlayerCopy)
+                if (Player.Instance.activeCell == this)
                 {
                     // set player-character lower
-                    tempPlayerCopy.transform.position = tempPlayerCopy.transform.position - new Vector3(0f, HexMetrics.hexHeight, 0f);
+                    Player.Instance.transform.position = Player.Instance.transform.position - new Vector3(0f, HexMetrics.hexHeight, 0f);
 
                 }
             }
@@ -239,15 +237,15 @@ public class HexCell : MonoBehaviour
 
     }
 
-    public void PlacePlayer(Player player)
+    public void PlacePlayer()
     {
-        tempPlayerCopy = player;
-        player.transform.position = transform.position + new Vector3(0f, height * HexMetrics.hexHeight + HexMetrics.hexHeight / 2, 0f);
+        Player.Instance.activeCell = this;
+        Player.Instance.transform.position = transform.position + new Vector3(0f, height * HexMetrics.hexHeight + HexMetrics.hexHeight / 2, 0f);
     }
 
     public void RemovePlayer()
     {
-        tempPlayerCopy = null;
+        Player.Instance.activeCell = null;
     }
 
 
