@@ -29,35 +29,29 @@ public class HexCell : MonoBehaviour
     Canvas gridCanvas;
     TMP_Text label;
 
-    bool propagating;
+    bool propagating = false;
 
 
-
-    protected void Start()
+    protected void Awake()
     {
-        // Coordinate-Grids 
-        gridCanvas = GetComponentInChildren<Canvas>();
-        DefineLabel();
-
         hexStack = new Stack<GameObject>();
-        hexGrid = transform.parent.GetComponent<HexGrid>();
+        //hexGrid = transform.parent.GetComponent<HexGrid>();
+        // Bei Awake kann noch nicht über das Parentobjekt gegangen werden
+        hexGrid = GameObject.Find("HexGrid").GetComponent<HexGrid>();
 
-        // Falls man bereits bestehendes Terrain möchte
-        /*
-        for (int i = 0; i < Random.Range(1, 5); i++)
-        {
-            AddTile();
-        }
-        */
-
-        // Falls man kein bestehendes Terrain möchte
-        propagating = false;
+        gridCanvas = GetComponentInChildren<Canvas>();
 
         if (!propagating)
         {
             // Add Preview Prefab
             hexCellPreviewObj = Instantiate(hexCellPreviewPrefab, transform.position + new Vector3(0f, height * HexMetrics.hexHeight, 0f), Quaternion.identity, transform);
         }
+    }
+
+    protected void Start()
+    {
+        // Coordinate-Grids 
+        DefineLabel();
     }
 
     protected void Update()
@@ -144,6 +138,7 @@ public class HexCell : MonoBehaviour
                         // Wichtig, beim Destroyed von HexCells, diese auch aus der Liste löschen
                         hexGrid.GetCells().Remove(activeCell);
                         Destroy(activeCell.gameObject);
+                        hexGrid.RemoveCell(activeCell);
                         
                     }
                 }
@@ -173,7 +168,7 @@ public class HexCell : MonoBehaviour
         }
     }
 
-    IEnumerable GenerateCellCoordinatesInRadius(int radius)
+    public IEnumerable GenerateCellCoordinatesInRadius(int radius)
     {
         // Step 1: Find all surrounding Hexes
 
