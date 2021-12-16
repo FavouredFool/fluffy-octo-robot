@@ -29,6 +29,8 @@ public class HexCell : MonoBehaviour
     Canvas gridCanvas;
     TMP_Text label;
 
+    Player tempPlayerCopy = null;
+
     bool propagating = false;
 
 
@@ -80,6 +82,14 @@ public class HexCell : MonoBehaviour
 
         // Propagating-Boolean abändern wenn nötig
         UpdatePropagating();
+
+        if (tempPlayerCopy)
+        {
+            // set player-character heigher
+            tempPlayerCopy.transform.position = tempPlayerCopy.transform.position + new Vector3(0f, HexMetrics.hexHeight, 0f);
+        }
+        
+
     }
 
     public void RemoveTile()
@@ -87,20 +97,30 @@ public class HexCell : MonoBehaviour
 
         if (hexStack.Count > 0)
         {
-            // Tile in Stack auf korrekter Höhe hinzufügen
-            Destroy(hexStack.Pop());
+            // Can't remove block completely when player is on it
+            if (!tempPlayerCopy || height > 1)
+            {
+                // Tile in Stack auf korrekter Höhe hinzufügen
+                Destroy(hexStack.Pop());
 
-            // Height des Konstrukts erhöhen
-            SetHeight(height - 1);
+                // Height des Konstrukts erhöhen
+                SetHeight(height - 1);
 
-            // Wenn vorher eine Tilepreview auf der Cell gezeigt wurde, soll diese geupdated werden
-            if (hexPreviewObj)
-                ShowTilePreview(true);
+                // Wenn vorher eine Tilepreview auf der Cell gezeigt wurde, soll diese geupdated werden
+                if (hexPreviewObj)
+                    ShowTilePreview(true);
 
-            // Propagating-Boolean abändern wenn nötig
-            UpdatePropagating();
-        }
-        
+                // Propagating-Boolean abändern wenn nötig
+                UpdatePropagating();
+
+                if (tempPlayerCopy)
+                {
+                    // set player-character lower
+                    tempPlayerCopy.transform.position = tempPlayerCopy.transform.position - new Vector3(0f, HexMetrics.hexHeight, 0f);
+
+                }
+            }
+        } 
     }
 
     void UpdatePropagating()
@@ -217,6 +237,17 @@ public class HexCell : MonoBehaviour
             }
         }
 
+    }
+
+    public void PlacePlayer(Player player)
+    {
+        tempPlayerCopy = player;
+        player.transform.position = transform.position + new Vector3(0f, height * HexMetrics.hexHeight + HexMetrics.hexHeight / 2, 0f);
+    }
+
+    public void RemovePlayer()
+    {
+        tempPlayerCopy = null;
     }
 
 

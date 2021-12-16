@@ -11,8 +11,11 @@ public class HexGrid : MonoBehaviour
     public int size = 5;
 
     public HexCell cellPrefab;
+    public Player playerPrefab;
 
     List<HexCell> cells;
+
+    HexCell startCell;
 
     float gridRadius = 0f;
 
@@ -22,19 +25,17 @@ public class HexGrid : MonoBehaviour
         cells = new(TriangleNumber(size) + TriangleNumber(size - 1) - 2 * TriangleNumber(size / 2));
 
         // Terraingeneration
-        HexCell cell = CreateCell(0, 0);
+        startCell = CreateCell(0, 0);
 
-        foreach (HexCoordinates coordinates in cell.GenerateCellCoordinatesInRadius(size/2))
+        foreach (HexCoordinates coordinates in startCell.GenerateCellCoordinatesInRadius(size/2))
         {
-            if (!coordinates.Equals(cell.coordinates))
+            if (!coordinates.Equals(startCell.coordinates))
             {
                 Vector3 offsetCoordinates = HexCoordinates.ToOffsetCoordinates(coordinates);
-                Debug.Log(offsetCoordinates);
+
                 CreateCell((int) offsetCoordinates.x, (int) offsetCoordinates.z);
             }
         }
-
-
     }
 
     protected void Start()
@@ -48,8 +49,11 @@ public class HexGrid : MonoBehaviour
             {
                 cell.AddTile();
             }
-
         }
+
+        // Create Player on Map
+        Player player = Instantiate(playerPrefab, transform);
+        startCell.PlacePlayer(player);
     }
 
     protected void Update()
@@ -116,9 +120,6 @@ public class HexGrid : MonoBehaviour
 
     public HexCell GetCell(HexCoordinates searchCoordinates)
     {
-
-        // Für effiziente Lösung statt durchiterieren über alle Cells den korrekten Index mathematisch über die Coordinates finden.
-        // Hier ggf. das Cells-Array zentralisieren um nicht auf's HexGrid zugreifen zu müssen (?)
 
         HexCell foundHexCell;
 
