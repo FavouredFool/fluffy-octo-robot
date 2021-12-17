@@ -248,6 +248,11 @@ public class HexCell : MonoBehaviour
         Player.Instance.activeCell = null;
     }
 
+    public int GetHeight()
+    {
+        return height;
+    }
+
 
     protected void SetHeight(int newHeight)
     {

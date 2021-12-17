@@ -45,18 +45,25 @@ public class MouseInteraction : MonoBehaviour
             if (Input.GetMouseButtonDown(0))
             {
                 HexCell pressedCell = SelectedHexCell();
-
-                // Move Towards that Tile if possible
-
-                foreach (HexCoordinates activeCoordinates in Player.Instance.activeCell.GenerateCellCoordinatesInRadius(1))
+                if (pressedCell && pressedCell.GetPropagating())
                 {
-                    HexCell activeCell = hexGrid.GetCell(activeCoordinates);
-                    if (pressedCell == activeCell)
-                    {
-                        activeCell.RemovePlayer();
-                        pressedCell.PlacePlayer();
-                    }
+                    
+                    // Move Towards that Tile if possible
 
+                    foreach (HexCoordinates activeCoordinates in Player.Instance.activeCell.GenerateCellCoordinatesInRadius(1))
+                    {
+                        HexCell activeCell = hexGrid.GetCell(activeCoordinates);
+
+
+                        if (pressedCell == activeCell && Player.Instance.activeCell && pressedCell.GetHeight() - Player.Instance.activeCell.GetHeight() <= Player.Instance.maxWalkHeight)
+                        {
+                            
+                            activeCell.RemovePlayer();
+                            pressedCell.PlacePlayer();
+                            return;
+                        }
+
+                    }
                 }
             }
         }

@@ -8,9 +8,18 @@ public class Player : MonoBehaviour
 
     public static Player Instance { get { return instance; } }
 
+    [HideInInspector]
+    public HexCell activeCell = null;
+
+    [HideInInspector]
+    public int maxWalkHeight;
+
 
     private void Awake()
     {
+        maxWalkHeight = 1;
+
+
         if (instance != null && instance != this)
         {
             Destroy(this.gameObject);
@@ -20,6 +29,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    public HexCell activeCell = null;
+   
+    
 
 }
