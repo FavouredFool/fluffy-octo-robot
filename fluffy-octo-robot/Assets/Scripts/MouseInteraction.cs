@@ -7,6 +7,7 @@ public class MouseInteraction : MonoBehaviour
 
     public HexGrid hexGrid;
     private BattleSystem battleSystem;
+    private PlayerControl playerControl;
 
     HexCell hoveredHex;
     HexCell previouslyhoveredHex;
@@ -22,10 +23,7 @@ public class MouseInteraction : MonoBehaviour
     // Update is called once per frame
     protected void Update()
     {
-
-        
-
-        if (TemporaryTurnControl.gameState == TemporaryTurnControl.GameState.GOD)
+        if (battleSystem.GetState().Equals(GameState.GODTURN))
         {
             if (Input.GetMouseButtonDown(0))
             {
@@ -44,25 +42,26 @@ public class MouseInteraction : MonoBehaviour
                     activeHex.RemoveTile();
                 }
             }
-        } else if (TemporaryTurnControl.gameState == TemporaryTurnControl.GameState.HUMAN)
+        } else if (battleSystem.GetState().Equals(GameState.PLAYERTURN))
         {
-            
-
-
 
             if (Input.GetMouseButtonDown(0))
             {
                 HexCell pressedCell = SelectedHexCell();
                 if (pressedCell && pressedCell.GetPropagating())
                 {
-                    
-                    // Move Towards that Tile if possible
 
-                    foreach (HexCoordinates activeCoordinates in Player.Instance.activeCell.GenerateCellCoordinatesInRadius(1))
+                    if (CheckIfPlayerIsInstantiated())
+                    {
+                        InstantiatePlayer();
+                    }
+
+                    // Move Towards that Tile if possible
+                    foreach (HexCoordinates activeCoordinates in playerControl.activeCell.GenerateCellCoordinatesInRadius(1))
                     {
                         HexCell activeCell = hexGrid.GetCell(activeCoordinates);
 
-                        if (pressedCell == activeCell && Player.Instance.activeCell && pressedCell.ValdiatePlacement())
+                        if (pressedCell == activeCell && playerControl.activeCell && pressedCell.ValdiatePlacement())
                         {
                             
                             activeCell.RemovePlayer();
@@ -84,7 +83,7 @@ public class MouseInteraction : MonoBehaviour
             // Refresh jeden zweiten Frame
             yield return new WaitForSeconds(Time.deltaTime * 4);
 
-            if (TemporaryTurnControl.gameState == TemporaryTurnControl.GameState.GOD)
+            if (battleSystem.GetState().Equals(GameState.GODTURN))
             {
                 // ber�hrte Cell finden
                 hoveredHex = SelectedHexCell();
@@ -108,6 +107,15 @@ public class MouseInteraction : MonoBehaviour
         }
     }
 
+    public void InstantiatePlayer()
+    {
+        playerControl = FindObjectOfType<PlayerControl>();
+    }
+
+    private bool CheckIfPlayerIsInstantiated()
+    {
+        return playerControl == null;
+    }
 
     protected HexCell SelectedHexCell()
     {

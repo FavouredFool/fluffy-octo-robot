@@ -1,9 +1,10 @@
 using UnityEngine;
 using UnityEngine.UI;
+using ObserverPattern;
 
 public enum GameState
 {
-    START, PLAYERTURN, GODTURN, WON, LOST
+    START, PLAYERTURN, GODTURN, CORRUPTION, WON, LOST
 }
 
 public class BattleSystem : MonoBehaviour
@@ -11,15 +12,14 @@ public class BattleSystem : MonoBehaviour
     public GameState state;
 
     public GameObject player;
-    public Transform tile;
 
     public Button finishPlayerTurn;
     public Button finishGodTurn;
 
+    public Subject subject = new Subject();
+
     private void Start()
     {
-        Debug.Log("start battle");
-
         finishPlayerTurn.gameObject.SetActive(false);
         finishGodTurn.gameObject.SetActive(false);
 
@@ -45,6 +45,8 @@ public class BattleSystem : MonoBehaviour
 
         finishPlayerTurn.gameObject.SetActive(true);
         finishGodTurn.gameObject.SetActive(false);
+
+        subject.Notify();
     }
 
     private void GodTurn()
@@ -53,6 +55,8 @@ public class BattleSystem : MonoBehaviour
 
         finishPlayerTurn.gameObject.SetActive(false);
         finishGodTurn.gameObject.SetActive(true);
+
+        subject.Notify();
     }
 
     public GameState GetState()

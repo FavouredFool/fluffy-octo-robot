@@ -3,10 +3,10 @@ using TMPro;
 using UnityEngine.UI;
 using Unity.Netcode;
 
-public class UIManager : MonoBehaviour {
-    [SerializeField]
-    private Button startServerButton;
+// mac multiple windows: open -na fluffy-test 
 
+public class UIManager : MonoBehaviour {
+   
     [SerializeField]
     private Button startHostButton;
 
@@ -17,10 +17,7 @@ public class UIManager : MonoBehaviour {
     private TextMeshProUGUI playerInGameText;
 
     private BattleSystem battleSystem;
-
-    private void Awake() {
-        Cursor.visible = true;
-    }
+    private HexCell hexCell;
 
     private void Update() {
         playerInGameText.text = $"Players in game: {PlayersManager.Instance.PlayersInGame}";
@@ -28,28 +25,17 @@ public class UIManager : MonoBehaviour {
 
     private void Start() {
         battleSystem = FindObjectOfType<BattleSystem>();
+        hexCell = FindObjectOfType<HexCell>();
 
         startHostButton.onClick.AddListener(() => {
             if (NetworkManager.Singleton.StartHost()) {
                 StartGame("Host Started ...");
-            } else {
-                Debug.Log("Host could not be started ...");
-            }
-        });
-
-        startServerButton.onClick.AddListener(() => {
-            if (NetworkManager.Singleton.StartServer()) {
-                StartGame("Server Started ...");
-            } else {
-                Debug.Log("Server could not be started ...");
             }
         });
 
         startClientButton.onClick.AddListener(() => {
             if (NetworkManager.Singleton.StartClient()) {
                 StartGame("Client Started ...");
-            } else {
-                Debug.Log("Client could not be started ...");
             }
         });
     }
@@ -58,9 +44,10 @@ public class UIManager : MonoBehaviour {
     {
         Debug.Log(message);
 
+        hexCell.FirstPlayerPlace();
+
         startClientButton.gameObject.SetActive(false);
         startHostButton.gameObject.SetActive(false);
-        startServerButton.gameObject.SetActive(false);
 
         battleSystem.SetupBattle();
     }

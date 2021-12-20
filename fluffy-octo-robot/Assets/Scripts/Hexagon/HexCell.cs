@@ -33,6 +33,9 @@ public class HexCell : MonoBehaviour, IObserver
 
     bool propagating = false;
 
+    private BattleSystem battleSystem;
+    private PlayerControl playerControl;
+
 
     protected void Awake()
     {
@@ -52,13 +55,20 @@ public class HexCell : MonoBehaviour, IObserver
 
     protected void Start()
     {
+        battleSystem = FindObjectOfType<BattleSystem>();
+
         // Coordinate-Grids 
         DefineLabel();
     }
 
-    protected void Update()
+    private void InstantiatePlayer()
     {
-        
+        playerControl = FindObjectOfType<PlayerControl>();
+    }
+
+    private bool CheckIfPlayerIsInstantiated()
+    {
+        return playerControl == null;
     }
 
     protected void DefineLabel()
@@ -83,10 +93,10 @@ public class HexCell : MonoBehaviour, IObserver
         // Propagating-Boolean ab�ndern wenn n�tig
         UpdatePropagating();
         
-        if (Player.Instance && Player.Instance.activeCell == this)
+        if (playerControl && playerControl.activeCell == this)
         {
             // set player-character heigher
-            Player.Instance.transform.position = Player.Instance.transform.position + new Vector3(0f, HexMetrics.hexHeight, 0f);
+            playerControl.transform.position = playerControl.transform.position + new Vector3(0f, HexMetrics.hexHeight, 0f);
         }
         
 
@@ -97,8 +107,13 @@ public class HexCell : MonoBehaviour, IObserver
 
         if (hexStack.Count > 0)
         {
+            if (CheckIfPlayerIsInstantiated())
+            {
+                InstantiatePlayer();
+            }
+
             // Can't remove block completely when player is on it
-            if (Player.Instance && (Player.Instance.activeCell != this || height > 1))
+            if (playerControl && (playerControl.activeCell != this || height > 1))
             {
                 // Tile in Stack auf korrekter H�he hinzuf�gen
                 Destroy(hexStack.Pop());
@@ -113,10 +128,10 @@ public class HexCell : MonoBehaviour, IObserver
                 // Propagating-Boolean ab�ndern wenn n�tig
                 UpdatePropagating();
 
-                if (Player.Instance.activeCell == this)
+                if (playerControl.activeCell == this)
                 {
                     // set player-character lower
-                    Player.Instance.transform.position = Player.Instance.transform.position - new Vector3(0f, HexMetrics.hexHeight, 0f);
+                    playerControl.transform.position = playerControl.transform.position - new Vector3(0f, HexMetrics.hexHeight, 0f);
 
                 }
             }
@@ -239,21 +254,40 @@ public class HexCell : MonoBehaviour, IObserver
 
     }
 
+    public void FirstPlayerPlace()
+    {
+        InstantiatePlayer();
+
+        playerControl.activeCell = this;
+        playerControl.transform.position = transform.position + new Vector3(0f, (height + 1) * HexMetrics.hexHeight + HexMetrics.hexHeight / 2, 0f);
+    }
+
     public void PlacePlayer()
     {
-        Player.Instance.activeCell = this;
-        Player.Instance.transform.position = transform.position + new Vector3(0f, height * HexMetrics.hexHeight + HexMetrics.hexHeight / 2, 0f);
-        if (TemporaryTurnControl.gameState == TemporaryTurnControl.GameState.HUMAN)
+        if (CheckIfPlayerIsInstantiated())
+        {
+            InstantiatePlayer();
+        }
+        Debug.Log("Place Player " + height);
+
+        playerControl.activeCell = this;
+        playerControl.transform.position = transform.position + new Vector3(0f, height * HexMetrics.hexHeight + HexMetrics.hexHeight / 2, 0f);
+
+        if (battleSystem.GetState().Equals(GameState.PLAYERTURN))
         {
             // calculate preview Tiles
             CalculatePreviewTilesForHuman(true);
-
         }
     }
 
     public void CalculatePreviewTilesForHuman(bool active)
     {
-        foreach (HexCoordinates activeCoordinates in Player.Instance.activeCell.GenerateCellCoordinatesInRadius(1))
+        if (CheckIfPlayerIsInstantiated())
+        {
+            InstantiatePlayer();
+        }
+
+        foreach (HexCoordinates activeCoordinates in playerControl.activeCell.GenerateCellCoordinatesInRadius(1))
         {
             HexCell activeCell = hexGrid.GetCell(activeCoordinates);
 
@@ -277,23 +311,33 @@ public class HexCell : MonoBehaviour, IObserver
 
     public bool ValdiatePlacement()
     {
-        // Check if Player is allowed to be placed at that position based on his previous position
-        if (propagating && Player.Instance.activeCell != this)
+        if (CheckIfPlayerIsInstantiated())
         {
-            return GetHeight() - Player.Instance.activeCell.GetHeight() <= Player.Instance.maxWalkHeight;
+            InstantiatePlayer();
+        }
+
+        // Check if Player is allowed to be placed at that position based on his previous position
+        if (propagating && playerControl.activeCell != this)
+        {
+            return GetHeight() - playerControl.activeCell.GetHeight() <= playerControl.maxWalkHeight;
         }
         return false;
     }
 
     public void RemovePlayer()
     {
-        if (TemporaryTurnControl.gameState == TemporaryTurnControl.GameState.HUMAN)
+        if (CheckIfPlayerIsInstantiated())
+        {
+            InstantiatePlayer();
+        }
+
+        if (battleSystem.GetState().Equals(GameState.PLAYERTURN))
         {
             // calculate preview Tiles
             CalculatePreviewTilesForHuman(false);
         }
 
-        Player.Instance.activeCell = null;
+        playerControl.activeCell = null;
 
         
     }
@@ -323,9 +367,14 @@ public class HexCell : MonoBehaviour, IObserver
         // OnChange des Turnstates werden alle Preview-Cells zerst�rt und ggf. neue berechnet
         ShowTilePreview(false);
 
-        if (TemporaryTurnControl.gameState == TemporaryTurnControl.GameState.HUMAN)
+        if (CheckIfPlayerIsInstantiated())
         {
-            Player.Instance.activeCell.CalculatePreviewTilesForHuman(true);
+            InstantiatePlayer();
+        }
+
+        if (battleSystem.GetState().Equals(GameState.PLAYERTURN))
+        {
+            playerControl.activeCell.CalculatePreviewTilesForHuman(true);
         }
     }
 

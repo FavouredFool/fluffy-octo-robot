@@ -12,20 +12,13 @@ public class HexGrid : MonoBehaviour
     public int size = 5;
 
     public HexCell cellPrefab;
-    public Player playerPrefab;
-    public TurnToggle toggle;
 
     List<HexCell> cells;
-    Player player;
 
     HexCell startCell;
 
     float gridRadius = 0f;
 
-    
-
-
-    
 
     protected void Awake()
     {
@@ -59,10 +52,6 @@ public class HexGrid : MonoBehaviour
                 cell.AddTile();
             }
         }
-
-        // Create Player on Map
-        player = Instantiate(playerPrefab, transform);
-        startCell.PlacePlayer();
     }
 
 
@@ -79,15 +68,15 @@ public class HexGrid : MonoBehaviour
         cell.transform.localPosition = position;
         cells.Add(cell);
 
-        // gridRadius ggf. abändern
+        // gridRadius ggf. ab?ndern
         float distanceFromStart = Vector3.Distance(Vector3.zero, cell.transform.position);
         if (gridRadius < distanceFromStart)
         {
             gridRadius = distanceFromStart;
         }
 
-        // Zu Observerlist hinzufügen
-        toggle.subject.AddObserver(cell);
+        // Zu Observerlist hinzuf?gen
+        // toggle.subject.AddObserver(cell);
 
 
         return cell;
@@ -149,11 +138,6 @@ public class HexGrid : MonoBehaviour
         return gridRadius;
     }
 
-    public Player GetPlayer()
-    {
-        return player;
-    }
-
 }
 
 
@@ -163,7 +147,7 @@ public class HexGrid : MonoBehaviour
  int line;
 
  if (size % 2 == 0)
-     Debug.LogWarning("FEHLER: Keine ungerade Höhe mitgegeben");
+     Debug.LogWarning("FEHLER: Keine ungerade H?he mitgegeben");
  else
  {
      Func<float, int> floor_ceil_1;
@@ -175,7 +159,7 @@ public class HexGrid : MonoBehaviour
      for (int z = -size / 2, i = 0, lineCounter = 0; z <= size / 2; z++, lineCounter++)
      {
 
-         // Lines umschreiben, um Hexagon nach oben (über der Mitte) wieder dünner werden zu lassen
+         // Lines umschreiben, um Hexagon nach oben (?ber der Mitte) wieder d?nner werden zu lassen
          if (lineCounter > size / 2)
              line = size - 1 - lineCounter;
          else
@@ -184,7 +168,7 @@ public class HexGrid : MonoBehaviour
 
          // Absolut schrecklicher Code aber ich habe keinen Plan wie man das mathematisch zusammenfasst. Es funktioniert!
 
-         // Mathematisch prüfen, ob die Zeile eine gerade Menge Tiles hat
+         // Mathematisch pr?fen, ob die Zeile eine gerade Menge Tiles hat
          if (((size - 1) % 4 == 0 && line % 2 == 0) || ((size - 1) % 4 != 0 && line % 2 != 0))
          {
              floor_ceil_1 = Mathf.CeilToInt;
@@ -194,7 +178,7 @@ public class HexGrid : MonoBehaviour
          }
          else
          { 
-             // Verzweigung: Ist die Reihe unter oder über der Mitte?
+             // Verzweigung: Ist die Reihe unter oder ?ber der Mitte?
              if (lineCounter <= (int)size / 2)
              {
                  // Verzweigung: Ist das Hexagon von der Size: 1, 5, 9 [...] oder 3, 7, 11 [...]?
