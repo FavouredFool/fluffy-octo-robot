@@ -154,8 +154,8 @@ public class HexCell : MonoBehaviour, IObserver
                     if (!neighbourFound)
                     {
                         // Wichtig, beim Destroyed von HexCells, diese auch aus der Liste löschen
-                        hexGrid.GetCells().Remove(activeCell);
-                        Destroy(activeCell.gameObject);
+                        //hexGrid.GetCells().Remove(activeCell);
+                        //Destroy(activeCell.gameObject);
                         hexGrid.RemoveCell(activeCell);
                         
                     }
@@ -325,6 +325,17 @@ public class HexCell : MonoBehaviour, IObserver
         {
             Player.Instance.activeCell.CalculatePreviewTilesForHuman(true);
         }
+    }
+
+    public void ClearStack()
+    {
+        foreach (GameObject tile in hexStack)
+        {
+            Destroy(tile);
+        }
+        hexStack.Clear();
+        SetHeight(0);
+        UpdatePropagating();
     }
 
 }

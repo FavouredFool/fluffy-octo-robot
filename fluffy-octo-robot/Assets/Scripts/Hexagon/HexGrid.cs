@@ -115,6 +115,25 @@ public class HexGrid : MonoBehaviour
         Destroy(cell.gameObject);
     }
 
+    
+    public void CorruptRandomCell()
+    {
+        HexCell cellToCorrupt;
+        int failsaveCounter = 0;
+        do
+        {
+            cellToCorrupt = cells[UnityEngine.Random.Range(0, cells.Count - 1)];
+            failsaveCounter++;
+        } while ((cellToCorrupt == Player.Instance.activeCell || !cellToCorrupt.GetPropagating() || cellToCorrupt == startCell) && failsaveCounter <= 1000);
+
+        if (failsaveCounter > 1000)
+        {
+            Debug.LogWarning("Endlosschleife entkommen");
+        }
+
+        cellToCorrupt.ClearStack();
+    }
+
 
     protected int TriangleNumber(int i)
     {
