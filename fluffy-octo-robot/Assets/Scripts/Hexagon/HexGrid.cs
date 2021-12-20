@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using UnityEngine;
 using TMPro;
 using System;
+using ObserverPattern;
 
 public class HexGrid : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class HexGrid : MonoBehaviour
 
     public HexCell cellPrefab;
     public Player playerPrefab;
+    public TurnToggle toggle;
 
     List<HexCell> cells;
     Player player;
@@ -19,6 +21,10 @@ public class HexGrid : MonoBehaviour
     HexCell startCell;
 
     float gridRadius = 0f;
+
+    
+
+
     
 
     protected void Awake()
@@ -42,6 +48,7 @@ public class HexGrid : MonoBehaviour
 
     protected void Start()
     {
+
         List<HexCell> initialCellsList = new(cells);
 
         // Very simple Mapgeneration
@@ -58,10 +65,6 @@ public class HexGrid : MonoBehaviour
         startCell.PlacePlayer();
     }
 
-    protected void Update()
-    {
-
-    }
 
     public HexCell CreateCell(int x, int z)
     {
@@ -82,6 +85,10 @@ public class HexGrid : MonoBehaviour
         {
             gridRadius = distanceFromStart;
         }
+
+        // Zu Observerlist hinzufügen
+        toggle.subject.AddObserver(cell);
+
 
         return cell;
 

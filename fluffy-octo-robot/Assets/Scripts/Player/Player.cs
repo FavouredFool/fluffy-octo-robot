@@ -17,6 +17,7 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
+
         maxWalkHeight = 1;
 
 

@@ -1,9 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ObserverPattern;
 
 public class TurnToggle : MonoBehaviour
 {
+
+    public Subject subject = new Subject();
+
     public void toggle(bool turn)
     {
         if (turn)
@@ -13,5 +17,8 @@ public class TurnToggle : MonoBehaviour
         {
             TemporaryTurnControl.gameState = TemporaryTurnControl.GameState.HUMAN;
         }
+
+        // Allen Observern bescheid geben
+        subject.Notify();
     }
 }

@@ -14,11 +14,15 @@ public class MouseInteraction : MonoBehaviour
     protected void Start()
     {
         StartCoroutine(HandleHover());
+
     }
 
     // Update is called once per frame
     protected void Update()
     {
+
+        
+
         if (TemporaryTurnControl.gameState == TemporaryTurnControl.GameState.GOD)
         {
             if (Input.GetMouseButtonDown(0))
@@ -38,10 +42,12 @@ public class MouseInteraction : MonoBehaviour
                     activeHex.RemoveTile();
                 }
             }
-        }
-
-        if (TemporaryTurnControl.gameState == TemporaryTurnControl.GameState.HUMAN)
+        } else if (TemporaryTurnControl.gameState == TemporaryTurnControl.GameState.HUMAN)
         {
+            
+
+
+
             if (Input.GetMouseButtonDown(0))
             {
                 HexCell pressedCell = SelectedHexCell();
@@ -54,8 +60,7 @@ public class MouseInteraction : MonoBehaviour
                     {
                         HexCell activeCell = hexGrid.GetCell(activeCoordinates);
 
-
-                        if (pressedCell == activeCell && Player.Instance.activeCell && pressedCell.GetHeight() - Player.Instance.activeCell.GetHeight() <= Player.Instance.maxWalkHeight)
+                        if (pressedCell == activeCell && Player.Instance.activeCell && pressedCell.ValdiatePlacement())
                         {
                             
                             activeCell.RemovePlayer();

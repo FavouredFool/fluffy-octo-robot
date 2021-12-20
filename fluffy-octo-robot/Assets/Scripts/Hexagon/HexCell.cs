@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-    
+using ObserverPattern;
 
-public class HexCell : MonoBehaviour
+public class HexCell : MonoBehaviour, IObserver
 {
 
     public GameObject hexPrefab;
@@ -241,11 +241,59 @@ public class HexCell : MonoBehaviour
     {
         Player.Instance.activeCell = this;
         Player.Instance.transform.position = transform.position + new Vector3(0f, height * HexMetrics.hexHeight + HexMetrics.hexHeight / 2, 0f);
+        if (TemporaryTurnControl.gameState == TemporaryTurnControl.GameState.HUMAN)
+        {
+            // calculate preview Tiles
+            CalculatePreviewTilesForHuman(true);
+
+        }
+    }
+
+    public void CalculatePreviewTilesForHuman(bool active)
+    {
+        foreach (HexCoordinates activeCoordinates in Player.Instance.activeCell.GenerateCellCoordinatesInRadius(1))
+        {
+            HexCell activeCell = hexGrid.GetCell(activeCoordinates);
+
+            if (active)
+            {
+                // Calculate if they should be on -> they are previously all turned off; no turning off necessary
+                if (activeCell.ValdiatePlacement())
+                {
+                    activeCell.ShowTilePreview(true);
+                }
+            } else if (!active && activeCell != this)
+            {
+                activeCell.ShowTilePreview(false);
+            }
+            
+            
+
+        }
+
+    }
+
+    public bool ValdiatePlacement()
+    {
+        // Check if Player is allowed to be placed at that position based on his previous position
+        if (propagating && Player.Instance.activeCell != this)
+        {
+            return GetHeight() - Player.Instance.activeCell.GetHeight() <= Player.Instance.maxWalkHeight;
+        }
+        return false;
     }
 
     public void RemovePlayer()
     {
+        if (TemporaryTurnControl.gameState == TemporaryTurnControl.GameState.HUMAN)
+        {
+            // calculate preview Tiles
+            CalculatePreviewTilesForHuman(false);
+        }
+
         Player.Instance.activeCell = null;
+
+        
     }
 
     public int GetHeight()
@@ -266,6 +314,17 @@ public class HexCell : MonoBehaviour
     public bool GetPropagating()
     {
         return propagating;
+    }
+
+    public void OnNotify()
+    {
+        // OnChange des Turnstates werden alle Preview-Cells zerstört und ggf. neue berechnet
+        ShowTilePreview(false);
+
+        if (TemporaryTurnControl.gameState == TemporaryTurnControl.GameState.HUMAN)
+        {
+            Player.Instance.activeCell.CalculatePreviewTilesForHuman(true);
+        }
     }
 
 }
