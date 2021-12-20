@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-    
+using ObserverPattern;
 
-public class HexCell : MonoBehaviour
+public class HexCell : MonoBehaviour, IObserver
 {
 
     public GameObject hexPrefab;
@@ -31,37 +31,29 @@ public class HexCell : MonoBehaviour
     Canvas gridCanvas;
     TMP_Text label;
 
-    bool propagating;
+    bool propagating = false;
 
 
-
-    protected void Start()
+    protected void Awake()
     {
-        // Coordinate-Grids 
-        gridCanvas = GetComponentInChildren<Canvas>();
-        DefineLabel();
-
         hexStack = new Stack<GameObject>();
-        hexGrid = transform.parent.GetComponent<HexGrid>();
+        //hexGrid = transform.parent.GetComponent<HexGrid>();
+        // Bei Awake kann noch nicht ï¿½ber das Parentobjekt gegangen werden
+        hexGrid = GameObject.Find("HexGrid").GetComponent<HexGrid>();
 
-        // Falls man bereits bestehendes Terrain möchte
-        
-        /*
-        for (int i = 0; i < Random.Range(0, 5); i++)
-        {
-            AddTile();
-        }
-        */
-        
+        gridCanvas = GetComponentInChildren<Canvas>();
 
-        // Falls man kein bestehendes Terrain möchte
-        propagating = false;
-        
         if (!propagating)
         {
             // Add Preview Prefab
             hexCellPreviewObj = Instantiate(hexCellPreviewPrefab, transform.position + new Vector3(0f, height * HexMetrics.hexHeight, 0f), Quaternion.identity, transform);
         }
+    }
+
+    protected void Start()
+    {
+        // Coordinate-Grids 
+        DefineLabel();
     }
 
     protected void Update()
@@ -78,18 +70,26 @@ public class HexCell : MonoBehaviour
 
     public void AddTile()
     {
-        // Tile in Stack auf korrekter Höhe hinzufügen
+        // Tile in Stack auf korrekter Hï¿½he hinzufï¿½gen
         hexStack.Push(Instantiate(hexPrefab, transform.position + new Vector3(0f, height * HexMetrics.hexHeight, 0f), Quaternion.identity, transform));
 
-        // Height des Konstrukts erhöhen
+        // Height des Konstrukts erhï¿½hen
         SetHeight(height + 1);
 
         // Wenn vorher eine Tilepreview auf der Cell gezeigt wurde, soll diese geupdated werden
         if (hexPreviewObj)
             ShowTilePreview(true);
 
-        // Propagating-Boolean abändern wenn nötig
+        // Propagating-Boolean abï¿½ndern wenn nï¿½tig
         UpdatePropagating();
+        
+        if (Player.Instance && Player.Instance.activeCell == this)
+        {
+            // set player-character heigher
+            Player.Instance.transform.position = Player.Instance.transform.position + new Vector3(0f, HexMetrics.hexHeight, 0f);
+        }
+        
+
     }
 
     public void RemoveTile()
@@ -97,20 +97,30 @@ public class HexCell : MonoBehaviour
 
         if (hexStack.Count > 0)
         {
-            // Tile in Stack auf korrekter Höhe hinzufügen
-            Destroy(hexStack.Pop());
+            // Can't remove block completely when player is on it
+            if (Player.Instance && (Player.Instance.activeCell != this || height > 1))
+            {
+                // Tile in Stack auf korrekter Hï¿½he hinzufï¿½gen
+                Destroy(hexStack.Pop());
 
-            // Height des Konstrukts erhöhen
-            SetHeight(height - 1);
+                // Height des Konstrukts erhï¿½hen
+                SetHeight(height - 1);
 
-            // Wenn vorher eine Tilepreview auf der Cell gezeigt wurde, soll diese geupdated werden
-            if (hexPreviewObj)
-                ShowTilePreview(true);
+                // Wenn vorher eine Tilepreview auf der Cell gezeigt wurde, soll diese geupdated werden
+                if (hexPreviewObj)
+                    ShowTilePreview(true);
 
-            // Propagating-Boolean abändern wenn nötig
-            UpdatePropagating();
-        }
-        
+                // Propagating-Boolean abï¿½ndern wenn nï¿½tig
+                UpdatePropagating();
+
+                if (Player.Instance.activeCell == this)
+                {
+                    // set player-character lower
+                    Player.Instance.transform.position = Player.Instance.transform.position - new Vector3(0f, HexMetrics.hexHeight, 0f);
+
+                }
+            }
+        } 
     }
 
     void UpdatePropagating()
@@ -145,9 +155,10 @@ public class HexCell : MonoBehaviour
 
                     if (!neighbourFound)
                     {
-                        // Wichtig, beim Destroyed von HexCells, diese auch aus der Liste löschen
+                        // Wichtig, beim Destroyed von HexCells, diese auch aus der Liste lï¿½schen
                         hexGrid.GetCells().Remove(activeCell);
                         Destroy(activeCell.gameObject);
+                        hexGrid.RemoveCell(activeCell);
                         
                     }
                 }
@@ -177,7 +188,7 @@ public class HexCell : MonoBehaviour
         }
     }
 
-    IEnumerable GenerateCellCoordinatesInRadius(int radius)
+    public IEnumerable GenerateCellCoordinatesInRadius(int radius)
     {
         // Step 1: Find all surrounding Hexes
 
@@ -228,10 +239,74 @@ public class HexCell : MonoBehaviour
 
     }
 
+    public void PlacePlayer()
+    {
+        Player.Instance.activeCell = this;
+        Player.Instance.transform.position = transform.position + new Vector3(0f, height * HexMetrics.hexHeight + HexMetrics.hexHeight / 2, 0f);
+        if (TemporaryTurnControl.gameState == TemporaryTurnControl.GameState.HUMAN)
+        {
+            // calculate preview Tiles
+            CalculatePreviewTilesForHuman(true);
+
+        }
+    }
+
+    public void CalculatePreviewTilesForHuman(bool active)
+    {
+        foreach (HexCoordinates activeCoordinates in Player.Instance.activeCell.GenerateCellCoordinatesInRadius(1))
+        {
+            HexCell activeCell = hexGrid.GetCell(activeCoordinates);
+
+            if (active)
+            {
+                // Calculate if they should be on -> they are previously all turned off; no turning off necessary
+                if (activeCell.ValdiatePlacement())
+                {
+                    activeCell.ShowTilePreview(true);
+                }
+            } else
+            {
+                activeCell.ShowTilePreview(false);
+            }
+            
+            
+
+        }
+
+    }
+
+    public bool ValdiatePlacement()
+    {
+        // Check if Player is allowed to be placed at that position based on his previous position
+        if (propagating && Player.Instance.activeCell != this)
+        {
+            return GetHeight() - Player.Instance.activeCell.GetHeight() <= Player.Instance.maxWalkHeight;
+        }
+        return false;
+    }
+
+    public void RemovePlayer()
+    {
+        if (TemporaryTurnControl.gameState == TemporaryTurnControl.GameState.HUMAN)
+        {
+            // calculate preview Tiles
+            CalculatePreviewTilesForHuman(false);
+        }
+
+        Player.Instance.activeCell = null;
+
+        
+    }
+
+    public int GetHeight()
+    {
+        return height;
+    }
+
 
     protected void SetHeight(int newHeight)
     {
-        // Höhe ändern:
+        // Hï¿½he ï¿½ndern:
         height = newHeight;
 
         // Change CanvasPosition
@@ -241,6 +316,17 @@ public class HexCell : MonoBehaviour
     public bool GetPropagating()
     {
         return propagating;
+    }
+
+    public void OnNotify()
+    {
+        // OnChange des Turnstates werden alle Preview-Cells zerstï¿½rt und ggf. neue berechnet
+        ShowTilePreview(false);
+
+        if (TemporaryTurnControl.gameState == TemporaryTurnControl.GameState.HUMAN)
+        {
+            Player.Instance.activeCell.CalculatePreviewTilesForHuman(true);
+        }
     }
 
 }

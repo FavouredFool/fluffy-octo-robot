@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class MouseInteraction : MonoBehaviour
 {
+
     public HexGrid hexGrid;
     private BattleSystem battleSystem;
 
@@ -15,13 +16,16 @@ public class MouseInteraction : MonoBehaviour
     {
         battleSystem = FindObjectOfType<BattleSystem>();
         StartCoroutine(HandleHover());
+
     }
 
     // Update is called once per frame
     protected void Update()
     {
 
-        if (battleSystem.GetState().Equals(GameState.GODTURN))
+        
+
+        if (TemporaryTurnControl.gameState == TemporaryTurnControl.GameState.GOD)
         {
             if (Input.GetMouseButtonDown(0))
             {
@@ -40,6 +44,35 @@ public class MouseInteraction : MonoBehaviour
                     activeHex.RemoveTile();
                 }
             }
+        } else if (TemporaryTurnControl.gameState == TemporaryTurnControl.GameState.HUMAN)
+        {
+            
+
+
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                HexCell pressedCell = SelectedHexCell();
+                if (pressedCell && pressedCell.GetPropagating())
+                {
+                    
+                    // Move Towards that Tile if possible
+
+                    foreach (HexCoordinates activeCoordinates in Player.Instance.activeCell.GenerateCellCoordinatesInRadius(1))
+                    {
+                        HexCell activeCell = hexGrid.GetCell(activeCoordinates);
+
+                        if (pressedCell == activeCell && Player.Instance.activeCell && pressedCell.ValdiatePlacement())
+                        {
+                            
+                            activeCell.RemovePlayer();
+                            pressedCell.PlacePlayer();
+                            return;
+                        }
+
+                    }
+                }
+            }
         }
         
     }
@@ -51,10 +84,9 @@ public class MouseInteraction : MonoBehaviour
             // Refresh jeden zweiten Frame
             yield return new WaitForSeconds(Time.deltaTime * 4);
 
-            if (battleSystem.GetState().Equals(GameState.GODTURN))
+            if (TemporaryTurnControl.gameState == TemporaryTurnControl.GameState.GOD)
             {
-
-                // berührte Cell finden
+                // berï¿½hrte Cell finden
                 hoveredHex = SelectedHexCell();
 
                 if (hoveredHex != previouslyhoveredHex)
@@ -85,7 +117,7 @@ public class MouseInteraction : MonoBehaviour
         if (Physics.Raycast(inputRay, out hit))
         {
             
-            // Fix den Raycast noch leicht zu verlängern, damit man auch die Wände berühren kann um eine Tile auszuwählen
+            // Fix den Raycast noch leicht zu verlï¿½ngern, damit man auch die Wï¿½nde berï¿½hren kann um eine Tile auszuwï¿½hlen
             return GetHexFromPos(hit.point + inputRay.direction.normalized * 0.1f);
             
         }
@@ -100,7 +132,7 @@ public class MouseInteraction : MonoBehaviour
         HexCell foundHexCell;
 
 
-        // Für effiziente Lösung statt durchiterieren über alle Cells den korrekten Index mathematisch über die Coordinates finden.
+        // Fï¿½r effiziente Lï¿½sung statt durchiterieren ï¿½ber alle Cells den korrekten Index mathematisch ï¿½ber die Coordinates finden.
         foreach (HexCell activeCell in hexGrid.GetCells())
         {
             if (activeCell.coordinates.Equals(coordinates))
