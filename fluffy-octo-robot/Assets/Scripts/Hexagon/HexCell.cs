@@ -262,7 +262,7 @@ public class HexCell : MonoBehaviour, IObserver
                 {
                     activeCell.ShowTilePreview(true);
                 }
-            } else if (!active && activeCell != this)
+            } else
             {
                 activeCell.ShowTilePreview(false);
             }
