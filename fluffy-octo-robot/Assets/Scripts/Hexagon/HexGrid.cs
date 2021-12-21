@@ -118,7 +118,7 @@ public class HexGrid : MonoBehaviour
     
     public void CorruptRandomCell()
     {
-        HexCell cellToCorrupt;
+        HexCell cellToCorrupt = null;
         int failsaveCounter = 0;
         do
         {
@@ -128,10 +128,14 @@ public class HexGrid : MonoBehaviour
 
         if (failsaveCounter > 1000)
         {
+            cellToCorrupt = null;
             Debug.LogWarning("Endlosschleife entkommen");
         }
-
-        cellToCorrupt.ClearStack();
+        if (cellToCorrupt)
+        {
+            cellToCorrupt.ClearStack();
+        }
+        
     }
 
 
