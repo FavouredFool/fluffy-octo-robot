@@ -96,7 +96,7 @@ public class HexCell : MonoBehaviour, IObserver
         if (hexStack.Count > 0)
         {
             // Can't remove block completely when player is on it
-            if (Player.Instance && (Player.Instance.activeCell != this || height > 1))
+            if (Player.Instance && (Player.Instance.activeCell != this || height > 1) && this != hexGrid.GetStartCell())
             {
                 // Tile in Stack auf korrekter Höhe hinzufügen
                 Destroy(hexStack.Pop());
@@ -336,6 +336,8 @@ public class HexCell : MonoBehaviour, IObserver
         hexStack.Clear();
         SetHeight(0);
         UpdatePropagating();
+        CalculatePreviewTilesForHuman(false);
+        CalculatePreviewTilesForHuman(true);
     }
 
 }

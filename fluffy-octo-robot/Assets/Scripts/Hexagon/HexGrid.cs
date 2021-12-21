@@ -173,6 +173,11 @@ public class HexGrid : MonoBehaviour
         return player;
     }
 
+    public HexCell GetStartCell()
+    {
+        return startCell;
+    }
+
 }
 
 

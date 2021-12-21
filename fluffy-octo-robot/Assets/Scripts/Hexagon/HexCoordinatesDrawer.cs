@@ -1,3 +1,4 @@
+/*
 using UnityEditor;
 using UnityEngine;
 
@@ -17,4 +18,4 @@ public class HexCoordinatesDrawer : PropertyDrawer
     }
 
 
-}
+}*/

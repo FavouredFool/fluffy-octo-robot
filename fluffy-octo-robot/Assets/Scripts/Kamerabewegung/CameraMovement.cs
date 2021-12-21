@@ -32,18 +32,18 @@ public class CameraMovement : MonoBehaviour
 
         if (Input.GetKey(KeyCode.A))
         {
-            transform.RotateAround(Vector3.zero, Vector3.up, cameraRotationSpeed);
+            transform.RotateAround(Vector3.zero, Vector3.up, cameraRotationSpeed * Time.deltaTime * 100);
         }
 
         if (Input.GetKey(KeyCode.D))
         {
-            transform.RotateAround(Vector3.zero, Vector3.up, -cameraRotationSpeed);
+            transform.RotateAround(Vector3.zero, Vector3.up, -cameraRotationSpeed * Time.deltaTime * 100);
         }
 
         if (Vector3.Distance(Vector3.zero, transform.position) != cameraDistance)
         {
             transform.LookAt(hexGrid.transform, Vector3.up);
-            transform.position = Vector3.MoveTowards(transform.position, transform.position.normalized * cameraDistance, cameraZoomSpeed);
+            transform.position = Vector3.MoveTowards(transform.position, transform.position.normalized * cameraDistance, cameraZoomSpeed * Time.deltaTime * 100);
         }
         
     }
