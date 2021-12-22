@@ -35,7 +35,12 @@ public class UIManager : MonoBehaviour {
 
         startClientButton.onClick.AddListener(() => {
             if (NetworkManager.Singleton.StartClient()) {
-                StartGame("Client Started ...");
+                // StartGame("Client Started ...");
+
+                startClientButton.gameObject.SetActive(false);
+                startHostButton.gameObject.SetActive(false);
+
+                battleSystem.SetupBattle();
             }
         });
     }
@@ -44,7 +49,7 @@ public class UIManager : MonoBehaviour {
     {
         Debug.Log(message);
 
-        hexCell.FirstPlayerPlace();
+        hexCell.PlacePlayer();
 
         startClientButton.gameObject.SetActive(false);
         startHostButton.gameObject.SetActive(false);

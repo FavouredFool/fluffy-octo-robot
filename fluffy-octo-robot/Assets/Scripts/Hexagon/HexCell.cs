@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using UnityEngine.UI;
 using ObserverPattern;
 
 public class HexCell : MonoBehaviour, IObserver
@@ -252,14 +251,6 @@ public class HexCell : MonoBehaviour, IObserver
             }
         }
 
-    }
-
-    public void FirstPlayerPlace()
-    {
-        InstantiatePlayer();
-
-        playerControl.activeCell = this;
-        playerControl.transform.position = transform.position + new Vector3(0f, (height + 1) * HexMetrics.hexHeight + HexMetrics.hexHeight / 2, 0f);
     }
 
     public void PlacePlayer()

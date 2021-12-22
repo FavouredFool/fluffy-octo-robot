@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4104382372064449832}
   - component: {fileID: 1419833093248718662}
+  - component: {fileID: 7187596142896238725}
   m_Layer: 0
   m_Name: HexGrid
   m_TagString: Untagged
@@ -46,3 +47,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   size: 41
   cellPrefab: {fileID: 1498622557011609434, guid: 9a1f1e9fdb37e7b4589bf4b9af03664c, type: 3}
+--- !u!114 &7187596142896238725
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 341504086632604920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 951099334
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
