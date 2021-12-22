@@ -21,7 +21,7 @@ public class HexGrid : NetworkBehaviour
 
     protected void Awake()
     {
-        /*
+        
         // initiale Capacity bereitstellen
         cells = new(TriangleNumber(size) + TriangleNumber(size - 1) - 2 * TriangleNumber(size / 2));
 
@@ -37,7 +37,7 @@ public class HexGrid : NetworkBehaviour
                 CreateCell((int) offsetCoordinates.x, (int) offsetCoordinates.z);
             }
         }
-        */
+        
     }
 
     protected void Start()
@@ -147,5 +147,38 @@ public class HexGrid : NetworkBehaviour
     private void SpawnTileClientRPC()
     {
         Debug.Log("All Clients do a debug log");
+    }
+
+    public void CreateCellsFromList(List<SerializedTile> newTileList)
+    {
+        Debug.Log("HexGrid neu bauen");
+
+        // Step 1: Delete entire grid and clear List
+
+        // Delete Grid
+        foreach (Transform child in transform) {
+            Destroy(child.gameObject);
+        }
+
+        // Clear List
+        GetCells().Clear();
+
+        foreach (SerializedTile newTile in newTileList)
+        {
+            // 0 rausfiltern, da diese Tiles sowieso automatisch bei cell.AddTile() erzeugt werden
+            if (newTile.GetHeight() != 0)
+            {
+                Vector3 offsetCoordinates = HexCoordinates.ToOffsetCoordinates(newTile.GetCoordinates());
+
+                // Step 2: Build new Cells
+                HexCell cell = CreateCell((int)offsetCoordinates.x, (int)offsetCoordinates.z);
+
+                // Step 3: Add Tiles 
+                for (int i = 0; i < newTile.GetHeight(); i++)
+                {
+                    cell.AddTile();
+                }
+            }
+        }
     }
 }
