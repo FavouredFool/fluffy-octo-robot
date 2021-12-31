@@ -62,6 +62,7 @@ public class HexCell : MonoBehaviour, IObserver
 
     private void InstantiatePlayer()
     {
+        Debug.Log("instantiate Player");
         playerControl = FindObjectOfType<PlayerControl>();
     }
 
@@ -255,11 +256,13 @@ public class HexCell : MonoBehaviour, IObserver
 
     public void PlacePlayer()
     {
+
         if (CheckIfPlayerIsInstantiated())
         {
             InstantiatePlayer();
         }
         Debug.Log("Place Player " + height);
+        Debug.Log(CheckIfPlayerIsInstantiated());
 
         playerControl.activeCell = this;
         playerControl.transform.position = transform.position + new Vector3(0f, height * HexMetrics.hexHeight + HexMetrics.hexHeight / 2, 0f);
@@ -293,11 +296,7 @@ public class HexCell : MonoBehaviour, IObserver
             {
                 activeCell.ShowTilePreview(false);
             }
-            
-            
-
         }
-
     }
 
     public bool ValdiatePlacement()
@@ -312,6 +311,7 @@ public class HexCell : MonoBehaviour, IObserver
         {
             return GetHeight() - playerControl.activeCell.GetHeight() <= playerControl.maxWalkHeight;
         }
+
         return false;
     }
 
@@ -341,7 +341,7 @@ public class HexCell : MonoBehaviour, IObserver
 
     protected void SetHeight(int newHeight)
     {
-        // H�he �ndern:
+        // Hoehe aendern:
         height = newHeight;
 
         // Change CanvasPosition

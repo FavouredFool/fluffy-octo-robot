@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/TileScene.unity
+    guid: 65d34382cfd1ed543969bf5c936e917f
   m_configObjects: {}

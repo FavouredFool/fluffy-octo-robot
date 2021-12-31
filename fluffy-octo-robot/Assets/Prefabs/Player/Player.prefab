@@ -128,11 +128,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9813e57d7effe45fc8302eae359f429f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkSpeed: 0
-  defaultPositionRange: {x: -4, y: 4}
-  forwardBackPosition:
-    m_InternalValue: 0
-  leftRightPosition:
-    m_InternalValue: 0
   activeCell: {fileID: 0}
   maxWalkHeight: 0

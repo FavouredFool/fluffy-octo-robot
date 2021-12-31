@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641275, b: 0.5748172, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -181,7 +181,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Start as Player
+  m_text: Start as God
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -316,7 +316,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Start as God
+  m_text: Start as PLayer
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -430,7 +430,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -173, y: 24}
+  m_AnchoredPosition: {x: -93, y: 24}
   m_SizeDelta: {x: 200, y: 60}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &261455988
@@ -864,7 +864,7 @@ GameObject:
   - component: {fileID: 639996684}
   - component: {fileID: 639996683}
   m_Layer: 5
-  m_Name: Client
+  m_Name: StartPlayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -888,8 +888,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -230, y: -20}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchoredPosition: {x: -31, y: -20}
+  m_SizeDelta: {x: 180, y: 30}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &639996683
 MonoBehaviour:
@@ -1008,7 +1008,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -50}
+  m_AnchoredPosition: {x: -31, y: -50}
   m_SizeDelta: {x: 300, y: 50}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &644619667
@@ -1381,8 +1381,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8f4691df317f43cab676b6517a36d56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startHostButton: {fileID: 1138099227}
-  startClientButton: {fileID: 639996683}
+  startPlayerButton: {fileID: 639996683}
+  startGodButton: {fileID: 1138099227}
   playerInGameText: {fileID: 644619667}
 --- !u!4 &849190990
 Transform:
@@ -1582,7 +1582,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -166, y: 26}
+  m_AnchoredPosition: {x: -93, y: 26}
   m_SizeDelta: {x: 200, y: 60}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &1074648686
@@ -1680,7 +1680,7 @@ GameObject:
   - component: {fileID: 1138099228}
   - component: {fileID: 1138099227}
   m_Layer: 5
-  m_Name: Host
+  m_Name: StartGod
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1704,7 +1704,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -30, y: -20}
+  m_AnchoredPosition: {x: -235, y: -20}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &1138099227
@@ -1984,7 +1984,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1916768217}
-  - component: {fileID: 1916768216}
+  - component: {fileID: 1916768218}
   - component: {fileID: 1916768215}
   m_Layer: 0
   m_Name: NetworkManager
@@ -2012,7 +2012,22 @@ MonoBehaviour:
   ConnectPort: 7777
   ServerListenPort: 7777
   MessageSendMode: 0
---- !u!114 &1916768216
+--- !u!4 &1916768217
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1916768214}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1916768218
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2021,7 +2036,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1916768214}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 593a2fe42fa9d37498c96f9a383b6521, type: 3}
+  m_Script: {fileID: 11500000, guid: 66a7bd5e964cb41c9899514ab7fb691d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   DontDestroy: 1
@@ -2052,21 +2067,6 @@ MonoBehaviour:
     LoadSceneTimeOut: 120
     MessageBufferTimeout: 20
     EnableNetworkLogs: 1
---- !u!4 &1916768217
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1916768214}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 7
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2123697706
 GameObject:
   m_ObjectHideFlags: 0

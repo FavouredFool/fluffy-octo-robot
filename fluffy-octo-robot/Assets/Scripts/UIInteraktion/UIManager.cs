@@ -8,16 +8,17 @@ using Unity.Netcode;
 public class UIManager : MonoBehaviour {
    
     [SerializeField]
-    private Button startHostButton;
+    private Button startPlayerButton;
 
     [SerializeField]
-    private Button startClientButton;
+    private Button startGodButton;
 
     [SerializeField]
     private TextMeshProUGUI playerInGameText;
 
     private BattleSystem battleSystem;
     private HexCell hexCell;
+    private HexGrid hexGrid;
 
     private void Update() {
         playerInGameText.text = $"Players in game: {PlayersManager.Instance.PlayersInGame}";
@@ -26,36 +27,44 @@ public class UIManager : MonoBehaviour {
     private void Start() {
         battleSystem = FindObjectOfType<BattleSystem>();
         hexCell = FindObjectOfType<HexCell>();
+        hexGrid = FindObjectOfType<HexGrid>();
 
-        startHostButton.onClick.AddListener(() => {
+        startPlayerButton.onClick.AddListener(() => {
             if (NetworkManager.Singleton.StartHost()) {
-                StartGame("Host Started ...");
+                StartAsPlayer("Host Started ...");
             }
         });
 
-        startClientButton.onClick.AddListener(() => {
+        startGodButton.onClick.AddListener(() => {
             if (NetworkManager.Singleton.StartClient()) {
-                // StartGame("Client Started ...");
-
-                startClientButton.gameObject.SetActive(false);
-                startHostButton.gameObject.SetActive(false);
-
-                battleSystem.SetupBattle();
+                StartAsGod("Client Started ...");
             }
         });
     }
 
-    private void StartGame(string message)
+    private void StartAsPlayer(string message)
+    {
+        Debug.Log(message);
+        // Debug.Log(PlayersManager.Instance.HexCellSize);
+
+        hexGrid.SpawnTileServerRPC();
+        hexCell.PlacePlayer();
+
+        DisableStartButtonAndStartGame();
+    }
+
+    private void StartAsGod(string message)
     {
         Debug.Log(message);
 
-        hexCell.PlacePlayer();
+        DisableStartButtonAndStartGame();
+    }
 
-        startClientButton.gameObject.SetActive(false);
-        startHostButton.gameObject.SetActive(false);
+    private void DisableStartButtonAndStartGame()
+    {
+        startGodButton.gameObject.SetActive(false);
+        startPlayerButton.gameObject.SetActive(false);
 
         battleSystem.SetupBattle();
     }
-
-
 }

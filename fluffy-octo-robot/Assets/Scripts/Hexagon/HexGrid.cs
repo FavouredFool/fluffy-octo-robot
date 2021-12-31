@@ -42,7 +42,7 @@ public class HexGrid : NetworkBehaviour
 
     protected void Start()
     {
-
+        /*
         List<HexCell> initialCellsList = new(cells);
 
         // Very simple Mapgeneration
@@ -53,8 +53,8 @@ public class HexGrid : NetworkBehaviour
                 cell.AddTile();
             }
         }
+        */
     }
-
 
     public HexCell CreateCell(int x, int z)
     {
@@ -137,7 +137,7 @@ public class HexGrid : NetworkBehaviour
 
     // This function would be called (is the host)
     [ServerRpc]
-    private void SpawnTileServerRPC()
+    public void SpawnTileServerRPC()
     {
         SpawnTileClientRPC();
     }
@@ -147,6 +147,17 @@ public class HexGrid : NetworkBehaviour
     private void SpawnTileClientRPC()
     {
         Debug.Log("All Clients do a debug log");
+
+        List<HexCell> initialCellsList = new(cells);
+
+        // Very simple Mapgeneration
+        foreach (HexCell cell in initialCellsList)
+        {
+            for (int i = 0; i < Random.Range(1, 4); i++)
+            {
+                cell.AddTile();
+            }
+        }
     }
 
     public void CreateCellsFromList(List<SerializedTile> newTileList)
