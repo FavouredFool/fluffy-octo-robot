@@ -1,16 +1,15 @@
 using UnityEngine;
 using UnityEngine.UI;
 using ObserverPattern;
+using Unity.Netcode;
 
 public enum GameState
 {
     START, PLAYERTURN, GODTURN, CORRUPTION, WON, LOST
 }
 
-public class BattleSystem : MonoBehaviour
+public class BattleSystem : NetworkBehaviour
 {
-    public GameState state;
-
     public GameObject player;
 
     public Button finishPlayerTurn;
@@ -30,8 +29,12 @@ public class BattleSystem : MonoBehaviour
         finishGodTurn.onClick.AddListener(() => {
             PlayerTurn();
         });
+    }
 
-        state = GameState.START;
+    private void Update()
+    {
+        finishPlayerTurn.gameObject.SetActive(IsHost && PlayersManager.Instance.CurrentGameState.Equals(GameState.PLAYERTURN));
+        finishGodTurn.gameObject.SetActive(IsClient && PlayersManager.Instance.CurrentGameState.Equals(GameState.GODTURN));
     }
 
     public void SetupBattle()
@@ -41,26 +44,15 @@ public class BattleSystem : MonoBehaviour
 
     private void PlayerTurn()
     {
-        state = GameState.PLAYERTURN;
-
-        finishPlayerTurn.gameObject.SetActive(true);
-        finishGodTurn.gameObject.SetActive(false);
+        PlayersManager.Instance.UpdateGameStateServerRpc(GameState.PLAYERTURN);
 
         subject.Notify();
     }
 
     private void GodTurn()
     {
-        state = GameState.GODTURN;
-
-        finishPlayerTurn.gameObject.SetActive(false);
-        finishGodTurn.gameObject.SetActive(true);
+        PlayersManager.Instance.UpdateGameStateServerRpc(GameState.GODTURN);
 
         subject.Notify();
-    }
-
-    public GameState GetState()
-    {
-        return state;
     }
 }

@@ -32,7 +32,6 @@ public class HexCell : MonoBehaviour, IObserver
 
     bool propagating = false;
 
-    private BattleSystem battleSystem;
     private PlayerControl playerControl;
 
 
@@ -40,7 +39,7 @@ public class HexCell : MonoBehaviour, IObserver
     {
         hexStack = new Stack<GameObject>();
         //hexGrid = transform.parent.GetComponent<HexGrid>();
-        // Bei Awake kann noch nicht �ber das Parentobjekt gegangen werden
+        // Bei Awake kann noch nicht ueber das Parentobjekt gegangen werden
         hexGrid = GameObject.Find("HexGrid").GetComponent<HexGrid>();
 
         gridCanvas = GetComponentInChildren<Canvas>();
@@ -54,8 +53,6 @@ public class HexCell : MonoBehaviour, IObserver
 
     protected void Start()
     {
-        battleSystem = FindObjectOfType<BattleSystem>();
-
         // Coordinate-Grids 
         DefineLabel();
     }
@@ -267,7 +264,7 @@ public class HexCell : MonoBehaviour, IObserver
         playerControl.activeCell = this;
         playerControl.transform.position = transform.position + new Vector3(0f, height * HexMetrics.hexHeight + HexMetrics.hexHeight / 2, 0f);
 
-        if (battleSystem.GetState().Equals(GameState.PLAYERTURN))
+        if (PlayersManager.Instance.CurrentGameState.Equals(GameState.PLAYERTURN))
         {
             // calculate preview Tiles
             CalculatePreviewTilesForHuman(true);
@@ -322,7 +319,7 @@ public class HexCell : MonoBehaviour, IObserver
             InstantiatePlayer();
         }
 
-        if (battleSystem.GetState().Equals(GameState.PLAYERTURN))
+        if (PlayersManager.Instance.CurrentGameState.Equals(GameState.PLAYERTURN))
         {
             // calculate preview Tiles
             CalculatePreviewTilesForHuman(false);
@@ -363,7 +360,7 @@ public class HexCell : MonoBehaviour, IObserver
             InstantiatePlayer();
         }
 
-        if (battleSystem.GetState().Equals(GameState.PLAYERTURN))
+        if (PlayersManager.Instance.CurrentGameState.Equals(GameState.PLAYERTURN))
         {
             playerControl.activeCell.CalculatePreviewTilesForHuman(true);
         }

@@ -19,6 +19,9 @@ public class UIManager : NetworkBehaviour {
     [SerializeField]
     private TextMeshProUGUI hexSizeTest;
 
+    [SerializeField]
+    private TextMeshProUGUI currentBattleState;
+
     private BattleSystem battleSystem;
     private HexCell hexCell;
     private HexGrid hexGrid;
@@ -26,6 +29,7 @@ public class UIManager : NetworkBehaviour {
     private void Update() {
         playerInGameText.text = $"Players in game: {PlayersManager.Instance.PlayersInGame}";
         hexSizeTest.text = $"Hex Cells: {PlayersManager.Instance.SerializedHexCellSize}";
+        currentBattleState.text = $"Current Game state: {PlayersManager.Instance.CurrentGameState}";
     }
 
     private void Start() {
@@ -60,9 +64,6 @@ public class UIManager : NetworkBehaviour {
     private void StartAsGod(string message)
     {
         Debug.Log(message);
-
-        // hexGrid.SpawnTileServerRPC();
-        
 
         DisableStartButtonAndStartGame();
     }

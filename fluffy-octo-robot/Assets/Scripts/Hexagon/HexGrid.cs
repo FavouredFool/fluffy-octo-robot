@@ -151,28 +151,11 @@ public class HexGrid : NetworkBehaviour
         }
         */
 
-        initialLoad = true;
-
-        List<SerializedTile> test = ConvertNetworkListToTileList(PlayersManager.Instance.SerializedHexCells);
-
-        CreateCellsFromList(test);
+        InitialSpawnTile();
     }
 
     public void InitialSpawnTile()
     {
-        /*
-        List<HexCell> initialCellsList = new(cells);
-
-        // Very simple Mapgeneration
-        foreach (HexCell cell in initialCellsList)
-        {
-            for (int i = 0; i < Random.Range(1, 4); i++)
-            {
-                cell.AddTile();
-            }
-        }
-        */
-
         initialLoad = true;
 
         List<SerializedTile> test = ConvertNetworkListToTileList(PlayersManager.Instance.SerializedHexCells);

@@ -1,8 +1,16 @@
 using FluffyRobot.Core.Singeltons;
 using Unity.Netcode;
+using UnityEngine;
 
 public class PlayersManager : Singelton<PlayersManager> {
+
+    [SerializeField]
     private NetworkVariable<int> playersInGame = new NetworkVariable<int>();
+
+    [SerializeField]
+    private NetworkVariable<GameState> currentGameState = new NetworkVariable<GameState>(GameState.START);
+
+    [SerializeField]
     private NetworkList<SerializedNetworkHex> hexCells;
 
     private void Awake()
@@ -33,6 +41,14 @@ public class PlayersManager : Singelton<PlayersManager> {
         }
     }
 
+    public GameState CurrentGameState
+    {
+        get
+        {
+            return currentGameState.Value;
+        }
+    }
+
     private void Start() {
         NetworkManager.Singleton.OnClientConnectedCallback += (id) => {
             if(IsServer) {
@@ -54,5 +70,16 @@ public class PlayersManager : Singelton<PlayersManager> {
                 playersInGame.Value--;
             }
         };
+    }
+
+    public void UpdateGameState(GameState newGamestate)
+    {
+        currentGameState.Value = newGamestate;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void UpdateGameStateServerRpc(GameState newGamestate)
+    {
+        currentGameState.Value = newGamestate;
     }
 }

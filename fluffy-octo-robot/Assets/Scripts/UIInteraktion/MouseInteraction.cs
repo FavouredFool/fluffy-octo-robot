@@ -6,7 +6,6 @@ public class MouseInteraction : MonoBehaviour
 {
 
     public HexGrid hexGrid;
-    private BattleSystem battleSystem;
     private PlayerControl playerControl;
 
     HexCell hoveredHex;
@@ -15,7 +14,6 @@ public class MouseInteraction : MonoBehaviour
     // Start is called before the first frame update
     protected void Start()
     {
-        battleSystem = FindObjectOfType<BattleSystem>();
         StartCoroutine(HandleHover());
 
     }
@@ -23,7 +21,7 @@ public class MouseInteraction : MonoBehaviour
     // Update is called once per frame
     protected void Update()
     {
-        if (battleSystem.GetState().Equals(GameState.GODTURN))
+        if (PlayersManager.Instance.CurrentGameState.Equals(GameState.GODTURN))
         {
             if (Input.GetMouseButtonDown(0))
             {
@@ -42,7 +40,7 @@ public class MouseInteraction : MonoBehaviour
                     activeHex.RemoveTile();
                 }
             }
-        } else if (battleSystem.GetState().Equals(GameState.PLAYERTURN))
+        } else if (PlayersManager.Instance.CurrentGameState.Equals(GameState.PLAYERTURN))
         {
 
             if (Input.GetMouseButtonDown(0))
@@ -83,7 +81,7 @@ public class MouseInteraction : MonoBehaviour
             // Refresh jeden zweiten Frame
             yield return new WaitForSeconds(Time.deltaTime * 4);
 
-            if (battleSystem.GetState().Equals(GameState.GODTURN))
+            if (PlayersManager.Instance.CurrentGameState.Equals(GameState.GODTURN))
             {
                 // ber�hrte Cell finden
                 hoveredHex = SelectedHexCell();
