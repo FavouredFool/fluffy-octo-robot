@@ -15,9 +15,12 @@ public class HexGrid : NetworkBehaviour
 
     float gridRadius = 0f;
 
+    public bool initialLoad;
+
 
     protected void Awake()
     {
+        initialLoad = false;
         
         // initiale Capacity bereitstellen
         cells = new(TriangleNumber(size) + TriangleNumber(size - 1) - 2 * TriangleNumber(size / 2));
@@ -35,6 +38,14 @@ public class HexGrid : NetworkBehaviour
             }
         }
         
+    }
+
+    private void Update()
+    {
+        if (PlayersManager.Instance.SerializedHexCellSize > 0 && !initialLoad)
+        {
+            InitialSpawnTile();
+        }
     }
 
     public HexCell CreateCell(int x, int z)
@@ -117,15 +128,15 @@ public class HexGrid : NetworkBehaviour
     }
 
     // This function would be called (is the host)
-    [ServerRpc]
-    public void SpawnTileServerRPC()
+    [ServerRpc(RequireOwnership = false)]
+    public void InitialSpawnTileServerRPC()
     {
-        SpawnTileClientRPC();
+        InitialSpawnTileClientRPC();
     }
 
     // This function do anything on every Client when its called
     [ClientRpc]
-    public void SpawnTileClientRPC()
+    public void InitialSpawnTileClientRPC()
     {
         /*
         List<HexCell> initialCellsList = new(cells);
@@ -140,18 +151,43 @@ public class HexGrid : NetworkBehaviour
         }
         */
 
-        List<SerializedTile> test = ConvertNetworkListToTileList(PlayersManager.Instance.HexTests);
+        initialLoad = true;
+
+        List<SerializedTile> test = ConvertNetworkListToTileList(PlayersManager.Instance.SerializedHexCells);
 
         CreateCellsFromList(test);
     }
 
-    private List<SerializedTile> ConvertNetworkListToTileList(NetworkList<HexTest> networkList)
+    public void InitialSpawnTile()
+    {
+        /*
+        List<HexCell> initialCellsList = new(cells);
+
+        // Very simple Mapgeneration
+        foreach (HexCell cell in initialCellsList)
+        {
+            for (int i = 0; i < Random.Range(1, 4); i++)
+            {
+                cell.AddTile();
+            }
+        }
+        */
+
+        initialLoad = true;
+
+        List<SerializedTile> test = ConvertNetworkListToTileList(PlayersManager.Instance.SerializedHexCells);
+
+        CreateCellsFromList(test);
+    }
+
+
+    private List<SerializedTile> ConvertNetworkListToTileList(NetworkList<SerializedNetworkHex> networkList)
     {
         List<SerializedTile> tempTileList = new List<SerializedTile>();
 
-        foreach (HexTest hexTest in networkList)
+        foreach (SerializedNetworkHex serializedNetworkHex in networkList)
         {
-            tempTileList.Add(new SerializedTile(new HexCoordinates(hexTest.X, hexTest.Z), hexTest.Y));
+            tempTileList.Add(new SerializedTile(new HexCoordinates(serializedNetworkHex.X, serializedNetworkHex.Z), serializedNetworkHex.Y));
         }
 
         return tempTileList;
@@ -159,7 +195,7 @@ public class HexGrid : NetworkBehaviour
 
     public void CreateCellsFromList(List<SerializedTile> newTileList)
     {
-        Debug.Log("HexGrid neu bauen");
+        Debug.Log("HexGrid neu bauen " + newTileList.Count);
 
         // Step 1: Delete entire grid and clear List
 

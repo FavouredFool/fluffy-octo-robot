@@ -90,7 +90,7 @@ public class HexCell : MonoBehaviour, IObserver
         if (hexPreviewObj)
             ShowTilePreview(true);
 
-        // Propagating-Boolean ab�ndern wenn n�tig
+        // Propagating-Boolean abaendern wenn noetig
         UpdatePropagating();
         
         if (playerControl && playerControl.activeCell == this)

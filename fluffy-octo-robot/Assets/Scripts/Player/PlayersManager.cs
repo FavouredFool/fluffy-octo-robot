@@ -3,11 +3,11 @@ using Unity.Netcode;
 
 public class PlayersManager : Singelton<PlayersManager> {
     private NetworkVariable<int> playersInGame = new NetworkVariable<int>();
-    private NetworkList<HexTest> hexCells;
+    private NetworkList<SerializedNetworkHex> hexCells;
 
     private void Awake()
     {
-        hexCells = new NetworkList<HexTest>();
+        hexCells = new NetworkList<SerializedNetworkHex>();
     }
 
     public int PlayersInGame
@@ -17,7 +17,7 @@ public class PlayersManager : Singelton<PlayersManager> {
         }
     }
 
-    public int HexCellSize
+    public int SerializedHexCellSize
     {
         get
         {
@@ -25,7 +25,7 @@ public class PlayersManager : Singelton<PlayersManager> {
         }
     }
 
-    public NetworkList<HexTest> HexTests
+    public NetworkList<SerializedNetworkHex> SerializedHexCells
     {
         get
         {
@@ -38,13 +38,13 @@ public class PlayersManager : Singelton<PlayersManager> {
             if(IsServer) {
                 playersInGame.Value++;
 
-                if (HexCellSize == 0)
+                if (SerializedHexCellSize == 0)
                 {
-                    hexCells.Add(new HexTest(0, 0, 2));
-                    hexCells.Add(new HexTest(1, 0, 1));
-                    hexCells.Add(new HexTest(0, 1, 3));
-                    hexCells.Add(new HexTest(1, 1, 1));
-                    hexCells.Add(new HexTest(-2, -2, 5));
+                    hexCells.Add(new SerializedNetworkHex(0, 0, 2));
+                    hexCells.Add(new SerializedNetworkHex(1, 0, 1));
+                    hexCells.Add(new SerializedNetworkHex(0, 1, 3));
+                    hexCells.Add(new SerializedNetworkHex(1, 1, 1));
+                    hexCells.Add(new SerializedNetworkHex(-2, -2, 5));
                 }
             }
         };

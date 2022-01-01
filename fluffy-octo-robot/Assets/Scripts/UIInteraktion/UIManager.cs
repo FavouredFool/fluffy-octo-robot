@@ -5,7 +5,7 @@ using Unity.Netcode;
 
 // mac multiple windows: open -na fluffy-test 
 
-public class UIManager : MonoBehaviour {
+public class UIManager : NetworkBehaviour {
    
     [SerializeField]
     private Button startPlayerButton;
@@ -25,7 +25,7 @@ public class UIManager : MonoBehaviour {
 
     private void Update() {
         playerInGameText.text = $"Players in game: {PlayersManager.Instance.PlayersInGame}";
-        hexSizeTest.text = $"Hex Cells: {PlayersManager.Instance.HexCellSize}";
+        hexSizeTest.text = $"Hex Cells: {PlayersManager.Instance.SerializedHexCellSize}";
     }
 
     private void Start() {
@@ -50,7 +50,8 @@ public class UIManager : MonoBehaviour {
     {
         Debug.Log(message);
 
-        hexGrid.SpawnTileServerRPC();
+        // host can call the server method
+        hexGrid.InitialSpawnTileServerRPC();
         hexCell.PlacePlayer();
 
         DisableStartButtonAndStartGame();
@@ -60,7 +61,8 @@ public class UIManager : MonoBehaviour {
     {
         Debug.Log(message);
 
-        hexGrid.SpawnTileClientRPC();
+        // hexGrid.SpawnTileServerRPC();
+        
 
         DisableStartButtonAndStartGame();
     }
