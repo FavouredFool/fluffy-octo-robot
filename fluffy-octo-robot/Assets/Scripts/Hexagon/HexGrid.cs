@@ -9,9 +9,6 @@ public class HexGrid : NetworkBehaviour
 
     public HexCell cellPrefab;
 
-    // Add serialazation
-    // NetworkList<HexCell> hexCells = new NetworkList<HexCell>();
-
     List<HexCell> cells;
 
     HexCell startCell;
@@ -38,22 +35,6 @@ public class HexGrid : NetworkBehaviour
             }
         }
         
-    }
-
-    protected void Start()
-    {
-        /*
-        List<HexCell> initialCellsList = new(cells);
-
-        // Very simple Mapgeneration
-        foreach (HexCell cell in initialCellsList)
-        {
-            for (int i = 0; i < UnityEngine.Random.Range(1,4); i++)
-            {
-                cell.AddTile();
-            }
-        }
-        */
     }
 
     public HexCell CreateCell(int x, int z)
@@ -144,10 +125,9 @@ public class HexGrid : NetworkBehaviour
 
     // This function do anything on every Client when its called
     [ClientRpc]
-    private void SpawnTileClientRPC()
+    public void SpawnTileClientRPC()
     {
-        Debug.Log("All Clients do a debug log");
-
+        /*
         List<HexCell> initialCellsList = new(cells);
 
         // Very simple Mapgeneration
@@ -158,6 +138,23 @@ public class HexGrid : NetworkBehaviour
                 cell.AddTile();
             }
         }
+        */
+
+        List<SerializedTile> test = ConvertNetworkListToTileList(PlayersManager.Instance.HexTests);
+
+        CreateCellsFromList(test);
+    }
+
+    private List<SerializedTile> ConvertNetworkListToTileList(NetworkList<HexTest> networkList)
+    {
+        List<SerializedTile> tempTileList = new List<SerializedTile>();
+
+        foreach (HexTest hexTest in networkList)
+        {
+            tempTileList.Add(new SerializedTile(new HexCoordinates(hexTest.X, hexTest.Z), hexTest.Y));
+        }
+
+        return tempTileList;
     }
 
     public void CreateCellsFromList(List<SerializedTile> newTileList)

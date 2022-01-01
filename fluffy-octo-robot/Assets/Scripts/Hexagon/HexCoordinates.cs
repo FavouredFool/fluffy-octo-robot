@@ -77,26 +77,6 @@ public struct HexCoordinates
         return new HexCoordinates(iX, iZ);
     }
 
-    /*
-    public static Vector3 ToPosition(HexCoordinates coordinates)
-    {
-        
-        float x = coordinates.x * (HexMetrics.innerRadius * 2f);
-        float z = coordinates.z * (HexMetrics.innerRadius * 2f);
-
-        float offset = coordinates.z * (HexMetrics.outerRadius * 3f);
-        x += offset;
-        
-
-        Vector3 position;
-        position.x = (x + z / 2f - z / 2) * (HexMetrics.innerRadius * 2f);
-        position.y = 0f;
-        position.z = z * (HexMetrics.outerRadius * 1.5f);
-
-        return new Vector3(x, 0, z);
-    }
-*/
-
     public override string ToString()
     {
         return "(" + X.ToString() + ", " + Y.ToString() + ", " + Z.ToString() + ")";

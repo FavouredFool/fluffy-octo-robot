@@ -80,7 +80,7 @@ public class HexCell : MonoBehaviour, IObserver
 
     public void AddTile()
     {
-        // Tile in Stack auf korrekter H�he hinzuf�gen
+        // Tile in Stack auf korrekter Hoehe hinzufuegen
         hexStack.Push(Instantiate(hexPrefab, transform.position + new Vector3(0f, height * HexMetrics.hexHeight, 0f), Quaternion.identity, transform));
 
         // Height des Konstrukts erh�hen

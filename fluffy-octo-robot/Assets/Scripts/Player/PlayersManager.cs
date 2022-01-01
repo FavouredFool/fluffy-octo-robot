@@ -3,7 +3,12 @@ using Unity.Netcode;
 
 public class PlayersManager : Singelton<PlayersManager> {
     private NetworkVariable<int> playersInGame = new NetworkVariable<int>();
-    // private NetworkList<HexTest> hexCells = new NetworkList<HexTest>();
+    private NetworkList<HexTest> hexCells;
+
+    private void Awake()
+    {
+        hexCells = new NetworkList<HexTest>();
+    }
 
     public int PlayersInGame
     {
@@ -16,8 +21,15 @@ public class PlayersManager : Singelton<PlayersManager> {
     {
         get
         {
-            // return hexCells.Count;
-            return 0;
+            return hexCells.Count;
+        }
+    }
+
+    public NetworkList<HexTest> HexTests
+    {
+        get
+        {
+            return hexCells;
         }
     }
 
@@ -25,7 +37,15 @@ public class PlayersManager : Singelton<PlayersManager> {
         NetworkManager.Singleton.OnClientConnectedCallback += (id) => {
             if(IsServer) {
                 playersInGame.Value++;
-                // hexCells.Add(new HexTest(3, 4, 5));
+
+                if (HexCellSize == 0)
+                {
+                    hexCells.Add(new HexTest(0, 0, 2));
+                    hexCells.Add(new HexTest(1, 0, 1));
+                    hexCells.Add(new HexTest(0, 1, 3));
+                    hexCells.Add(new HexTest(1, 1, 1));
+                    hexCells.Add(new HexTest(-2, -2, 5));
+                }
             }
         };
 

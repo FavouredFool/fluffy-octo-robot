@@ -16,12 +16,16 @@ public class UIManager : MonoBehaviour {
     [SerializeField]
     private TextMeshProUGUI playerInGameText;
 
+    [SerializeField]
+    private TextMeshProUGUI hexSizeTest;
+
     private BattleSystem battleSystem;
     private HexCell hexCell;
     private HexGrid hexGrid;
 
     private void Update() {
         playerInGameText.text = $"Players in game: {PlayersManager.Instance.PlayersInGame}";
+        hexSizeTest.text = $"Hex Cells: {PlayersManager.Instance.HexCellSize}";
     }
 
     private void Start() {
@@ -45,7 +49,6 @@ public class UIManager : MonoBehaviour {
     private void StartAsPlayer(string message)
     {
         Debug.Log(message);
-        // Debug.Log(PlayersManager.Instance.HexCellSize);
 
         hexGrid.SpawnTileServerRPC();
         hexCell.PlacePlayer();
@@ -56,6 +59,8 @@ public class UIManager : MonoBehaviour {
     private void StartAsGod(string message)
     {
         Debug.Log(message);
+
+        hexGrid.SpawnTileClientRPC();
 
         DisableStartButtonAndStartGame();
     }

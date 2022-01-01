@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,9 +15,7 @@ public class ReformGrid : MonoBehaviour
             new SerializedTile(new HexCoordinates(1, 1), 1),
             new SerializedTile(new HexCoordinates(-2, -2), 5)
         };
-            
-
-
+        
         hexGrid.CreateCellsFromList(tempTileList);
     }
 }
