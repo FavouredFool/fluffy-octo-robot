@@ -56,11 +56,11 @@ public class PlayersManager : Singelton<PlayersManager> {
 
                 if (SerializedHexCellSize == 0)
                 {
-                    hexCells.Add(new SerializedNetworkHex(0, 2, 0));
-                    hexCells.Add(new SerializedNetworkHex(1, 1, 0));
-                    hexCells.Add(new SerializedNetworkHex(0, 3, 1));
+                    hexCells.Add(new SerializedNetworkHex(0, 0, 2));
+                    hexCells.Add(new SerializedNetworkHex(1, 0, 1));
+                    hexCells.Add(new SerializedNetworkHex(0, 1, 3));
                     hexCells.Add(new SerializedNetworkHex(1, 1, 1));
-                    hexCells.Add(new SerializedNetworkHex(-2, 5, -2));
+                    hexCells.Add(new SerializedNetworkHex(-2, -2, 5));
                 }
             }
         };

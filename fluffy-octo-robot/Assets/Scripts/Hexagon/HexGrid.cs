@@ -170,7 +170,7 @@ public class HexGrid : NetworkBehaviour
 
         foreach (SerializedNetworkHex serializedNetworkHex in networkList)
         {
-            tempTileList.Add(new SerializedTile(new HexCoordinates(serializedNetworkHex.X, serializedNetworkHex.Z), serializedNetworkHex.Y));
+            tempTileList.Add(new SerializedTile(new HexCoordinates(serializedNetworkHex.X, serializedNetworkHex.Z), serializedNetworkHex.Height));
         }
 
         return tempTileList;
