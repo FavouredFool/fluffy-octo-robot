@@ -28,7 +28,7 @@ public class MouseInteraction : MonoBehaviour
                 HexCell activeHex = SelectedHexCell();
                 if (activeHex)
                 {
-                    activeHex.AddTile();
+                    activeHex.AddTileManually();
                 }
             }
 
@@ -37,7 +37,7 @@ public class MouseInteraction : MonoBehaviour
                 HexCell activeHex = SelectedHexCell();
                 if (activeHex)
                 {
-                    activeHex.RemoveTile();
+                    activeHex.RemoveTileManually();
                 }
             }
         } else if (PlayersManager.Instance.CurrentGameState.Equals(GameState.PLAYERTURN))
@@ -80,7 +80,7 @@ public class MouseInteraction : MonoBehaviour
         {
             // Refresh jeden zweiten Frame
             yield return new WaitForSeconds(Time.deltaTime * 4);
-
+            
             if (PlayersManager.Instance.CurrentGameState.Equals(GameState.GODTURN))
             {
                 // ber�hrte Cell finden
@@ -137,8 +137,6 @@ public class MouseInteraction : MonoBehaviour
         HexCoordinates coordinates = HexCoordinates.FromPosition(position);
         HexCell foundHexCell;
 
-
-        // F�r effiziente L�sung statt durchiterieren �ber alle Cells den korrekten Index mathematisch �ber die Coordinates finden.
         foreach (HexCell activeCell in hexGrid.GetCells())
         {
             if (activeCell.coordinates.Equals(coordinates))

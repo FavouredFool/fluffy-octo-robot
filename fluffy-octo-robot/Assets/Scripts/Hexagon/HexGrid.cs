@@ -15,37 +15,54 @@ public class HexGrid : NetworkBehaviour
 
     float gridRadius = 0f;
 
-    public bool initialLoad;
+    List<HexCell> tempCells;
 
 
     protected void Awake()
     {
-        initialLoad = false;
-        
+
         // initiale Capacity bereitstellen
         cells = new(TriangleNumber(size) + TriangleNumber(size - 1) - 2 * TriangleNumber(size / 2));
 
         // Terraingeneration
         startCell = CreateCell(0, 0);
 
-        foreach (HexCoordinates coordinates in startCell.GenerateCellCoordinatesInRadius(size/2))
+        foreach (HexCoordinates coordinates in startCell.GenerateCellCoordinatesInRadius(size / 2))
         {
             if (!coordinates.Equals(startCell.coordinates))
             {
                 Vector3 offsetCoordinates = HexCoordinates.ToOffsetCoordinates(coordinates);
 
-                CreateCell((int) offsetCoordinates.x, (int) offsetCoordinates.z);
+                CreateCell((int)offsetCoordinates.x, (int)offsetCoordinates.z);
             }
         }
+
+        List<HexCell> startCells = new List<HexCell>(cells);
+        foreach (HexCell activeCell in startCells)
+        {
+            activeCell.AddTile();
+            activeCell.AddTile();
+        }
+
+        ReformWorld();
         
+    }
+
+    public void ReformWorld()
+    {
+        // send cells to Networking
+        PlayersManager.Instance.UpdateHexCellsSerialized(cells);
+        InstantiateTiles();
     }
 
     private void Update()
     {
+        /*
         if (PlayersManager.Instance.SerializedHexCellSize > 0 && !initialLoad)
         {
             InitialSpawnTile();
         }
+        */
     }
 
     public HexCell CreateCell(int x, int z)
@@ -59,6 +76,7 @@ public class HexGrid : NetworkBehaviour
         cell.coordinates = HexCoordinates.FromOffsetCoordinates(x, z);
         cell.transform.SetParent(transform, false);
         cell.transform.localPosition = position;
+
         cells.Add(cell);
 
         // gridRadius ggf. ab?ndern
@@ -127,6 +145,7 @@ public class HexGrid : NetworkBehaviour
         return gridRadius;
     }
 
+    /*
     // This function would be called (is the host)
     [ServerRpc(RequireOwnership = false)]
     public void InitialSpawnTileServerRPC()
@@ -138,35 +157,19 @@ public class HexGrid : NetworkBehaviour
     [ClientRpc]
     public void InitialSpawnTileClientRPC()
     {
-        /*
-        List<HexCell> initialCellsList = new(cells);
-
-        // Very simple Mapgeneration
-        foreach (HexCell cell in initialCellsList)
-        {
-            for (int i = 0; i < Random.Range(1, 4); i++)
-            {
-                cell.AddTile();
-            }
-        }
-        */
-
-        InitialSpawnTile();
+        InstantiateTiles();
     }
+    */
 
-    public void InitialSpawnTile()
+    public void InstantiateTiles()
     {
-        initialLoad = true;
-
-        List<SerializedTile> test = ConvertNetworkListToTileList(PlayersManager.Instance.SerializedHexCells);
-
-        CreateCellsFromList(test);
+        CreateCellsFromList(ConvertNetworkListToTileList(PlayersManager.Instance.SerializedHexCells));
     }
 
 
     private List<SerializedTile> ConvertNetworkListToTileList(NetworkList<SerializedNetworkHex> networkList)
     {
-        List<SerializedTile> tempTileList = new List<SerializedTile>();
+        List<SerializedTile> tempTileList = new();
 
         foreach (SerializedNetworkHex serializedNetworkHex in networkList)
         {
@@ -178,7 +181,7 @@ public class HexGrid : NetworkBehaviour
 
     public void CreateCellsFromList(List<SerializedTile> newTileList)
     {
-        Debug.Log("HexGrid neu bauen " + newTileList.Count);
+        Debug.Log("HexGrid neu bauen");
 
         // Step 1: Delete entire grid and clear List
 
@@ -189,23 +192,55 @@ public class HexGrid : NetworkBehaviour
 
         // Clear List
         GetCells().Clear();
+        Debug.Log(newTileList.Count);
+
+        gridRadius = float.NegativeInfinity;
+
+
 
         foreach (SerializedTile newTile in newTileList)
         {
             // 0 rausfiltern, da diese Tiles sowieso automatisch bei cell.AddTile() erzeugt werden
             if (newTile.GetHeight() != 0)
             {
-                Vector3 offsetCoordinates = HexCoordinates.ToOffsetCoordinates(newTile.GetCoordinates());
 
                 // Step 2: Build new Cells
-                HexCell cell = CreateCell((int)offsetCoordinates.x, (int)offsetCoordinates.z);
+                HexCell cell = CreateCellFromHexCoordinate(newTile.GetCoordinates());
 
                 // Step 3: Add Tiles 
+
                 for (int i = 0; i < newTile.GetHeight(); i++)
                 {
                     cell.AddTile();
                 }
+                
             }
         }
+        Debug.Log(cells.Count);
+
+        // Add Tiles of Height 0
+
+        tempCells = new List<HexCell>(cells);
+        foreach (HexCell activeCell in tempCells)
+        {
+            foreach (HexCoordinates hexCoordinate in activeCell.GenerateCellCoordinatesInRadius(1))
+            {
+                HexCell neighbour = GetCell(hexCoordinate);
+                if (!neighbour)
+                {
+                    HexCell cell = CreateCellFromHexCoordinate(hexCoordinate);
+                }
+            }
+        }
+        
+        
+
+
+    }
+
+    HexCell CreateCellFromHexCoordinate(HexCoordinates hexCoordinate)
+    {
+        Vector3 offsetCoordinates = HexCoordinates.ToOffsetCoordinates(hexCoordinate);
+        return CreateCell((int)offsetCoordinates.x, (int)offsetCoordinates.z);
     }
 }

@@ -84,17 +84,19 @@ public class HexCell : MonoBehaviour, IObserver
         SetHeight(height + 1);
 
         // Wenn vorher eine Tilepreview auf der Cell gezeigt wurde, soll diese geupdated werden
-        if (hexPreviewObj)
-            ShowTilePreview(true);
+        //if (hexPreviewObj)
+            //ShowTilePreview(true);
 
         // Propagating-Boolean abaendern wenn noetig
-        UpdatePropagating();
+        //UpdatePropagating();
         
+        /*
         if (playerControl && playerControl.activeCell == this)
         {
             // set player-character heigher
             playerControl.transform.position = playerControl.transform.position + new Vector3(0f, HexMetrics.hexHeight, 0f);
         }
+        */
         
 
     }
@@ -104,37 +106,73 @@ public class HexCell : MonoBehaviour, IObserver
 
         if (hexStack.Count > 0)
         {
+            /*
             if (CheckIfPlayerIsInstantiated())
             {
                 InstantiatePlayer();
             }
+            */
 
             // Can't remove block completely when player is on it
             if (playerControl && (playerControl.activeCell != this || height > 1))
             {
-                // Tile in Stack auf korrekter H�he hinzuf�gen
+                // Tile in Stack popen
                 Destroy(hexStack.Pop());
 
-                // Height des Konstrukts erh�hen
+                // Height des Konstrukts verringern
                 SetHeight(height - 1);
 
+
+                
+
+                
+
+
                 // Wenn vorher eine Tilepreview auf der Cell gezeigt wurde, soll diese geupdated werden
-                if (hexPreviewObj)
-                    ShowTilePreview(true);
+                //if (hexPreviewObj)
+                //ShowTilePreview(true);
 
                 // Propagating-Boolean ab�ndern wenn n�tig
-                UpdatePropagating();
+                //UpdatePropagating();
 
+                /*
                 if (playerControl.activeCell == this)
                 {
                     // set player-character lower
                     playerControl.transform.position = playerControl.transform.position - new Vector3(0f, HexMetrics.hexHeight, 0f);
 
                 }
+                */
             }
         } 
     }
 
+    public void AddTileManually()
+    {
+        // Height des Konstrukts erhöhen
+        SetHeight(height + 1);
+
+        // Reform World
+        hexGrid.ReformWorld();
+    }
+
+    public void RemoveTileManually()
+    {
+
+        if (height > 0)
+        {
+
+                // Height des Konstrukts verringern
+                SetHeight(height - 1);
+
+                // Reform World
+                hexGrid.ReformWorld();
+
+        }
+    }
+
+
+    /*
     void UpdatePropagating()
     {
         if (height == 0 && propagating)
@@ -200,6 +238,8 @@ public class HexCell : MonoBehaviour, IObserver
         }
     }
 
+    */
+
     public IEnumerable GenerateCellCoordinatesInRadius(int radius)
     {
         // Step 1: Find all surrounding Hexes
@@ -251,6 +291,7 @@ public class HexCell : MonoBehaviour, IObserver
 
     }
 
+    
     public void PlacePlayer()
     {
 
@@ -261,6 +302,7 @@ public class HexCell : MonoBehaviour, IObserver
         Debug.Log("Place Player " + height);
         Debug.Log(CheckIfPlayerIsInstantiated());
 
+        /*
         playerControl.activeCell = this;
         playerControl.transform.position = transform.position + new Vector3(0f, height * HexMetrics.hexHeight + HexMetrics.hexHeight / 2, 0f);
 
@@ -269,7 +311,9 @@ public class HexCell : MonoBehaviour, IObserver
             // calculate preview Tiles
             CalculatePreviewTilesForHuman(true);
         }
+        */
     }
+    
 
     public void CalculatePreviewTilesForHuman(bool active)
     {

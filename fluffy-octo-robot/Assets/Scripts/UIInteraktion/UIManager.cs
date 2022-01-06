@@ -16,8 +16,6 @@ public class UIManager : NetworkBehaviour {
     [SerializeField]
     private TextMeshProUGUI playerInGameText;
 
-    [SerializeField]
-    private TextMeshProUGUI hexSizeTest;
 
     [SerializeField]
     private TextMeshProUGUI currentBattleState;
@@ -28,7 +26,6 @@ public class UIManager : NetworkBehaviour {
 
     private void Update() {
         playerInGameText.text = $"Players in game: {PlayersManager.Instance.PlayersInGame}";
-        hexSizeTest.text = $"Hex Cells: {PlayersManager.Instance.SerializedHexCellSize}";
         currentBattleState.text = $"Current Game state: {PlayersManager.Instance.CurrentGameState}";
     }
 
@@ -55,7 +52,7 @@ public class UIManager : NetworkBehaviour {
         Debug.Log(message);
 
         // host can call the server method
-        hexGrid.InitialSpawnTileServerRPC();
+        //hexGrid.InitialSpawnTileServerRPC();
         hexCell.PlacePlayer();
 
         DisableStartButtonAndStartGame();
