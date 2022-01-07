@@ -17,6 +17,8 @@ public class HexGrid : NetworkBehaviour
 
     List<HexCell> tempCells;
 
+    public GameObject playerPrefab;
+
 
     protected void Awake()
     {
@@ -26,7 +28,9 @@ public class HexGrid : NetworkBehaviour
 
         // Terraingeneration
         HexCell startCell = CreateCellFromHexCoordinate(startCellCoordinates);
-        Player.Instance.activeCell = startCell;
+
+        Instantiate(playerPrefab);
+        Player.Instance.activeCellCoordinates = startCellCoordinates;
 
         foreach (HexCoordinates coordinates in startCell.GenerateCellCoordinatesInRadius(size / 2))
         {
@@ -199,6 +203,7 @@ public class HexGrid : NetworkBehaviour
 
 
 
+
         foreach (SerializedTile newTile in newTileList)
         {
             // 0 rausfiltern, da diese Tiles sowieso automatisch bei cell.AddTile() erzeugt werden
@@ -234,14 +239,9 @@ public class HexGrid : NetworkBehaviour
         }
 
         // Move Player
-        //GetCell(GetStartCellCoordiantes()).PlacePlayer();
 
-        Player.Instance.activeCell.PlacePlayer();
-
-
-
-        
-
+        //Player.Instance.activeCell.PlacePlayer();
+        GetCell(Player.Instance.activeCellCoordinates).PlacePlayer();
 
     }
 

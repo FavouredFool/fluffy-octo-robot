@@ -249,7 +249,7 @@ public class HexCell : MonoBehaviour, IObserver
     public void PlacePlayer()
     {
         Debug.Log(Player.Instance);
-        Player.Instance.activeCell = this;
+        Player.Instance.activeCellCoordinates = coordinates;
         Player.Instance.transform.position = transform.position + new Vector3(0f, height * HexMetrics.hexHeight + HexMetrics.hexHeight / 2, 0f);
         if (PlayersManager.Instance.CurrentGameState == GameState.HUMANTURN)
         {

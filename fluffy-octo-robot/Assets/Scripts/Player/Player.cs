@@ -10,7 +10,7 @@ public class Player : NetworkBehaviour
     public static Player Instance { get { return instance; } }
 
     [HideInInspector]
-    public HexCell activeCell = null;
+    public HexCoordinates activeCellCoordinates;
 
     [HideInInspector]
     public int maxWalkHeight;
