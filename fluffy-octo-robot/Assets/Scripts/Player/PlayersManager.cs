@@ -14,11 +14,9 @@ public class PlayersManager : Singelton<PlayersManager> {
     [SerializeField]
     private NetworkList<SerializedNetworkHex> hexCellsSerialized;
 
-    private List<HexCell> cells;
 
     private void Awake()
     {
-        cells = new();
         hexCellsSerialized = new NetworkList<SerializedNetworkHex>();
     }
 
@@ -55,19 +53,6 @@ public class PlayersManager : Singelton<PlayersManager> {
 
                 Debug.Log("Player Added");
 
-                /*
-                if (SerializedHexCellSize == 0)
-                {
-                    hexCells.Add(new SerializedNetworkHex(0, 0, 2));
-                    hexCells.Add(new SerializedNetworkHex(1, 0, 1));
-                    hexCells.Add(new SerializedNetworkHex(0, 1, 3));
-                    hexCells.Add(new SerializedNetworkHex(1, 1, 1));
-                    hexCells.Add(new SerializedNetworkHex(-2, -2, 5));
-                }
-                
-
-                hexCellsSerialized = SerializeHexCells(cells);
-                */
             }
         };
 
@@ -80,16 +65,15 @@ public class PlayersManager : Singelton<PlayersManager> {
         };
     }
 
-    public NetworkList<SerializedNetworkHex> SerializeHexCells(List<HexCell> hexCells)
+    public void SerializeHexCells(List<HexCell> hexCells)
     {
-        NetworkList<SerializedNetworkHex> tempList = new NetworkList<SerializedNetworkHex>();
+        hexCellsSerialized.Clear();
 
         foreach (HexCell activeCell in hexCells)
         {
-            tempList.Add(new SerializedNetworkHex(activeCell.coordinates.X, activeCell.coordinates.Z, activeCell.GetHeight()));
+            hexCellsSerialized.Add(new SerializedNetworkHex(activeCell.coordinates.X, activeCell.coordinates.Z, activeCell.GetHeight()));
         }
 
-        return tempList;
     }
 
     public void UpdateGameState(GameState newGamestate)
@@ -103,9 +87,4 @@ public class PlayersManager : Singelton<PlayersManager> {
         currentGameState.Value = newGamestate;
     }
 
-    public void UpdateHexCellsSerialized(List<HexCell> hexCells)
-    {
-        hexCellsSerialized = SerializeHexCells(hexCells);
-
-    }
 }

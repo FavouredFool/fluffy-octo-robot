@@ -51,7 +51,7 @@ public class HexGrid : NetworkBehaviour
     public void ReformWorld()
     {
         // send cells to Networking
-        PlayersManager.Instance.UpdateHexCellsSerialized(cells);
+        PlayersManager.Instance.SerializeHexCells(cells);
         InstantiateTiles();
     }
 
@@ -192,7 +192,6 @@ public class HexGrid : NetworkBehaviour
 
         // Clear List
         GetCells().Clear();
-        Debug.Log(newTileList.Count);
 
         gridRadius = float.NegativeInfinity;
 
@@ -216,7 +215,6 @@ public class HexGrid : NetworkBehaviour
                 
             }
         }
-        Debug.Log(cells.Count);
 
         // Add Tiles of Height 0
 
