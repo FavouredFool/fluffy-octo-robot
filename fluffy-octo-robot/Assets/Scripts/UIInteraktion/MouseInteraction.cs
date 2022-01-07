@@ -40,7 +40,7 @@ public class MouseInteraction : MonoBehaviour
                     activeHex.RemoveTileManually();
                 }
             }
-        } else if (PlayersManager.Instance.CurrentGameState.Equals(GameState.PLAYERTURN))
+        } else if (PlayersManager.Instance.CurrentGameState.Equals(GameState.HUMANTURN))
         {
 
             if (Input.GetMouseButtonDown(0))

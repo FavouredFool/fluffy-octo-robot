@@ -5,7 +5,7 @@ using Unity.Netcode;
 
 public enum GameState
 {
-    START, PLAYERTURN, GODTURN, CORRUPTION, WON, LOST
+    START, HUMANTURN, GODTURN, CORRUPTION, WON, LOST
 }
 
 public class BattleSystem : NetworkBehaviour
@@ -33,7 +33,7 @@ public class BattleSystem : NetworkBehaviour
 
     private void Update()
     {
-        finishPlayerTurn.gameObject.SetActive(IsHost && PlayersManager.Instance.CurrentGameState.Equals(GameState.PLAYERTURN));
+        finishPlayerTurn.gameObject.SetActive(IsHost && PlayersManager.Instance.CurrentGameState.Equals(GameState.HUMANTURN));
         finishGodTurn.gameObject.SetActive(IsClient && PlayersManager.Instance.CurrentGameState.Equals(GameState.GODTURN));
     }
 
@@ -44,7 +44,7 @@ public class BattleSystem : NetworkBehaviour
 
     private void PlayerTurn()
     {
-        PlayersManager.Instance.UpdateGameStateServerRpc(GameState.PLAYERTURN);
+        PlayersManager.Instance.UpdateGameStateServerRpc(GameState.HUMANTURN);
 
         subject.Notify();
     }

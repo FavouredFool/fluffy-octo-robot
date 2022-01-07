@@ -53,6 +53,7 @@ public class HexCell : MonoBehaviour, IObserver
         DefineLabel();
     }
 
+    /*
     private void InstantiatePlayer()
     {
         Debug.Log("instantiate Player");
@@ -63,6 +64,7 @@ public class HexCell : MonoBehaviour, IObserver
     {
         return playerControl == null;
     }
+    */
 
     protected void DefineLabel()
     {
@@ -246,13 +248,15 @@ public class HexCell : MonoBehaviour, IObserver
     
     public void PlacePlayer()
     {
-
-        if (CheckIfPlayerIsInstantiated())
+        Debug.Log(Player.Instance);
+        Player.Instance.activeCell = this;
+        Player.Instance.transform.position = transform.position + new Vector3(0f, height * HexMetrics.hexHeight + HexMetrics.hexHeight / 2, 0f);
+        if (PlayersManager.Instance.CurrentGameState == GameState.HUMANTURN)
         {
-            InstantiatePlayer();
+            // calculate preview Tiles
+            CalculatePreviewTilesForHuman(true);
+
         }
-        Debug.Log("Place Player " + height);
-        Debug.Log(CheckIfPlayerIsInstantiated());
 
         /*
         playerControl.activeCell = this;
@@ -269,10 +273,6 @@ public class HexCell : MonoBehaviour, IObserver
 
     public void CalculatePreviewTilesForHuman(bool active)
     {
-        if (CheckIfPlayerIsInstantiated())
-        {
-            InstantiatePlayer();
-        }
 
         foreach (HexCoordinates activeCoordinates in playerControl.activeCell.GenerateCellCoordinatesInRadius(1))
         {
@@ -294,10 +294,7 @@ public class HexCell : MonoBehaviour, IObserver
 
     public bool ValdiatePlacement()
     {
-        if (CheckIfPlayerIsInstantiated())
-        {
-            InstantiatePlayer();
-        }
+
 
         // Check if Player is allowed to be placed at that position based on his previous position
         if (GetHeight() > 0 && playerControl.activeCell != this)
@@ -310,12 +307,8 @@ public class HexCell : MonoBehaviour, IObserver
 
     public void RemovePlayer()
     {
-        if (CheckIfPlayerIsInstantiated())
-        {
-            InstantiatePlayer();
-        }
 
-        if (PlayersManager.Instance.CurrentGameState.Equals(GameState.PLAYERTURN))
+        if (PlayersManager.Instance.CurrentGameState.Equals(GameState.HUMANTURN))
         {
             // calculate preview Tiles
             CalculatePreviewTilesForHuman(false);
@@ -347,12 +340,8 @@ public class HexCell : MonoBehaviour, IObserver
         // OnChange des Turnstates werden alle Preview-Cells zerst�rt und ggf. neue berechnet
         ShowTilePreview(false);
 
-        if (CheckIfPlayerIsInstantiated())
-        {
-            InstantiatePlayer();
-        }
 
-        if (PlayersManager.Instance.CurrentGameState.Equals(GameState.PLAYERTURN))
+        if (PlayersManager.Instance.CurrentGameState.Equals(GameState.HUMANTURN))
         {
             playerControl.activeCell.CalculatePreviewTilesForHuman(true);
         }

@@ -26,6 +26,7 @@ public class HexGrid : NetworkBehaviour
 
         // Terraingeneration
         HexCell startCell = CreateCellFromHexCoordinate(startCellCoordinates);
+        Player.Instance.activeCell = startCell;
 
         foreach (HexCoordinates coordinates in startCell.GenerateCellCoordinatesInRadius(size / 2))
         {
@@ -231,7 +232,14 @@ public class HexGrid : NetworkBehaviour
                 }
             }
         }
-        
+
+        // Move Player
+        //GetCell(GetStartCellCoordiantes()).PlacePlayer();
+
+        Player.Instance.activeCell.PlacePlayer();
+
+
+
         
 
 
