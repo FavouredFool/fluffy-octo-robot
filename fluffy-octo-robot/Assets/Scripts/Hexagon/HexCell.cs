@@ -72,6 +72,11 @@ public class HexCell : MonoBehaviour
 
     public void AddTile()
     {
+        if (GetHeight() == 0)
+        {
+            Destroy(hexCellPreviewObj);
+        }
+
         // Tile in Stack auf korrekter Hoehe hinzufuegen
         hexStack.Push(Instantiate(hexPrefab, transform.position + new Vector3(0f, height * HexMetrics.hexHeight, 0f), Quaternion.identity, transform));
 
@@ -258,25 +263,6 @@ public class HexCell : MonoBehaviour
 
         //Reform World
         hexGrid.ReformWorld();
-
-        /*
-        if (PlayersManager.Instance.CurrentGameState == GameState.HUMANTURN)
-        {
-            // calculate preview Tiles
-            CalculatePreviewTilesForHuman(true);
-
-        }
-        */
-        /*
-        playerControl.activeCell = this;
-        playerControl.transform.position = transform.position + new Vector3(0f, height * HexMetrics.hexHeight + HexMetrics.hexHeight / 2, 0f);
-
-        if (PlayersManager.Instance.CurrentGameState.Equals(GameState.PLAYERTURN))
-        {
-            // calculate preview Tiles
-            CalculatePreviewTilesForHuman(true);
-        }
-        */
     }
     
 
@@ -313,19 +299,6 @@ public class HexCell : MonoBehaviour
 
         return false;
     }
-
-/*
-    public void RemovePlayer()
-    {
-
-        if (PlayersManager.Instance.CurrentGameState.Equals(GameState.HUMANTURN))
-        {
-            // calculate preview Tiles
-            CalculatePreviewTilesForHuman(false);
-        }
-
-    }
-*/
 
     public int GetHeight()
     {

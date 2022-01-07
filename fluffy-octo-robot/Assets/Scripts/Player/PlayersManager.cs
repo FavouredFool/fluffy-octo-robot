@@ -69,11 +69,12 @@ public class PlayersManager : Singelton<PlayersManager> {
         };
     }
 
-    public void SerializeHexCells(List<HexCell> hexCells)
+    public void SerializeAndUpdateHexCells(List<HexCell> hexCells)
     {
         hexCellsSerialized.Clear();
         bool playerActive;
 
+        // Convert to serialized List
         foreach (HexCell activeCell in hexCells)
         {
             if (hexGrid.GetCell(Player.Instance.activeCellCoordinates) == activeCell)
@@ -83,6 +84,12 @@ public class PlayersManager : Singelton<PlayersManager> {
 
             hexCellsSerialized.Add(new SerializedNetworkHex(activeCell.coordinates.X, activeCell.coordinates.Z, activeCell.GetHeight(), playerActive));
         }
+
+        // Update bisher nur diesen Client
+        hexGrid.InstantiateTiles();
+
+        // Update both parties
+        //UpdateListServerRpc(hexCellsSerialized);
 
     }
 
@@ -96,6 +103,17 @@ public class PlayersManager : Singelton<PlayersManager> {
     {
         currentGameState.Value = newGamestate;
         
+
     }
+
+    /*
+    // Wie funktioniert das?
+    [ServerRpc(RequireOwnership = false)]
+    public void UpdateListServerRpc(NetworkList<SerializedNetworkHex> networkList)
+    {
+        hexCellsSerialized = networkList;
+        //hexGrid.InstantiateTiles();
+    }
+    */
 
 }
