@@ -110,7 +110,7 @@ public class HexCell : MonoBehaviour
     public void RemoveTileManually()
     {
 
-        if (height > 0 && (height != 1 || !coordinates.Equals(hexGrid.GetStartCellCoordiantes())))
+        if (height > 0 && (height != 1 || (!coordinates.Equals(hexGrid.GetStartCellCoordiantes()) && hexGrid.GetCell(Player.Instance.activeCellCoordinates) != this)))
         {
 
             // Height des Konstrukts verringern
@@ -242,7 +242,7 @@ public class HexCell : MonoBehaviour
 
     }
 
-    public void PlacePlayerRebuild()
+    public void PlacePlayerForRebuild()
     {
         Player.Instance.activeCellCoordinates = coordinates;
         Player.Instance.transform.position = transform.position + new Vector3(0f, height * HexMetrics.hexHeight + HexMetrics.hexHeight / 2, 0f);
@@ -341,6 +341,8 @@ public class HexCell : MonoBehaviour
         // Change CanvasPosition
         gridCanvas.transform.localPosition = new Vector3(0f, (newHeight - 1/2f) * HexMetrics.hexHeight, 0f);
     }
+
+
 
 
 

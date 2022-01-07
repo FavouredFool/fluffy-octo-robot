@@ -8,7 +8,7 @@ public class ReformGrid : MonoBehaviour
 
     public void SimulateGridReform()
     {
-        
+        /*
         List<SerializedTile> tempTileList = new List<SerializedTile> {
             new SerializedTile(new HexCoordinates(0, 0), 2),
             new SerializedTile(new HexCoordinates(1, 0), 1),
@@ -19,6 +19,7 @@ public class ReformGrid : MonoBehaviour
         
         //hexGrid.InstantiateTiles();
         hexGrid.CreateCellsFromList(tempTileList);
+        */
 
         //PlayersManager.Instance.SerializeHexCells(hexGrid.GetCells());
     }

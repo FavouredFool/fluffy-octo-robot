@@ -14,10 +14,14 @@ public class PlayersManager : Singelton<PlayersManager> {
     [SerializeField]
     private NetworkList<SerializedNetworkHex> hexCellsSerialized;
 
+    private HexGrid hexGrid;
+
 
     private void Awake()
     {
         hexCellsSerialized = new NetworkList<SerializedNetworkHex>();
+
+        hexGrid = FindObjectOfType<HexGrid>();
     }
 
     public int PlayersInGame
@@ -68,10 +72,16 @@ public class PlayersManager : Singelton<PlayersManager> {
     public void SerializeHexCells(List<HexCell> hexCells)
     {
         hexCellsSerialized.Clear();
+        bool playerActive;
 
         foreach (HexCell activeCell in hexCells)
         {
-            hexCellsSerialized.Add(new SerializedNetworkHex(activeCell.coordinates.X, activeCell.coordinates.Z, activeCell.GetHeight()));
+            if (hexGrid.GetCell(Player.Instance.activeCellCoordinates) == activeCell)
+                playerActive = true;
+            else
+                playerActive = false;
+
+            hexCellsSerialized.Add(new SerializedNetworkHex(activeCell.coordinates.X, activeCell.coordinates.Z, activeCell.GetHeight(), playerActive));
         }
 
     }

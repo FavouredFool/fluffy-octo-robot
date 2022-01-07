@@ -169,23 +169,23 @@ public class HexGrid : NetworkBehaviour
 
     public void InstantiateTiles()
     {
-        CreateCellsFromList(ConvertNetworkListToTileList(PlayersManager.Instance.SerializedHexCells));
+        CreateCellsFromList(PlayersManager.Instance.SerializedHexCells);
     }
 
-
-    private List<SerializedTile> ConvertNetworkListToTileList(NetworkList<SerializedNetworkHex> networkList)
+    /*
+    private List<HexCell> ConvertNetworkListToTileList(NetworkList<SerializedNetworkHex> networkList)
     {
-        List<SerializedTile> tempTileList = new();
+        List<HexCell> tempTileList = new();
 
         foreach (SerializedNetworkHex serializedNetworkHex in networkList)
         {
-            tempTileList.Add(new SerializedTile(new HexCoordinates(serializedNetworkHex.X, serializedNetworkHex.Z), serializedNetworkHex.Height));
+            tempTileList.Add(new HexCell(new HexCoordinates(serializedNetworkHex.X, serializedNetworkHex.Z), serializedNetworkHex.Height));
         }
 
         return tempTileList;
-    }
+    }*/
 
-    public void CreateCellsFromList(List<SerializedTile> newTileList)
+    public void CreateCellsFromList(NetworkList<SerializedNetworkHex> newTileList)
     {
         Debug.Log("HexGrid neu bauen");
 
@@ -204,18 +204,22 @@ public class HexGrid : NetworkBehaviour
 
 
 
-        foreach (SerializedTile newTile in newTileList)
+        foreach (SerializedNetworkHex newTile in newTileList)
         {
             // 0 rausfiltern, da diese Tiles sowieso automatisch bei cell.AddTile() erzeugt werden
-            if (newTile.GetHeight() != 0)
+            if (newTile.Height != 0)
             {
 
                 // Step 2: Build new Cells
-                HexCell cell = CreateCellFromHexCoordinate(newTile.GetCoordinates());
+                HexCell cell = CreateCellFromHexCoordinate(new HexCoordinates(newTile.X, newTile.Z));
+
+                if (newTile.PlayerActive)
+                {
+                    Player.Instance.activeCellCoordinates = new HexCoordinates(newTile.X, newTile.Z);
+                }
 
                 // Step 3: Add Tiles 
-
-                for (int i = 0; i < newTile.GetHeight(); i++)
+                for (int i = 0; i < newTile.Height; i++)
                 {
                     cell.AddTile();
                 }
@@ -233,16 +237,13 @@ public class HexGrid : NetworkBehaviour
                 HexCell neighbour = GetCell(hexCoordinate);
                 if (!neighbour)
                 {
-                    HexCell cell = CreateCellFromHexCoordinate(hexCoordinate);
+                    CreateCellFromHexCoordinate(hexCoordinate);
                 }
             }
         }
 
-        // Move Player
-
-        //Player.Instance.activeCell.PlacePlayer();
-        GetCell(Player.Instance.activeCellCoordinates).PlacePlayerRebuild();
-
+        // Place Player
+        GetCell(Player.Instance.activeCellCoordinates).PlacePlayerForRebuild();
 
 
         // Calculate Preview Tiles

@@ -48,8 +48,6 @@ public class MouseInteraction : MonoBehaviour
                 HexCell pressedCell = SelectedHexCell();
                 if (pressedCell && pressedCell.GetHeight() > 0)
                 {
-
-
                     // Move Towards that Tile if possible
                     foreach (HexCoordinates activeCoordinates in hexGrid.GetCell(Player.Instance.activeCellCoordinates).GenerateCellCoordinatesInRadius(1))
                     {
@@ -97,16 +95,6 @@ public class MouseInteraction : MonoBehaviour
             }
                
         }
-    }
-
-    public void InstantiatePlayer()
-    {
-        playerControl = FindObjectOfType<PlayerControl>();
-    }
-
-    private bool CheckIfPlayerIsInstantiated()
-    {
-        return playerControl == null;
     }
 
     protected HexCell SelectedHexCell()
