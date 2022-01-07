@@ -21,7 +21,6 @@ public class UIManager : NetworkBehaviour {
     private TextMeshProUGUI currentBattleState;
 
     private BattleSystem battleSystem;
-    private HexCell hexCell;
     private HexGrid hexGrid;
 
     private void Update() {
@@ -31,7 +30,6 @@ public class UIManager : NetworkBehaviour {
 
     private void Start() {
         battleSystem = FindObjectOfType<BattleSystem>();
-        hexCell = FindObjectOfType<HexCell>();
         hexGrid = FindObjectOfType<HexGrid>();
 
         startPlayerButton.onClick.AddListener(() => {
@@ -53,7 +51,7 @@ public class UIManager : NetworkBehaviour {
 
         // host can call the server method
         //hexGrid.InitialSpawnTileServerRPC();
-        hexCell.PlacePlayer();
+        hexGrid.GetCell(hexGrid.GetStartCellCoordiantes()).PlacePlayer();
 
         DisableStartButtonAndStartGame();
     }

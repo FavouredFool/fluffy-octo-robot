@@ -30,8 +30,6 @@ public class HexCell : MonoBehaviour, IObserver
     Canvas gridCanvas;
     TMP_Text label;
 
-    bool propagating = false;
-
     private PlayerControl playerControl;
 
 
@@ -44,11 +42,9 @@ public class HexCell : MonoBehaviour, IObserver
 
         gridCanvas = GetComponentInChildren<Canvas>();
 
-        if (!propagating)
-        {
-            // Add Preview Prefab
-            hexCellPreviewObj = Instantiate(hexCellPreviewPrefab, transform.position + new Vector3(0f, height * HexMetrics.hexHeight, 0f), Quaternion.identity, transform);
-        }
+        // Add Preview Prefab
+        hexCellPreviewObj = Instantiate(hexCellPreviewPrefab, transform.position + new Vector3(0f, height * HexMetrics.hexHeight, 0f), Quaternion.identity, transform);
+
     }
 
     protected void Start()
@@ -304,7 +300,7 @@ public class HexCell : MonoBehaviour, IObserver
         }
 
         // Check if Player is allowed to be placed at that position based on his previous position
-        if (propagating && playerControl.activeCell != this)
+        if (GetHeight() > 0 && playerControl.activeCell != this)
         {
             return GetHeight() - playerControl.activeCell.GetHeight() <= playerControl.maxWalkHeight;
         }
@@ -345,10 +341,6 @@ public class HexCell : MonoBehaviour, IObserver
         gridCanvas.transform.localPosition = new Vector3(0f, (newHeight - 1/2f) * HexMetrics.hexHeight, 0f);
     }
 
-    public bool GetPropagating()
-    {
-        return propagating;
-    }
 
     public void OnNotify()
     {

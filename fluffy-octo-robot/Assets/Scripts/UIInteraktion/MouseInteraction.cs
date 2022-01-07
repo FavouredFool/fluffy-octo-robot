@@ -46,7 +46,7 @@ public class MouseInteraction : MonoBehaviour
             if (Input.GetMouseButtonDown(0))
             {
                 HexCell pressedCell = SelectedHexCell();
-                if (pressedCell && pressedCell.GetPropagating())
+                if (pressedCell && pressedCell.GetHeight() > 0)
                 {
 
                     if (CheckIfPlayerIsInstantiated())

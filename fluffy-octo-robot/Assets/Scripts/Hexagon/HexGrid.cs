@@ -43,7 +43,6 @@ public class HexGrid : NetworkBehaviour
         foreach (HexCell activeCell in startCells)
         {
             activeCell.AddTile();
-            activeCell.AddTile();
         }
 
         ReformWorld();
