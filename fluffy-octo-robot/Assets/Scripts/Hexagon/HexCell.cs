@@ -82,23 +82,6 @@ public class HexCell : MonoBehaviour, IObserver
 
         // Height des Konstrukts erh�hen
         SetHeight(height + 1);
-
-        // Wenn vorher eine Tilepreview auf der Cell gezeigt wurde, soll diese geupdated werden
-        //if (hexPreviewObj)
-            //ShowTilePreview(true);
-
-        // Propagating-Boolean abaendern wenn noetig
-        //UpdatePropagating();
-        
-        /*
-        if (playerControl && playerControl.activeCell == this)
-        {
-            // set player-character heigher
-            playerControl.transform.position = playerControl.transform.position + new Vector3(0f, HexMetrics.hexHeight, 0f);
-        }
-        */
-        
-
     }
 
     public void RemoveTile()
@@ -106,12 +89,6 @@ public class HexCell : MonoBehaviour, IObserver
 
         if (hexStack.Count > 0)
         {
-            /*
-            if (CheckIfPlayerIsInstantiated())
-            {
-                InstantiatePlayer();
-            }
-            */
 
             // Can't remove block completely when player is on it
             if (playerControl && (playerControl.activeCell != this || height > 1))
@@ -122,27 +99,6 @@ public class HexCell : MonoBehaviour, IObserver
                 // Height des Konstrukts verringern
                 SetHeight(height - 1);
 
-
-                
-
-                
-
-
-                // Wenn vorher eine Tilepreview auf der Cell gezeigt wurde, soll diese geupdated werden
-                //if (hexPreviewObj)
-                //ShowTilePreview(true);
-
-                // Propagating-Boolean ab�ndern wenn n�tig
-                //UpdatePropagating();
-
-                /*
-                if (playerControl.activeCell == this)
-                {
-                    // set player-character lower
-                    playerControl.transform.position = playerControl.transform.position - new Vector3(0f, HexMetrics.hexHeight, 0f);
-
-                }
-                */
             }
         } 
     }
@@ -159,14 +115,14 @@ public class HexCell : MonoBehaviour, IObserver
     public void RemoveTileManually()
     {
 
-        if (height > 0)
+        if (height > 0 && (height != 1 || !coordinates.Equals(hexGrid.GetStartCellCoordiantes())))
         {
 
-                // Height des Konstrukts verringern
-                SetHeight(height - 1);
+            // Height des Konstrukts verringern
+            SetHeight(height - 1);
 
-                // Reform World
-                hexGrid.ReformWorld();
+            // Reform World
+            hexGrid.ReformWorld();
 
         }
     }

@@ -11,7 +11,7 @@ public class HexGrid : NetworkBehaviour
 
     List<HexCell> cells;
 
-    HexCell startCell;
+    HexCoordinates startCellCoordinates = new HexCoordinates(0, 0);
 
     float gridRadius = 0f;
 
@@ -25,16 +25,18 @@ public class HexGrid : NetworkBehaviour
         cells = new(TriangleNumber(size) + TriangleNumber(size - 1) - 2 * TriangleNumber(size / 2));
 
         // Terraingeneration
-        startCell = CreateCell(0, 0);
+        HexCell startCell = CreateCellFromHexCoordinate(startCellCoordinates);
 
         foreach (HexCoordinates coordinates in startCell.GenerateCellCoordinatesInRadius(size / 2))
         {
-            if (!coordinates.Equals(startCell.coordinates))
+            if (!coordinates.Equals(startCellCoordinates))
             {
                 Vector3 offsetCoordinates = HexCoordinates.ToOffsetCoordinates(coordinates);
 
                 CreateCell((int)offsetCoordinates.x, (int)offsetCoordinates.z);
             }
+            
+
         }
 
         List<HexCell> startCells = new List<HexCell>(cells);
@@ -240,5 +242,10 @@ public class HexGrid : NetworkBehaviour
     {
         Vector3 offsetCoordinates = HexCoordinates.ToOffsetCoordinates(hexCoordinate);
         return CreateCell((int)offsetCoordinates.x, (int)offsetCoordinates.z);
+    }
+
+    public HexCoordinates GetStartCellCoordiantes()
+    {
+        return startCellCoordinates;
     }
 }
