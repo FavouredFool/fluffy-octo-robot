@@ -241,7 +241,16 @@ public class HexGrid : NetworkBehaviour
         // Move Player
 
         //Player.Instance.activeCell.PlacePlayer();
-        GetCell(Player.Instance.activeCellCoordinates).PlacePlayer();
+        GetCell(Player.Instance.activeCellCoordinates).PlacePlayerRebuild();
+
+
+
+        // Calculate Preview Tiles
+        if (PlayersManager.Instance.CurrentGameState == GameState.HUMANTURN)
+        {
+            // calculate preview Tiles
+            GetCell(Player.Instance.activeCellCoordinates).CalculatePreviewTilesForHuman(true);
+        } 
 
     }
 

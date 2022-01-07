@@ -85,6 +85,7 @@ public class PlayersManager : Singelton<PlayersManager> {
     public void UpdateGameStateServerRpc(GameState newGamestate)
     {
         currentGameState.Value = newGamestate;
+        
     }
 
 }

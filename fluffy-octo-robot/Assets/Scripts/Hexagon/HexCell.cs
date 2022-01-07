@@ -2,9 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using ObserverPattern;
 
-public class HexCell : MonoBehaviour, IObserver
+public class HexCell : MonoBehaviour
 {
 
     public GameObject hexPrefab;
@@ -29,8 +28,6 @@ public class HexCell : MonoBehaviour, IObserver
 
     Canvas gridCanvas;
     TMP_Text label;
-
-    private PlayerControl playerControl;
 
 
     protected void Awake()
@@ -89,7 +86,7 @@ public class HexCell : MonoBehaviour, IObserver
         {
 
             // Can't remove block completely when player is on it
-            if (playerControl && (playerControl.activeCell != this || height > 1))
+            if (hexGrid.GetCell(Player.Instance.activeCellCoordinates) != this || height > 1)
             {
                 // Tile in Stack popen
                 Destroy(hexStack.Pop());
@@ -245,19 +242,31 @@ public class HexCell : MonoBehaviour, IObserver
 
     }
 
+    public void PlacePlayerRebuild()
+    {
+        Player.Instance.activeCellCoordinates = coordinates;
+        Player.Instance.transform.position = transform.position + new Vector3(0f, height * HexMetrics.hexHeight + HexMetrics.hexHeight / 2, 0f);
+    }
+
+
     
     public void PlacePlayer()
     {
-        Debug.Log(Player.Instance);
         Player.Instance.activeCellCoordinates = coordinates;
         Player.Instance.transform.position = transform.position + new Vector3(0f, height * HexMetrics.hexHeight + HexMetrics.hexHeight / 2, 0f);
+
+
+        //Reform World
+        hexGrid.ReformWorld();
+
+        /*
         if (PlayersManager.Instance.CurrentGameState == GameState.HUMANTURN)
         {
             // calculate preview Tiles
             CalculatePreviewTilesForHuman(true);
 
         }
-
+        */
         /*
         playerControl.activeCell = this;
         playerControl.transform.position = transform.position + new Vector3(0f, height * HexMetrics.hexHeight + HexMetrics.hexHeight / 2, 0f);
@@ -274,7 +283,7 @@ public class HexCell : MonoBehaviour, IObserver
     public void CalculatePreviewTilesForHuman(bool active)
     {
 
-        foreach (HexCoordinates activeCoordinates in playerControl.activeCell.GenerateCellCoordinatesInRadius(1))
+        foreach (HexCoordinates activeCoordinates in hexGrid.GetCell(Player.Instance.activeCellCoordinates).GenerateCellCoordinatesInRadius(1))
         {
             HexCell activeCell = hexGrid.GetCell(activeCoordinates);
 
@@ -297,14 +306,15 @@ public class HexCell : MonoBehaviour, IObserver
 
 
         // Check if Player is allowed to be placed at that position based on his previous position
-        if (GetHeight() > 0 && playerControl.activeCell != this)
+        if (GetHeight() > 0 && hexGrid.GetCell(Player.Instance.activeCellCoordinates) != this)
         {
-            return GetHeight() - playerControl.activeCell.GetHeight() <= playerControl.maxWalkHeight;
+            return GetHeight() - hexGrid.GetCell(Player.Instance.activeCellCoordinates).GetHeight() <= Player.Instance.maxWalkHeight;
         }
 
         return false;
     }
 
+/*
     public void RemovePlayer()
     {
 
@@ -314,10 +324,8 @@ public class HexCell : MonoBehaviour, IObserver
             CalculatePreviewTilesForHuman(false);
         }
 
-        playerControl.activeCell = null;
-
-        
     }
+*/
 
     public int GetHeight()
     {
@@ -335,16 +343,5 @@ public class HexCell : MonoBehaviour, IObserver
     }
 
 
-    public void OnNotify()
-    {
-        // OnChange des Turnstates werden alle Preview-Cells zerst�rt und ggf. neue berechnet
-        ShowTilePreview(false);
-
-
-        if (PlayersManager.Instance.CurrentGameState.Equals(GameState.HUMANTURN))
-        {
-            playerControl.activeCell.CalculatePreviewTilesForHuman(true);
-        }
-    }
 
 }

@@ -11,6 +11,7 @@ public enum GameState
 public class BattleSystem : NetworkBehaviour
 {
     public GameObject player;
+    public HexGrid hexGrid;
 
     public Button finishPlayerTurn;
     public Button finishGodTurn;
@@ -44,14 +45,18 @@ public class BattleSystem : NetworkBehaviour
 
     private void PlayerTurn()
     {
+        
         PlayersManager.Instance.UpdateGameStateServerRpc(GameState.HUMANTURN);
+        hexGrid.ReformWorld();
 
         subject.Notify();
     }
 
     private void GodTurn()
     {
+        
         PlayersManager.Instance.UpdateGameStateServerRpc(GameState.GODTURN);
+        hexGrid.ReformWorld();
 
         subject.Notify();
     }

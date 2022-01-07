@@ -49,20 +49,14 @@ public class MouseInteraction : MonoBehaviour
                 if (pressedCell && pressedCell.GetHeight() > 0)
                 {
 
-                    if (CheckIfPlayerIsInstantiated())
-                    {
-                        InstantiatePlayer();
-                    }
 
                     // Move Towards that Tile if possible
-                    foreach (HexCoordinates activeCoordinates in playerControl.activeCell.GenerateCellCoordinatesInRadius(1))
+                    foreach (HexCoordinates activeCoordinates in hexGrid.GetCell(Player.Instance.activeCellCoordinates).GenerateCellCoordinatesInRadius(1))
                     {
                         HexCell activeCell = hexGrid.GetCell(activeCoordinates);
 
-                        if (pressedCell == activeCell && playerControl.activeCell && pressedCell.ValdiatePlacement())
+                        if (pressedCell == activeCell && pressedCell.ValdiatePlacement())
                         {
-                            
-                            activeCell.RemovePlayer();
                             pressedCell.PlacePlayer();
                             return;
                         }
