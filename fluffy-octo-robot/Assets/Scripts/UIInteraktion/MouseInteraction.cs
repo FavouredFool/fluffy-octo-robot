@@ -6,7 +6,6 @@ public class MouseInteraction : MonoBehaviour
 {
 
     public HexGrid hexGrid;
-    private PlayerControl playerControl;
 
     HexCell hoveredHex;
     HexCell previouslyhoveredHex;
