@@ -98,13 +98,6 @@ public class PlayersManager : Singelton<PlayersManager> {
 
         UpdateGridServerRpc(true);
         Debug.Log("Should Update Grid");
-
-        // Update bisher nur diesen Client
-        //hexGrid.InstantiateTiles();
-
-        // Update both parties
-        // UpdateListServerRpc(hexCellsSerialized);
-
     }
 
     public void UpdateGameState(GameState newGamestate)

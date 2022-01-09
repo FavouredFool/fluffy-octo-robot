@@ -12,6 +12,8 @@ public class HexCell : MonoBehaviour
 
     public TMP_Text cellLabelPrefab;
 
+    private ActionPoints actionPoints;
+
     [HideInInspector]
     public HexCoordinates coordinates;
 
@@ -32,6 +34,7 @@ public class HexCell : MonoBehaviour
 
     protected void Awake()
     {
+        actionPoints = FindObjectOfType<ActionPoints>();
         hexStack = new Stack<GameObject>();
         //hexGrid = transform.parent.GetComponent<HexGrid>();
         // Bei Awake kann noch nicht ueber das Parentobjekt gegangen werden
@@ -72,6 +75,13 @@ public class HexCell : MonoBehaviour
 
     public void AddTile()
     {
+        /*
+        if (actionPoints.GetCurrentActionPoints() == 0)
+        {
+            return;
+        }
+        */
+
         if (GetHeight() == 0)
         {
             Destroy(hexCellPreviewObj);
@@ -80,12 +90,21 @@ public class HexCell : MonoBehaviour
         // Tile in Stack auf korrekter Hoehe hinzufuegen
         hexStack.Push(Instantiate(hexPrefab, transform.position + new Vector3(0f, height * HexMetrics.hexHeight, 0f), Quaternion.identity, transform));
 
-        // Height des Konstrukts erh�hen
+        // Height des Konstrukts erhoehen
         SetHeight(height + 1);
+
+        // actionPoints.UpdateActionPoints();
     }
 
     public void RemoveTile()
     {
+        /*
+        if (actionPoints.GetCurrentActionPoints() == 0)
+        {
+            return;
+        }
+        */
+
         if (hexStack.Count > 0)
         {
             // Can't remove block completely when player is on it
@@ -96,14 +115,23 @@ public class HexCell : MonoBehaviour
 
                 // Height des Konstrukts verringern
                 SetHeight(height - 1);
+
+                // actionPoints.UpdateActionPoints();
             }
         } 
     }
 
     public void AddTileManually()
     {
+        if (actionPoints.GetCurrentActionPoints() == 0)
+        {
+            return;
+        }
+
         // Height des Konstrukts erhöhen
         SetHeight(height + 1);
+
+        actionPoints.UpdateActionPoints();
 
         // Reform World
         hexGrid.ReformWorld();
@@ -111,11 +139,18 @@ public class HexCell : MonoBehaviour
 
     public void RemoveTileManually()
     {
+        if (actionPoints.GetCurrentActionPoints() == 0)
+        {
+            return;
+        }
+
         if (height > 0 && (height != 1 || (!coordinates.Equals(hexGrid.GetStartCellCoordiantes()) && hexGrid.GetCell(Player.Instance.activeCellCoordinates) != this)))
         {
 
             // Height des Konstrukts verringern
             SetHeight(height - 1);
+
+            actionPoints.UpdateActionPoints();
 
             // Reform World
             hexGrid.ReformWorld();
@@ -253,9 +288,15 @@ public class HexCell : MonoBehaviour
     
     public void PlacePlayer()
     {
+        if (actionPoints.GetCurrentActionPoints() == 0)
+        {
+            return;
+        }
+
         Player.Instance.activeCellCoordinates = coordinates;
         Player.Instance.transform.position = transform.position + new Vector3(0f, height * HexMetrics.hexHeight + HexMetrics.hexHeight / 2, 0f);
 
+        actionPoints.UpdateActionPoints();
 
         //Reform World
         hexGrid.ReformWorld();

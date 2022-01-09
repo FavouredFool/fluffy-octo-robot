@@ -16,7 +16,14 @@ public class BattleSystem : NetworkBehaviour
     public Button finishPlayerTurn;
     public Button finishGodTurn;
 
+    private ActionPoints actionPoints;
+
     public Subject subject = new Subject();
+
+    private void Awake()
+    {
+        actionPoints = FindObjectOfType<ActionPoints>();
+    }
 
     private void Start()
     {
@@ -45,18 +52,20 @@ public class BattleSystem : NetworkBehaviour
 
     private void PlayerTurn()
     {
-        
         PlayersManager.Instance.UpdateGameStateServerRpc(GameState.HUMANTURN);
         hexGrid.ReformWorld();
+
+        actionPoints.ResetActionPoints();
 
         subject.Notify();
     }
 
     private void GodTurn()
-    {
-        
+    {   
         PlayersManager.Instance.UpdateGameStateServerRpc(GameState.GODTURN);
         hexGrid.ReformWorld();
+
+        actionPoints.ResetActionPoints();
 
         subject.Notify();
     }

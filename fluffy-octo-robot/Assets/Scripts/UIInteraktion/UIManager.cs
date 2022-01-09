@@ -49,10 +49,6 @@ public class UIManager : NetworkBehaviour {
     {
         Debug.Log(message);
 
-        // host can call the server method
-        //hexGrid.InitialSpawnTileServerRPC();
-        //hexGrid.GetCell(hexGrid.GetStartCellCoordiantes()).PlacePlayer();
-
         DisableStartButtonAndStartGame();
     }
 
