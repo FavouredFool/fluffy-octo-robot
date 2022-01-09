@@ -205,7 +205,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 22418150, guid: 751f7137cfffd4a16b1a4c191e687d64, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -0.9999771
+      value: -0.9999695
       objectReference: {fileID: 0}
     - target: {fileID: 22418150, guid: 751f7137cfffd4a16b1a4c191e687d64, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -1042,7 +1042,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 22493402, guid: 4c5368a58301e4892a15a0228d4fb291, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -8.254999
+      value: -8.254997
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4c5368a58301e4892a15a0228d4fb291, type: 3}
@@ -1253,6 +1253,10 @@ PrefabInstance:
       propertyPath: camera
       value: 
       objectReference: {fileID: 1016696756}
+    - target: {fileID: 2658292315120875011, guid: c73d2beaeb9cb6541a3969a459dbf80a, type: 3}
+      propertyPath: rotationSpeed
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 6147062892952545509, guid: c73d2beaeb9cb6541a3969a459dbf80a, type: 3}
       propertyPath: m_Name
       value: MenuHexGrid
@@ -1364,7 +1368,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 22474900, guid: 576b0985066f948b29da42ea6ff0aedb, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -2.7999992
+      value: -2.800003
       objectReference: {fileID: 0}
     - target: {fileID: 22474900, guid: 576b0985066f948b29da42ea6ff0aedb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

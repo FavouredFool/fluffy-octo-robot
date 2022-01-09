@@ -6,7 +6,8 @@ using TMPro;
 public class MenuHexCell : MonoBehaviour
 {
 
-    public GameObject hexPrefab;
+    public GameObject[] hexPrefabs;
+
     public GameObject hexPreviewPrefab;
     public GameObject hexCellPreviewPrefab;
 
@@ -21,7 +22,7 @@ public class MenuHexCell : MonoBehaviour
     [HideInInspector]
     public Stack<GameObject> hexStack;
 
-    HexGrid hexGrid;
+    MenuHexGrid menuHexGrid;
 
     GameObject hexPreviewObj = null;
     GameObject hexCellPreviewObj = null;
@@ -35,7 +36,7 @@ public class MenuHexCell : MonoBehaviour
         hexStack = new Stack<GameObject>();
         //hexGrid = transform.parent.GetComponent<HexGrid>();
         // Bei Awake kann noch nicht ueber das Parentobjekt gegangen werden
-        hexGrid = GameObject.Find("MenuHexGrid").GetComponent<HexGrid>();
+        menuHexGrid = GameObject.Find("MenuHexGrid").GetComponent<MenuHexGrid>();
 
         gridCanvas = GetComponentInChildren<Canvas>();
 
@@ -65,8 +66,20 @@ public class MenuHexCell : MonoBehaviour
             Destroy(hexCellPreviewObj);
         }
 
+
+        GameObject prefabToPlace;
+        if (menuHexGrid.GetStartCellCoordiantes().Equals(coordinates))
+        {
+            prefabToPlace = hexPrefabs[0];
+        } else
+        {
+            prefabToPlace = hexPrefabs[Random.Range(1, hexPrefabs.Length)];
+        }
+
         // Tile in Stack auf korrekter Hoehe hinzufuegen
-        hexStack.Push(Instantiate(hexPrefab, transform.position + new Vector3(0f, height * HexMetrics.hexHeight, 0f), Quaternion.identity, transform));
+        hexStack.Push(Instantiate(prefabToPlace, transform.position + new Vector3(0f, height * HexMetrics.hexHeight, 0f), Quaternion.identity, transform));
+        
+
 
         // Height des Konstrukts erh�hen
         SetHeight(height + 1);

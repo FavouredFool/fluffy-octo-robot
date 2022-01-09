@@ -85,7 +85,6 @@ public class MenuHexGrid : NetworkBehaviour
         position.y = 0f;
         position.z = z * (HexMetrics.outerRadius * 1.5f);
 
-        Debug.Log(cellPrefab);
         MenuHexCell cell = Instantiate(cellPrefab);
         cell.coordinates = HexCoordinates.FromOffsetCoordinates(x, z);
         cell.transform.SetParent(transform, false);
