@@ -86,10 +86,8 @@ public class HexCell : MonoBehaviour
 
     public void RemoveTile()
     {
-
         if (hexStack.Count > 0)
         {
-
             // Can't remove block completely when player is on it
             if (hexGrid.GetCell(Player.Instance.activeCellCoordinates) != this || height > 1)
             {
@@ -98,7 +96,6 @@ public class HexCell : MonoBehaviour
 
                 // Height des Konstrukts verringern
                 SetHeight(height - 1);
-
             }
         } 
     }
@@ -114,7 +111,6 @@ public class HexCell : MonoBehaviour
 
     public void RemoveTileManually()
     {
-
         if (height > 0 && (height != 1 || (!coordinates.Equals(hexGrid.GetStartCellCoordiantes()) && hexGrid.GetCell(Player.Instance.activeCellCoordinates) != this)))
         {
 
@@ -268,7 +264,6 @@ public class HexCell : MonoBehaviour
 
     public void CalculatePreviewTilesForHuman(bool active)
     {
-
         foreach (HexCoordinates activeCoordinates in hexGrid.GetCell(Player.Instance.activeCellCoordinates).GenerateCellCoordinatesInRadius(1))
         {
             HexCell activeCell = hexGrid.GetCell(activeCoordinates);
@@ -289,8 +284,6 @@ public class HexCell : MonoBehaviour
 
     public bool ValdiatePlacement()
     {
-
-
         // Check if Player is allowed to be placed at that position based on his previous position
         if (GetHeight() > 0 && hexGrid.GetCell(Player.Instance.activeCellCoordinates) != this)
         {
@@ -314,9 +307,4 @@ public class HexCell : MonoBehaviour
         // Change CanvasPosition
         gridCanvas.transform.localPosition = new Vector3(0f, (newHeight - 1/2f) * HexMetrics.hexHeight, 0f);
     }
-
-
-
-
-
 }

@@ -9,6 +9,9 @@ public class PlayersManager : Singelton<PlayersManager> {
     private NetworkVariable<int> playersInGame = new NetworkVariable<int>();
 
     [SerializeField]
+    private NetworkVariable<bool> updateGrid = new NetworkVariable<bool>(false);
+
+    [SerializeField]
     private NetworkVariable<GameState> currentGameState = new NetworkVariable<GameState>(GameState.START);
 
     [SerializeField]
@@ -44,6 +47,14 @@ public class PlayersManager : Singelton<PlayersManager> {
         get
         {
             return currentGameState.Value;
+        }
+    }
+
+    public bool ShouldUpdateGrid
+    {
+        get
+        {
+            return updateGrid.Value;
         }
     }
 
@@ -85,11 +96,14 @@ public class PlayersManager : Singelton<PlayersManager> {
             hexCellsSerialized.Add(new SerializedNetworkHex(activeCell.coordinates.X, activeCell.coordinates.Z, activeCell.GetHeight(), playerActive));
         }
 
+        UpdateGridServerRpc(true);
+        Debug.Log("Should Update Grid");
+
         // Update bisher nur diesen Client
-        hexGrid.InstantiateTiles();
+        //hexGrid.InstantiateTiles();
 
         // Update both parties
-        //UpdateListServerRpc(hexCellsSerialized);
+        // UpdateListServerRpc(hexCellsSerialized);
 
     }
 
@@ -102,18 +116,11 @@ public class PlayersManager : Singelton<PlayersManager> {
     public void UpdateGameStateServerRpc(GameState newGamestate)
     {
         currentGameState.Value = newGamestate;
-        
-
     }
 
-    /*
-    // Wie funktioniert das?
     [ServerRpc(RequireOwnership = false)]
-    public void UpdateListServerRpc(NetworkList<SerializedNetworkHex> networkList)
+    public void UpdateGridServerRpc(bool newUpdateGrid)
     {
-        hexCellsSerialized = networkList;
-        //hexGrid.InstantiateTiles();
+        updateGrid.Value = newUpdateGrid;
     }
-    */
-
 }

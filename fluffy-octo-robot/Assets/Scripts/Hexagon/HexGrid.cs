@@ -22,7 +22,6 @@ public class HexGrid : NetworkBehaviour
 
     protected void Awake()
     {
-
         // initiale Capacity bereitstellen
         cells = new(TriangleNumber(size) + TriangleNumber(size - 1) - 2 * TriangleNumber(size / 2));
 
@@ -40,35 +39,34 @@ public class HexGrid : NetworkBehaviour
 
                 CreateCell((int)offsetCoordinates.x, (int)offsetCoordinates.z);
             }
-            
-
         }
 
         List<HexCell> startCells = new List<HexCell>(cells);
+
         foreach (HexCell activeCell in startCells)
         {
             activeCell.AddTile();
         }
 
         ReformWorld();
-        
+    }
+
+    private void Update()
+    {
+        if (PlayersManager.Instance.ShouldUpdateGrid)
+        {
+            Debug.Log(PlayersManager.Instance.ShouldUpdateGrid);
+
+            PlayersManager.Instance.UpdateGridServerRpc(false);
+
+            InstantiateTiles();
+        }
     }
 
     public void ReformWorld()
     {
         // send cells to Networking
         PlayersManager.Instance.SerializeAndUpdateHexCells(cells);
-        
-    }
-
-    private void Update()
-    {
-        /*
-        if (PlayersManager.Instance.SerializedHexCellSize > 0 && !initialLoad)
-        {
-            InitialSpawnTile();
-        }
-        */
     }
 
     public HexCell CreateCell(int x, int z)
@@ -111,7 +109,6 @@ public class HexGrid : NetworkBehaviour
             {
                 gridRadius = distance;
             }
-            
         }
 
         Destroy(cell.gameObject);
@@ -131,7 +128,6 @@ public class HexGrid : NetworkBehaviour
 
     public HexCell GetCell(HexCoordinates searchCoordinates)
     {
-
         HexCell foundHexCell;
 
         foreach (HexCell activeCell in GetCells())
@@ -139,6 +135,7 @@ public class HexGrid : NetworkBehaviour
             if (activeCell.coordinates.Equals(searchCoordinates))
             {
                 foundHexCell = activeCell;
+
                 return activeCell;
             }
         }
@@ -151,39 +148,10 @@ public class HexGrid : NetworkBehaviour
         return gridRadius;
     }
 
-    /*
-    // This function would be called (is the host)
-    [ServerRpc(RequireOwnership = false)]
-    public void InitialSpawnTileServerRPC()
-    {
-        InitialSpawnTileClientRPC();
-    }
-
-    // This function do anything on every Client when its called
-    [ClientRpc]
-    public void InitialSpawnTileClientRPC()
-    {
-        InstantiateTiles();
-    }
-    */
-
     public void InstantiateTiles()
     {
         CreateCellsFromList(PlayersManager.Instance.SerializedHexCells);
     }
-
-    /*
-    private List<HexCell> ConvertNetworkListToTileList(NetworkList<SerializedNetworkHex> networkList)
-    {
-        List<HexCell> tempTileList = new();
-
-        foreach (SerializedNetworkHex serializedNetworkHex in networkList)
-        {
-            tempTileList.Add(new HexCell(new HexCoordinates(serializedNetworkHex.X, serializedNetworkHex.Z), serializedNetworkHex.Height));
-        }
-
-        return tempTileList;
-    }*/
 
     public void CreateCellsFromList(NetworkList<SerializedNetworkHex> newTileList)
     {
@@ -201,15 +169,11 @@ public class HexGrid : NetworkBehaviour
 
         gridRadius = float.NegativeInfinity;
 
-
-
-
         foreach (SerializedNetworkHex newTile in newTileList)
         {
             // 0 rausfiltern, da diese Tiles sowieso automatisch bei cell.AddTile() erzeugt werden
             if (newTile.Height != 0)
             {
-
                 // Step 2: Build new Cells
                 HexCell cell = CreateCellFromHexCoordinate(new HexCoordinates(newTile.X, newTile.Z));
 
@@ -223,12 +187,10 @@ public class HexGrid : NetworkBehaviour
                 {
                     cell.AddTile();
                 }
-                
             }
         }
 
         // Add Tiles of Height 0
-
         tempCells = new List<HexCell>(cells);
         foreach (HexCell activeCell in tempCells)
         {
@@ -245,19 +207,18 @@ public class HexGrid : NetworkBehaviour
         // Place Player
         GetCell(Player.Instance.activeCellCoordinates).PlacePlayerForRebuild();
 
-
         // Calculate Preview Tiles
         if (PlayersManager.Instance.CurrentGameState == GameState.HUMANTURN)
         {
             // calculate preview Tiles
             GetCell(Player.Instance.activeCellCoordinates).CalculatePreviewTilesForHuman(true);
         } 
-
     }
 
     HexCell CreateCellFromHexCoordinate(HexCoordinates hexCoordinate)
     {
         Vector3 offsetCoordinates = HexCoordinates.ToOffsetCoordinates(hexCoordinate);
+
         return CreateCell((int)offsetCoordinates.x, (int)offsetCoordinates.z);
     }
 
