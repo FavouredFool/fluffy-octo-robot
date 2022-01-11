@@ -45,8 +45,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ad8c6773df508640972f3f9021a6ef4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  size: 41
+  size: 3
   cellPrefab: {fileID: 1498622557011609434, guid: 9a1f1e9fdb37e7b4589bf4b9af03664c, type: 3}
+  playerPrefab: {fileID: 8867970884611671887, guid: ca4f874fb99b3b64baff48588a9ea6e6, type: 3}
 --- !u!114 &7187596142896238725
 MonoBehaviour:
   m_ObjectHideFlags: 0
