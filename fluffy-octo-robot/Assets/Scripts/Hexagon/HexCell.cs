@@ -75,13 +75,6 @@ public class HexCell : MonoBehaviour
 
     public void AddTile()
     {
-        /*
-        if (actionPoints.GetCurrentActionPoints() == 0)
-        {
-            return;
-        }
-        */
-
         if (GetHeight() == 0)
         {
             Destroy(hexCellPreviewObj);
@@ -92,19 +85,10 @@ public class HexCell : MonoBehaviour
 
         // Height des Konstrukts erhoehen
         SetHeight(height + 1);
-
-        // actionPoints.UpdateActionPoints();
     }
 
     public void RemoveTile()
     {
-        /*
-        if (actionPoints.GetCurrentActionPoints() == 0)
-        {
-            return;
-        }
-        */
-
         if (hexStack.Count > 0)
         {
             // Can't remove block completely when player is on it
@@ -115,8 +99,6 @@ public class HexCell : MonoBehaviour
 
                 // Height des Konstrukts verringern
                 SetHeight(height - 1);
-
-                // actionPoints.UpdateActionPoints();
             }
         } 
     }

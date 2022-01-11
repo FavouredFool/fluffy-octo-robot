@@ -4,6 +4,7 @@ using Unity.Netcode;
 
 public class HexGrid : NetworkBehaviour
 {
+    private int currentGridVersion;
 
     public int size = 5;
 
@@ -22,6 +23,8 @@ public class HexGrid : NetworkBehaviour
 
     protected void Awake()
     {
+        currentGridVersion = PlayersManager.Instance.CurrentGridVersion;
+
         // initiale Capacity bereitstellen
         cells = new(TriangleNumber(size) + TriangleNumber(size - 1) - 2 * TriangleNumber(size / 2));
 
@@ -53,11 +56,9 @@ public class HexGrid : NetworkBehaviour
 
     private void Update()
     {
-        if (PlayersManager.Instance.ShouldUpdateGrid)
+        if (PlayersManager.Instance.CurrentGridVersion != currentGridVersion)
         {
-            Debug.Log(PlayersManager.Instance.ShouldUpdateGrid);
-
-            PlayersManager.Instance.UpdateGridServerRpc(false);
+            currentGridVersion = PlayersManager.Instance.CurrentGridVersion;
 
             InstantiateTiles();
         }

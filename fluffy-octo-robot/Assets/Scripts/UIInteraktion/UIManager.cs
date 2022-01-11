@@ -16,12 +16,10 @@ public class UIManager : NetworkBehaviour {
     [SerializeField]
     private TextMeshProUGUI playerInGameText;
 
-
     [SerializeField]
     private TextMeshProUGUI currentBattleState;
 
     private BattleSystem battleSystem;
-    private HexGrid hexGrid;
 
     private void Update() {
         playerInGameText.text = $"Players in game: {PlayersManager.Instance.PlayersInGame}";
@@ -30,7 +28,6 @@ public class UIManager : NetworkBehaviour {
 
     private void Start() {
         battleSystem = FindObjectOfType<BattleSystem>();
-        hexGrid = FindObjectOfType<HexGrid>();
 
         startPlayerButton.onClick.AddListener(() => {
             if (NetworkManager.Singleton.StartHost()) {

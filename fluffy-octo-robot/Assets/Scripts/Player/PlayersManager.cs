@@ -9,7 +9,7 @@ public class PlayersManager : Singelton<PlayersManager> {
     private NetworkVariable<int> playersInGame = new NetworkVariable<int>();
 
     [SerializeField]
-    private NetworkVariable<bool> updateGrid = new NetworkVariable<bool>(false);
+    private NetworkVariable<int> gridVersion = new NetworkVariable<int>(0);
 
     [SerializeField]
     private NetworkVariable<GameState> currentGameState = new NetworkVariable<GameState>(GameState.START);
@@ -50,11 +50,11 @@ public class PlayersManager : Singelton<PlayersManager> {
         }
     }
 
-    public bool ShouldUpdateGrid
+    public int CurrentGridVersion
     {
         get
         {
-            return updateGrid.Value;
+            return gridVersion.Value;
         }
     }
 
@@ -82,7 +82,7 @@ public class PlayersManager : Singelton<PlayersManager> {
 
     public void SerializeAndUpdateHexCells(List<HexCell> hexCells)
     {
-        hexCellsSerialized.Clear();
+        SerializeClearHexCellListServerRpc();
         bool playerActive;
 
         // Convert to serialized List
@@ -93,10 +93,10 @@ public class PlayersManager : Singelton<PlayersManager> {
             else
                 playerActive = false;
 
-            hexCellsSerialized.Add(new SerializedNetworkHex(activeCell.coordinates.X, activeCell.coordinates.Z, activeCell.GetHeight(), playerActive));
+            SerializeAndUpdateHexCellsServerRpc(new SerializedNetworkHex(activeCell.coordinates.X, activeCell.coordinates.Z, activeCell.GetHeight(), playerActive));
         }
 
-        UpdateGridServerRpc(true);
+        UpdateGridVersionServerRpc();
         Debug.Log("Should Update Grid");
     }
 
@@ -112,8 +112,20 @@ public class PlayersManager : Singelton<PlayersManager> {
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void UpdateGridServerRpc(bool newUpdateGrid)
+    public void UpdateGridVersionServerRpc()
     {
-        updateGrid.Value = newUpdateGrid;
+        gridVersion.Value++;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void SerializeAndUpdateHexCellsServerRpc(SerializedNetworkHex hex)
+    {
+       hexCellsSerialized.Add(hex);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void SerializeClearHexCellListServerRpc()
+    {
+        hexCellsSerialized.Clear();
     }
 }
