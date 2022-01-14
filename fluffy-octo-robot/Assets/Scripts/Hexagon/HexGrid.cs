@@ -23,10 +23,13 @@ public class HexGrid : NetworkBehaviour
     public int corruptionDuration;
     
 
-
-    protected void Awake()
+    private void Start()
     {
         currentGridVersion = PlayersManager.Instance.CurrentGridVersion;
+
+        Debug.Log(PlayersManager.Instance.CurrentGridVersion);
+        Debug.Log(IsHost);
+        Debug.Log(PlayersManager.Instance.SerializedHexCells.Count);
 
         // initiale Capacity bereitstellen
         cells = new(TriangleNumber(size) + TriangleNumber(size - 1) - 2 * TriangleNumber(size / 2));

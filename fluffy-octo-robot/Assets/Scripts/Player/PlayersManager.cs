@@ -17,14 +17,11 @@ public class PlayersManager : Singelton<PlayersManager> {
     [SerializeField]
     private NetworkList<SerializedNetworkHex> hexCellsSerialized;
 
-    private HexGrid hexGrid;
-
-
     private void Awake()
     {
-        hexCellsSerialized = new NetworkList<SerializedNetworkHex>();
+        DontDestroyOnLoad(this);
 
-        hexGrid = FindObjectOfType<HexGrid>();
+        hexCellsSerialized = new NetworkList<SerializedNetworkHex>();
     }
 
     public int PlayersInGame
@@ -82,8 +79,10 @@ public class PlayersManager : Singelton<PlayersManager> {
 
     public void SerializeAndUpdateHexCells(List<HexCell> hexCells)
     {
-        SerializeClearHexCellListServerRpc();
+        HexGrid hexGrid = FindObjectOfType<HexGrid>();
         bool playerActive;
+
+        SerializeClearHexCellListServerRpc();
 
         // Convert to serialized List
         foreach (HexCell activeCell in hexCells)

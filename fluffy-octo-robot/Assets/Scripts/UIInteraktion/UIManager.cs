@@ -1,6 +1,5 @@
 using UnityEngine;
 using TMPro;
-using UnityEngine.UI;
 using Unity.Netcode;
 
 // mac multiple windows: open -na fluffy-test 
@@ -8,18 +7,10 @@ using Unity.Netcode;
 public class UIManager : NetworkBehaviour {
    
     [SerializeField]
-    private Button startPlayerButton;
-
-    [SerializeField]
-    private Button startGodButton;
-
-    [SerializeField]
     private TextMeshProUGUI playerInGameText;
 
     [SerializeField]
     private TextMeshProUGUI currentBattleState;
-
-    private BattleSystem battleSystem;
 
     private void Update() {
         playerInGameText.text = $"Players in game: {PlayersManager.Instance.PlayersInGame}";
@@ -27,40 +18,8 @@ public class UIManager : NetworkBehaviour {
     }
 
     private void Start() {
-        battleSystem = FindObjectOfType<BattleSystem>();
-
-        startPlayerButton.onClick.AddListener(() => {
-            if (NetworkManager.Singleton.StartHost()) {
-                StartAsPlayer("Host Started ...");
-            }
-        });
-
-        startGodButton.onClick.AddListener(() => {
-            if (NetworkManager.Singleton.StartClient()) {
-                StartAsGod("Client Started ...");
-            }
-        });
-    }
-
-    private void StartAsPlayer(string message)
-    {
-        Debug.Log(message);
-
-        DisableStartButtonAndStartGame();
-    }
-
-    private void StartAsGod(string message)
-    {
-        Debug.Log(message);
-
-        DisableStartButtonAndStartGame();
-    }
-
-    private void DisableStartButtonAndStartGame()
-    {
-        startGodButton.gameObject.SetActive(false);
-        startPlayerButton.gameObject.SetActive(false);
-
-        battleSystem.SetupBattle();
+        //if (NetworkManager.Singleton.StartClient()) {
+        //    StartAsGod("Client Started ...");
+        //}
     }
 }
