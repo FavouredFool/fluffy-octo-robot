@@ -95,8 +95,8 @@ public class HexGrid : NetworkBehaviour
         }
 
         return cell;
-
     }
+
 
     public void RemoveCell(HexCell cell)
     {
@@ -179,9 +179,23 @@ public class HexGrid : NetworkBehaviour
         }
         if (cellToCorrupt)
         {
-            cellToCorrupt.CorruptCell(0);
+            cellToCorrupt.CorruptCell(corruptionDuration);
         }
 
+    }
+
+    public void ReduceCorruptionTimer()
+    {
+        tempCells = new List<HexCell>(cells);
+        foreach (HexCell activeCell in tempCells) {
+
+            if (activeCell.GetRoundsTillCorrupted() > 0)
+            {
+                activeCell.CorruptCellWithoutRebuild(activeCell.GetRoundsTillCorrupted() - 1);
+            }
+        }
+
+        ReformWorld();
     }
 
 
@@ -208,6 +222,7 @@ public class HexGrid : NetworkBehaviour
             {
                 // Step 2: Build new Cells
                 HexCell cell = CreateCellFromHexCoordinate(new HexCoordinates(newHex.X, newHex.Z));
+                cell.SetRoundsTillCorrupted(newHex.RoundsTillCorrupted);
 
                 if (newHex.PlayerActive)
                 {
@@ -229,9 +244,13 @@ public class HexGrid : NetworkBehaviour
         {
             if (activeCell.GetRoundsTillCorrupted() >= 0)
             {
-                Debug.Log("test");
+                activeCell.corruptionLabelPrefab.transform.parent.gameObject.SetActive(true);
                 activeCell.CorruptCellForRebuild(activeCell.GetRoundsTillCorrupted());
+            } else
+            {
+                activeCell.corruptionLabelPrefab.transform.parent.gameObject.SetActive(false);
             }
+            
         }
 
 

@@ -11,6 +11,9 @@ public class HexCell : MonoBehaviour
     public GameObject hexCellPreviewPrefab;
 
     public TMP_Text cellLabelPrefab;
+    public TMP_Text corruptionLabelPrefab;
+
+    public Material corruptionMaterial;
 
     private ActionPoints actionPoints;
 
@@ -28,7 +31,6 @@ public class HexCell : MonoBehaviour
     GameObject hexPreviewObj = null;
     GameObject hexCellPreviewObj = null;
 
-    Canvas gridCanvas;
     TMP_Text label;
 
     int roundsTillCorrupted = -1;
@@ -42,7 +44,6 @@ public class HexCell : MonoBehaviour
         // Bei Awake kann noch nicht ueber das Parentobjekt gegangen werden
         hexGrid = GameObject.Find("HexGrid").GetComponent<HexGrid>();
 
-        gridCanvas = GetComponentInChildren<Canvas>();
 
         // Add Preview Prefab
         hexCellPreviewObj = Instantiate(hexCellPreviewPrefab, transform.position + new Vector3(0f, height * HexMetrics.hexHeight, 0f), Quaternion.identity, transform);
@@ -250,6 +251,16 @@ public class HexCell : MonoBehaviour
         return false;
     }
 
+    public void CorruptCellWithoutRebuild(int corruptionDuration)
+    {
+        roundsTillCorrupted = corruptionDuration;
+
+        if (roundsTillCorrupted == 0)
+        {
+            hexGrid.GetCells().Remove(this);
+        }
+    }
+
     public void CorruptCell(int corruptionDuration)
     {
         // Redraw Tile-Color / Change Material
@@ -266,10 +277,15 @@ public class HexCell : MonoBehaviour
 
     public void CorruptCellForRebuild(int corruptionDuration)
     {
-       
+         
         roundsTillCorrupted = corruptionDuration;
+        corruptionLabelPrefab.text = roundsTillCorrupted.ToString();
 
         // Redraw Tile-Color / Change Material
+        foreach (GameObject activeTile in hexStack)
+        {
+            activeTile.GetComponent<Renderer>().material = corruptionMaterial;
+        }
 
     }
 
@@ -285,12 +301,18 @@ public class HexCell : MonoBehaviour
         height = newHeight;
 
         // Change CanvasPosition
-        gridCanvas.transform.localPosition = new Vector3(0f, (newHeight - 1/2f) * HexMetrics.hexHeight, 0f);
+        cellLabelPrefab.transform.parent.localPosition = new Vector3(0f, (newHeight - 1/2f) * HexMetrics.hexHeight, 0f);
+        corruptionLabelPrefab.transform.parent.localPosition = new Vector3(0f, (newHeight - 1 / 2f) * HexMetrics.hexHeight + 15, 0f);
     }
 
     public int GetRoundsTillCorrupted()
     {
         return roundsTillCorrupted;
+    }
+
+    public void SetRoundsTillCorrupted(int rounds)
+    {
+        roundsTillCorrupted = rounds;
     }
 }
 

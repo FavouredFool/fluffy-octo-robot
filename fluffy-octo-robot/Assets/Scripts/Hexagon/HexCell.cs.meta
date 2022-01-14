@@ -3,7 +3,12 @@ guid: 915fac22a0aff3b46bf52edba08100b8
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - hexPrefab: {instanceID: 0}
+  - hexPreviewPrefab: {instanceID: 0}
+  - hexCellPreviewPrefab: {instanceID: 0}
+  - cellLabelPrefab: {instanceID: 0}
+  - corruptionMaterial: {fileID: 2100000, guid: e92eeccfccac7e64d9d96ad38657959e, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
