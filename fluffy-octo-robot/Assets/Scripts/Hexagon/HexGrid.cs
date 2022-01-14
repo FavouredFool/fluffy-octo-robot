@@ -67,7 +67,7 @@ public class HexGrid : NetworkBehaviour
     public void ReformWorld()
     {
         // send cells to Networking
-        PlayersManager.Instance.SerializeAndUpdateHexCells(cells);
+        //PlayersManager.Instance.SerializeAndUpdateHexCells(cells);
     }
 
     public HexCell CreateCell(int x, int z)

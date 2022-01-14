@@ -1,12 +1,11 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using TMPro;
 using UnityEngine.UI;
+using Unity.Netcode;
+using UnityEngine.SceneManagement;
 
-public class MenuScript : MonoBehaviour
+public class MenuScript : NetworkBehaviour
 {
     public Text errorText;
 
@@ -16,7 +15,12 @@ public class MenuScript : MonoBehaviour
 
     public void ButtonPlayAsHost()
     {
-        Debug.Log("host game");
+        if (NetworkManager.Singleton.StartHost())
+        {
+            Debug.Log("host game");
+
+            SceneManager.LoadScene(sceneName: "TileScene");
+        }
 
         // Spiel starten und Verbindung bereitstellen
     }
@@ -44,7 +48,7 @@ public class MenuScript : MonoBehaviour
     {
         if (String.IsNullOrEmpty(IP))
         {
-            errormessage = "Bitte das \"IPv4\"-Feld ausfüllen.";
+            errormessage = "Bitte das \"IPv4\"-Feld ausfuellen.";
             return false;
         }
 
