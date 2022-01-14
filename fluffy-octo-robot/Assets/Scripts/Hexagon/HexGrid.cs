@@ -12,6 +12,10 @@ public class HexGrid : NetworkBehaviour
 
     public GameObject playerPrefab;
 
+    public int corruptionDuration;
+
+    public int corruptionDivision;
+
     List<HexCell> cells;
 
     HexCoordinates startCellCoordinates = new HexCoordinates(0, 0);
@@ -20,7 +24,7 @@ public class HexGrid : NetworkBehaviour
 
     List<HexCell> tempCells;
 
-    public int corruptionDuration;
+    
     
 
     private void Start()
@@ -165,25 +169,34 @@ public class HexGrid : NetworkBehaviour
         CreateCellsFromList(PlayersManager.Instance.SerializedHexCells);
     }
 
-    public void CorruptRandomCell()
+    public void CorruptRandomCells()
     {
         HexCell cellToCorrupt = null;
-        int failsaveCounter = 0;
+        int failSaveCounter = 0;
+        int cellCorruptionAmount = Mathf.Max(GetCells().Count / corruptionDivision, 1);
+        int outerLoopCounter = 0;
         do
         {
-            cellToCorrupt = cells[UnityEngine.Random.Range(0, cells.Count - 1)];
-            failsaveCounter++;
-        } while ((cellToCorrupt == GetCell(Player.Instance.activeCellCoordinates) || cellToCorrupt.GetHeight() == 0 || cellToCorrupt == GetCell(startCellCoordinates) || cellToCorrupt.GetRoundsTillCorrupted() >= 0) && failsaveCounter <= 1000);
+            outerLoopCounter++;
+            do
+            {
+                cellToCorrupt = cells[UnityEngine.Random.Range(0, cells.Count - 1)];
+                failSaveCounter++;
+            } while ((cellToCorrupt == GetCell(Player.Instance.activeCellCoordinates) || cellToCorrupt.GetHeight() == 0 || cellToCorrupt == GetCell(startCellCoordinates) || cellToCorrupt.GetRoundsTillCorrupted() >= 0) && failSaveCounter <= 1000);
 
-        if (failsaveCounter > 1000)
-        {
-            cellToCorrupt = null;
-            Debug.LogWarning("Endlosschleife entkommen");
-        }
-        if (cellToCorrupt)
-        {
-            cellToCorrupt.CorruptCell(corruptionDuration);
-        }
+            if (failSaveCounter > 1000)
+            {
+                cellToCorrupt = null;
+                Debug.LogWarning("Endlosschleife entkommen");
+            }
+            if (cellToCorrupt)
+            {
+                cellToCorrupt.CorruptCell(corruptionDuration);
+            }
+
+        } while (outerLoopCounter < cellCorruptionAmount);
+
+        ReformWorld();
 
     }
 

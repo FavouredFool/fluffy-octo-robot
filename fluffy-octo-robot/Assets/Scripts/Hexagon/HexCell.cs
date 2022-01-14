@@ -270,9 +270,6 @@ public class HexCell : MonoBehaviour
         {
             hexGrid.GetCells().Remove(this);
         }
-
-        //Reform World
-        hexGrid.ReformWorld();
     }
 
     public void CorruptCellForRebuild(int corruptionDuration)

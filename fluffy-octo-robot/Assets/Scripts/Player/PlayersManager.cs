@@ -17,9 +17,13 @@ public class PlayersManager : Singelton<PlayersManager> {
     [SerializeField]
     private NetworkList<SerializedNetworkHex> hexCellsSerialized;
 
+    HexGrid hexGrid;
+
     private void Awake()
     {
         DontDestroyOnLoad(this);
+
+        
 
         hexCellsSerialized = new NetworkList<SerializedNetworkHex>();
     }
@@ -57,6 +61,9 @@ public class PlayersManager : Singelton<PlayersManager> {
 
     private void Start() {
 
+        
+
+
         NetworkManager.Singleton.OnClientConnectedCallback += (id) => {
 
             if(IsServer) {
@@ -79,10 +86,13 @@ public class PlayersManager : Singelton<PlayersManager> {
 
     public void SerializeAndUpdateHexCells(List<HexCell> hexCells)
     {
-        HexGrid hexGrid = FindObjectOfType<HexGrid>();
+        hexGrid = FindObjectOfType<HexGrid>();
+
+        
         bool playerActive;
 
         SerializeClearHexCellListServerRpc();
+        Debug.Log(SerializedHexCells.Count);
 
         // Convert to serialized List
         foreach (HexCell activeCell in hexCells)
@@ -97,6 +107,7 @@ public class PlayersManager : Singelton<PlayersManager> {
 
         UpdateGridVersionServerRpc();
         Debug.Log("Should Update Grid");
+        Debug.Log(SerializedHexCells.Count);
     }
 
     public void UpdateGameState(GameState newGamestate)

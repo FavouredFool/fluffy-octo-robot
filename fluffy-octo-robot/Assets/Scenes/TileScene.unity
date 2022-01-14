@@ -1355,6 +1355,14 @@ PrefabInstance:
       value: HexGrid
       objectReference: {fileID: 0}
     - target: {fileID: 1419833093248718662, guid: 1d76812737c807846b5894124d5ce617, type: 3}
+      propertyPath: size
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1419833093248718662, guid: 1d76812737c807846b5894124d5ce617, type: 3}
+      propertyPath: corruptionDivision
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 1419833093248718662, guid: 1d76812737c807846b5894124d5ce617, type: 3}
       propertyPath: corruptionDuration
       value: 2
       objectReference: {fileID: 0}
