@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Unity.Netcode;
 using UnityEngine.SceneManagement;
+using Unity.Netcode.Transports.UNET;
 
 public class MenuScript : NetworkBehaviour
 {
@@ -21,22 +22,21 @@ public class MenuScript : NetworkBehaviour
 
             SceneManager.LoadScene(sceneName: "TileScene");
         }
-
-        // Spiel starten und Verbindung bereitstellen
     }
 
     public void ButtonSearchForHost()
     {
-        Debug.Log("search for host");
-
         if (OnValidateIPv4())
         {
+            NetworkManager.Singleton.GetComponent<UNetTransport>().ConnectAddress = IP;
+
             // Versuchen eine Verbindung aufzubauen
+            if (NetworkManager.Singleton.StartClient()) {
+                Debug.Log("search for host");
+            }
         }
 
         errorText.text = errormessage;
-
-
     }
 
     public void GetIPInput(string IP)
@@ -46,6 +46,8 @@ public class MenuScript : NetworkBehaviour
 
     public bool OnValidateIPv4()
     {
+        Debug.Log(IP);
+
         if (String.IsNullOrEmpty(IP))
         {
             errormessage = "Bitte das \"IPv4\"-Feld ausfuellen.";
