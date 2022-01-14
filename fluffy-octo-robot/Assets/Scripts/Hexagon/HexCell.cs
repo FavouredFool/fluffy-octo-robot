@@ -31,6 +31,8 @@ public class HexCell : MonoBehaviour
     Canvas gridCanvas;
     TMP_Text label;
 
+    int roundsTillCorrupted = -1;
+
 
     protected void Awake()
     {
@@ -141,74 +143,6 @@ public class HexCell : MonoBehaviour
     }
 
 
-    /*
-    void UpdatePropagating()
-    {
-        if (height == 0 && propagating)
-        {
-            propagating = false;
-            hexCellPreviewObj = Instantiate(hexCellPreviewPrefab, transform.position + new Vector3(0f, height * HexMetrics.hexHeight, 0f), Quaternion.identity, transform);
-
-            // Update surrounding HexCells -> Remove Hexcells
-            foreach (HexCoordinates activeCoordinates in GenerateCellCoordinatesInRadius(1))
-            {
-                HexCell activeCell = hexGrid.GetCell(activeCoordinates);
-                
-                if (activeCell && !activeCell.GetPropagating())
-                {
-
-                    // Cell exists and isnt propagating -> Check if it has other neighbours
-                    bool neighbourFound = false;
-                    
-                    foreach (HexCoordinates neighbourCoordinates in activeCell.GenerateCellCoordinatesInRadius(1))
-                    {
-                        HexCell neighboursNeighbour = hexGrid.GetCell(neighbourCoordinates);
-
-                        if (neighboursNeighbour && neighboursNeighbour != activeCell && neighboursNeighbour != this && neighboursNeighbour.GetPropagating())
-                        {
-                            neighbourFound = true;
-                            //Debug.Log(activeCell.coordinates);
-                            break;
-                        }
-                    }
-
-                    if (!neighbourFound)
-                    {
-                        // Wichtig, beim Destroyed von HexCells, diese auch aus der Liste l�schen
-                        hexGrid.GetCells().Remove(activeCell);
-                        Destroy(activeCell.gameObject);
-                        hexGrid.RemoveCell(activeCell);
-                        
-                    }
-                }
-            }
-
-
-        } else if (height != 0 && !propagating)
-        {
-            propagating = true;
-
-            Destroy(hexCellPreviewObj);
-            hexCellPreviewObj = null;
-
-            // Update surrounding HexCells -> Add new HexCells
-            foreach(HexCoordinates activeCoordinates in GenerateCellCoordinatesInRadius(1))
-            {
-                HexCell activeCell = hexGrid.GetCell(activeCoordinates);
-                if (!activeCell)
-                {
-                    // Cell doesnt exist yet -> use Coordinates to create new Cell at position
-                    Vector3 offsetCoordinates = HexCoordinates.ToOffsetCoordinates(activeCoordinates);
-
-                    hexGrid.CreateCell((int)offsetCoordinates.x, (int)offsetCoordinates.z);
-
-                }
-            }
-        }
-    }
-
-    */
-
     public IEnumerable GenerateCellCoordinatesInRadius(int radius)
     {
         // Step 1: Find all surrounding Hexes
@@ -316,6 +250,29 @@ public class HexCell : MonoBehaviour
         return false;
     }
 
+    public void CorruptCell(int corruptionDuration)
+    {
+        // Redraw Tile-Color / Change Material
+        roundsTillCorrupted = corruptionDuration;
+
+        if (roundsTillCorrupted == 0)
+        {
+            hexGrid.GetCells().Remove(this);
+        }
+
+        //Reform World
+        hexGrid.ReformWorld();
+    }
+
+    public void CorruptCellForRebuild(int corruptionDuration)
+    {
+       
+        roundsTillCorrupted = corruptionDuration;
+
+        // Redraw Tile-Color / Change Material
+
+    }
+
     public int GetHeight()
     {
         return height;
@@ -330,4 +287,79 @@ public class HexCell : MonoBehaviour
         // Change CanvasPosition
         gridCanvas.transform.localPosition = new Vector3(0f, (newHeight - 1/2f) * HexMetrics.hexHeight, 0f);
     }
+
+    public int GetRoundsTillCorrupted()
+    {
+        return roundsTillCorrupted;
+    }
 }
+
+
+
+/*
+void UpdatePropagating()
+{
+    if (height == 0 && propagating)
+    {
+        propagating = false;
+        hexCellPreviewObj = Instantiate(hexCellPreviewPrefab, transform.position + new Vector3(0f, height * HexMetrics.hexHeight, 0f), Quaternion.identity, transform);
+
+        // Update surrounding HexCells -> Remove Hexcells
+        foreach (HexCoordinates activeCoordinates in GenerateCellCoordinatesInRadius(1))
+        {
+            HexCell activeCell = hexGrid.GetCell(activeCoordinates);
+
+            if (activeCell && !activeCell.GetPropagating())
+            {
+
+                // Cell exists and isnt propagating -> Check if it has other neighbours
+                bool neighbourFound = false;
+
+                foreach (HexCoordinates neighbourCoordinates in activeCell.GenerateCellCoordinatesInRadius(1))
+                {
+                    HexCell neighboursNeighbour = hexGrid.GetCell(neighbourCoordinates);
+
+                    if (neighboursNeighbour && neighboursNeighbour != activeCell && neighboursNeighbour != this && neighboursNeighbour.GetPropagating())
+                    {
+                        neighbourFound = true;
+                        //Debug.Log(activeCell.coordinates);
+                        break;
+                    }
+                }
+
+                if (!neighbourFound)
+                {
+                    // Wichtig, beim Destroyed von HexCells, diese auch aus der Liste l�schen
+                    hexGrid.GetCells().Remove(activeCell);
+                    Destroy(activeCell.gameObject);
+                    hexGrid.RemoveCell(activeCell);
+
+                }
+            }
+        }
+
+
+    } else if (height != 0 && !propagating)
+    {
+        propagating = true;
+
+        Destroy(hexCellPreviewObj);
+        hexCellPreviewObj = null;
+
+        // Update surrounding HexCells -> Add new HexCells
+        foreach(HexCoordinates activeCoordinates in GenerateCellCoordinatesInRadius(1))
+        {
+            HexCell activeCell = hexGrid.GetCell(activeCoordinates);
+            if (!activeCell)
+            {
+                // Cell doesnt exist yet -> use Coordinates to create new Cell at position
+                Vector3 offsetCoordinates = HexCoordinates.ToOffsetCoordinates(activeCoordinates);
+
+                hexGrid.CreateCell((int)offsetCoordinates.x, (int)offsetCoordinates.z);
+
+            }
+        }
+    }
+}
+
+*/

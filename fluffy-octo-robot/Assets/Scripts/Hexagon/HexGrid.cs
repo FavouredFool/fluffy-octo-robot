@@ -10,6 +10,8 @@ public class HexGrid : NetworkBehaviour
 
     public HexCell cellPrefab;
 
+    public GameObject playerPrefab;
+
     List<HexCell> cells;
 
     HexCoordinates startCellCoordinates = new HexCoordinates(0, 0);
@@ -18,7 +20,8 @@ public class HexGrid : NetworkBehaviour
 
     List<HexCell> tempCells;
 
-    public GameObject playerPrefab;
+    public int corruptionDuration;
+    
 
 
     protected void Awake()
@@ -115,6 +118,11 @@ public class HexGrid : NetworkBehaviour
         Destroy(cell.gameObject);
     }
 
+    public void RemoveCellFromList(HexCell cell)
+    {
+        cells.Remove(cell);
+    }
+
 
     protected int TriangleNumber(int i)
     {
@@ -154,7 +162,30 @@ public class HexGrid : NetworkBehaviour
         CreateCellsFromList(PlayersManager.Instance.SerializedHexCells);
     }
 
-    public void CreateCellsFromList(NetworkList<SerializedNetworkHex> newTileList)
+    public void CorruptRandomCell()
+    {
+        HexCell cellToCorrupt = null;
+        int failsaveCounter = 0;
+        do
+        {
+            cellToCorrupt = cells[UnityEngine.Random.Range(0, cells.Count - 1)];
+            failsaveCounter++;
+        } while ((cellToCorrupt == GetCell(Player.Instance.activeCellCoordinates) || cellToCorrupt.GetHeight() == 0 || cellToCorrupt == GetCell(startCellCoordinates) || cellToCorrupt.GetRoundsTillCorrupted() >= 0) && failsaveCounter <= 1000);
+
+        if (failsaveCounter > 1000)
+        {
+            cellToCorrupt = null;
+            Debug.LogWarning("Endlosschleife entkommen");
+        }
+        if (cellToCorrupt)
+        {
+            cellToCorrupt.CorruptCell(0);
+        }
+
+    }
+
+
+    public void CreateCellsFromList(NetworkList<SerializedNetworkHex> newHexList)
     {
         Debug.Log("HexGrid neu bauen");
 
@@ -170,29 +201,41 @@ public class HexGrid : NetworkBehaviour
 
         gridRadius = float.NegativeInfinity;
 
-        foreach (SerializedNetworkHex newTile in newTileList)
+        foreach (SerializedNetworkHex newHex in newHexList)
         {
             // 0 rausfiltern, da diese Tiles sowieso automatisch bei cell.AddTile() erzeugt werden
-            if (newTile.Height != 0)
+            if (newHex.Height != 0)
             {
                 // Step 2: Build new Cells
-                HexCell cell = CreateCellFromHexCoordinate(new HexCoordinates(newTile.X, newTile.Z));
+                HexCell cell = CreateCellFromHexCoordinate(new HexCoordinates(newHex.X, newHex.Z));
 
-                if (newTile.PlayerActive)
+                if (newHex.PlayerActive)
                 {
-                    Player.Instance.activeCellCoordinates = new HexCoordinates(newTile.X, newTile.Z);
+                    Player.Instance.activeCellCoordinates = new HexCoordinates(newHex.X, newHex.Z);
                 }
 
                 // Step 3: Add Tiles 
-                for (int i = 0; i < newTile.Height; i++)
+                for (int i = 0; i < newHex.Height; i++)
                 {
                     cell.AddTile();
                 }
             }
         }
 
-        // Add Tiles of Height 0
         tempCells = new List<HexCell>(cells);
+
+        // Add Corruption
+        foreach (HexCell activeCell in tempCells)
+        {
+            if (activeCell.GetRoundsTillCorrupted() >= 0)
+            {
+                Debug.Log("test");
+                activeCell.CorruptCellForRebuild(activeCell.GetRoundsTillCorrupted());
+            }
+        }
+
+
+        // Add Tiles of Height 0
         foreach (HexCell activeCell in tempCells)
         {
             foreach (HexCoordinates hexCoordinate in activeCell.GenerateCellCoordinatesInRadius(1))
