@@ -20,10 +20,13 @@ public class HexGrid : NetworkBehaviour
 
     public GameObject playerPrefab;
 
-
-    protected void Awake()
+    private void Start()
     {
         currentGridVersion = PlayersManager.Instance.CurrentGridVersion;
+
+        Debug.Log(PlayersManager.Instance.CurrentGridVersion);
+        Debug.Log(IsHost);
+        Debug.Log(PlayersManager.Instance.SerializedHexCells.Count);
 
         // initiale Capacity bereitstellen
         cells = new(TriangleNumber(size) + TriangleNumber(size - 1) - 2 * TriangleNumber(size / 2));
@@ -67,7 +70,7 @@ public class HexGrid : NetworkBehaviour
     public void ReformWorld()
     {
         // send cells to Networking
-        //PlayersManager.Instance.SerializeAndUpdateHexCells(cells);
+        PlayersManager.Instance.SerializeAndUpdateHexCells(cells);
     }
 
     public HexCell CreateCell(int x, int z)
