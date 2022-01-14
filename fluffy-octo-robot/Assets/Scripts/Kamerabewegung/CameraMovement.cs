@@ -40,15 +40,6 @@ public class CameraMovement : MonoBehaviour
             transform.RotateAround(Vector3.zero, Vector3.up, -cameraRotationSpeed);
         }
 
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            hexGrid.CorruptRandomCell();
-        }
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            hexGrid.ReduceCorruptionTimer();
-        }
-
         if (Vector3.Distance(Vector3.zero, transform.position) != cameraDistance)
         {
             transform.LookAt(hexGrid.transform, Vector3.up);
