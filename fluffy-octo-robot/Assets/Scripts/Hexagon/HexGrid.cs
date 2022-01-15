@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 using System.Collections;
+using static HexCell;
 
 public class HexGrid : NetworkBehaviour
 {
@@ -30,8 +31,6 @@ public class HexGrid : NetworkBehaviour
     public bool blockActions = false;
 
     
-    
-
     private void Start()
     {
         currentGridVersion = PlayersManager.Instance.CurrentGridVersion;
@@ -61,7 +60,7 @@ public class HexGrid : NetworkBehaviour
         {
             for (int i = 0; i<Random.Range(1, 5); i++)
             {
-                activeCell.AddTile();
+                activeCell.AddTileNoReform();
             }
         }
 
@@ -245,21 +244,32 @@ public class HexGrid : NetworkBehaviour
 
         foreach (SerializedNetworkHex newHex in newHexList)
         {
+            
             // 0 rausfiltern, da diese Tiles sowieso automatisch bei cell.AddTile() erzeugt werden
-                // Step 2: Build new Cells
-                HexCell cell = CreateCellFromHexCoordinate(new HexCoordinates(newHex.X, newHex.Z));
-                cell.SetRoundsTillCorrupted(newHex.RoundsTillCorrupted);
+            // Step 2: Build new Cells
+            HexCell cell = CreateCellFromHexCoordinate(new HexCoordinates(newHex.X, newHex.Z));
+            cell.SetRoundsTillCorrupted(newHex.RoundsTillCorrupted);
+            cell.cellBiome = newHex.Biome;
+            
 
-                if (newHex.PlayerActive)
-                {
-                    Player.Instance.activeCellCoordinates = new HexCoordinates(newHex.X, newHex.Z);
-                }
+            if (newHex.PlayerActive)
+            {
+                Player.Instance.activeCellCoordinates = new HexCoordinates(newHex.X, newHex.Z);
+            }
 
-                // Step 3: Add Tiles 
-                for (int i = 0; i < newHex.Height; i++)
+            // Step 3: Add Tiles 
+            for (int i = 0; i < newHex.Height; i++)
+            {
+
+                if (i == newHex.Height-1)
                 {
-                    cell.AddTile();
+                    cell.AddTile(cell.cellBiome);
+                } else
+                {
+                    cell.AddTile(Biome.GROUND);
                 }
+                
+            }
         }
 
         tempCells = new List<HexCell>(cells);
@@ -284,7 +294,6 @@ public class HexGrid : NetworkBehaviour
         // Add Tiles of Height 0
         foreach (HexCell activeCell in tempCells)
         {
-            //Debug.Log("All Cells: " + activeCell.coordinates);
             foreach (HexCoordinates hexCoordinate in activeCell.GenerateCellCoordinatesInRadius(1))
             {
                 HexCell neighbour = GetCell(hexCoordinate);

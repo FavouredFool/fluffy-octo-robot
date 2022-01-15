@@ -30,6 +30,7 @@ public class MouseInteraction : MonoBehaviour
                     if (activeHex)
                     {
                         activeHex.AddTileManually();
+                        
                     }
                 }
 

@@ -6,7 +6,8 @@ using TMPro;
 public class HexCell : MonoBehaviour
 {
 
-    public GameObject hexPrefab;
+    public GameObject[] hexPrefabs;
+
     public GameObject hexPreviewPrefab;
     public GameObject hexCellPreviewPrefab;
 
@@ -35,6 +36,10 @@ public class HexCell : MonoBehaviour
 
     int roundsTillCorrupted = -1;
 
+    public enum Biome { GROUND, HOME, WOOD, STONE }
+
+    public Biome cellBiome = Biome.WOOD;
+
 
     protected void Awake()
     {
@@ -56,19 +61,6 @@ public class HexCell : MonoBehaviour
         DefineLabel();
     }
 
-    /*
-    private void InstantiatePlayer()
-    {
-        Debug.Log("instantiate Player");
-        playerControl = FindObjectOfType<PlayerControl>();
-    }
-
-    private bool CheckIfPlayerIsInstantiated()
-    {
-        return playerControl == null;
-    }
-    */
-
     protected void DefineLabel()
     {
         label = GetComponentInChildren<TMP_Text>();
@@ -76,16 +68,10 @@ public class HexCell : MonoBehaviour
         label.color = Color.black;
     }
 
-    public void AddTile()
+    public void AddTile(Biome biome)
     {
-        if (GetHeight() == 0)
-        {
-            Destroy(hexCellPreviewObj);
-        }
-
         // Tile in Stack auf korrekter Hoehe hinzufuegen
-        hexStack.Push(Instantiate(hexPrefab, transform.position + new Vector3(0f, height * HexMetrics.hexHeight, 0f), Quaternion.identity, transform));
-
+        hexStack.Push(Instantiate(hexPrefabs[(int)biome], transform.position + new Vector3(0f, height * HexMetrics.hexHeight, 0f), Quaternion.identity, transform));
         // Height des Konstrukts erhoehen
         SetHeight(height + 1);
     }
@@ -106,6 +92,31 @@ public class HexCell : MonoBehaviour
         } 
     }
 
+    public void AddTileNoReform()
+    {
+        // Biome wird gesetzt
+        GameObject prefabToPlace;
+
+        if (coordinates.Equals(hexGrid.GetStartCellCoordiantes()))
+        {
+            prefabToPlace = hexPrefabs[1];
+            cellBiome = Biome.HOME;
+        }
+        else
+        {
+            int BiomeNumber = Random.Range(2, hexPrefabs.Length);
+            prefabToPlace = hexPrefabs[BiomeNumber];
+            cellBiome = (Biome)BiomeNumber;
+        }
+
+        // Tile in Stack auf korrekter Hoehe hinzufuegen
+        hexStack.Push(Instantiate(prefabToPlace, transform.position + new Vector3(0f, height * HexMetrics.hexHeight, 0f), Quaternion.identity, transform));
+
+
+        // Height des Konstrukts erhöhen
+        SetHeight(height + 1);
+    }
+
     public void AddTileManually()
     {
         if (actionPoints.GetCurrentActionPoints() == 0)
@@ -113,12 +124,28 @@ public class HexCell : MonoBehaviour
             return;
         }
 
+        // Biome wird gesetzt
+        GameObject prefabToPlace;
+
+        if (coordinates.Equals(hexGrid.GetStartCellCoordiantes()))
+        {
+            prefabToPlace = hexPrefabs[1];
+        } else
+        {
+            int BiomeNumber = Random.Range(2, hexPrefabs.Length);
+            prefabToPlace = hexPrefabs[BiomeNumber];
+            cellBiome = (Biome) BiomeNumber;
+        }
+
+        // Tile in Stack auf korrekter Hoehe hinzufuegen
+        hexStack.Push(Instantiate(prefabToPlace, transform.position + new Vector3(0f, height * HexMetrics.hexHeight, 0f), Quaternion.identity, transform));
+
+
         // Height des Konstrukts erhöhen
         SetHeight(height + 1);
 
         actionPoints.UpdateActionPoints();
 
-        // Reform World
         hexGrid.ReformWorld();
     }
 

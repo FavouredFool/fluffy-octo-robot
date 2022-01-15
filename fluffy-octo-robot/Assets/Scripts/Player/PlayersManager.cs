@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 using System.Collections;
+using static HexCell;
 
 public class PlayersManager : Singelton<PlayersManager> {
 
@@ -25,8 +26,6 @@ public class PlayersManager : Singelton<PlayersManager> {
     private void Awake()
     {
         DontDestroyOnLoad(this);
-
-        
 
         hexCellsSerialized = new NetworkList<SerializedNetworkHex>();
     }
@@ -110,7 +109,7 @@ public class PlayersManager : Singelton<PlayersManager> {
                 else
                     playerActive = false;
 
-                SerializeAndUpdateHexCellsServerRpc(new SerializedNetworkHex(activeCell.coordinates.X, activeCell.coordinates.Z, activeCell.GetHeight(), playerActive, activeCell.GetRoundsTillCorrupted()));
+                SerializeAndUpdateHexCellsServerRpc(new SerializedNetworkHex(activeCell.coordinates.X, activeCell.coordinates.Z, activeCell.GetHeight(), playerActive, activeCell.GetRoundsTillCorrupted(), activeCell.cellBiome));
             }
         }
         UpdateGridVersionServerRpc();
