@@ -25,6 +25,9 @@ public class HexGrid : NetworkBehaviour
 
     List<HexCell> tempCells;
 
+    [HideInInspector]
+    public bool blockActions = false;
+
     
     
 
@@ -74,6 +77,7 @@ public class HexGrid : NetworkBehaviour
     public void ReformWorld()
     {
         // send cells to Networking
+        blockActions = true;
         StartCoroutine(PlayersManager.Instance.SerializeAndUpdateHexCells(cells));
     }
 
@@ -288,6 +292,8 @@ public class HexGrid : NetworkBehaviour
             GetCell(Player.Instance.activeCellCoordinates).CalculatePreviewTilesForHuman(true);
         }
 
+
+        blockActions = false;
         
 
     }

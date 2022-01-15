@@ -29,17 +29,24 @@ public class BattleSystem : NetworkBehaviour
     {
 
         endTurnButton.onClick.AddListener(() => {
-            if (PlayersManager.Instance.CurrentGameState.Equals(GameState.GODTURN)) {
-                PlayerTurn();
-            } else if (PlayersManager.Instance.CurrentGameState.Equals(GameState.HUMANTURN))
+            if (!hexGrid.blockActions)
             {
-                CorruptionTurn();
-            } else if (PlayersManager.Instance.CurrentGameState.Equals(GameState.CORRUPTION))
-            {
-                GodTurn();
-            } else if (PlayersManager.Instance.CurrentGameState.Equals(GameState.START))
-            {
-                GodTurn();
+                if (PlayersManager.Instance.CurrentGameState.Equals(GameState.GODTURN))
+                {
+                    PlayerTurn();
+                }
+                else if (PlayersManager.Instance.CurrentGameState.Equals(GameState.HUMANTURN))
+                {
+                    CorruptionTurn();
+                }
+                else if (PlayersManager.Instance.CurrentGameState.Equals(GameState.CORRUPTION))
+                {
+                    GodTurn();
+                }
+                else if (PlayersManager.Instance.CurrentGameState.Equals(GameState.START))
+                {
+                    GodTurn();
+                }
             }
         });
 
