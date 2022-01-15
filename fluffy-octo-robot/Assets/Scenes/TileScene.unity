@@ -1473,14 +1473,22 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1419833093248718662, guid: 1d76812737c807846b5894124d5ce617, type: 3}
       propertyPath: size
-      value: 15
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1419833093248718662, guid: 1d76812737c807846b5894124d5ce617, type: 3}
       propertyPath: corruptionDivision
-      value: 14
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 1419833093248718662, guid: 1d76812737c807846b5894124d5ce617, type: 3}
       propertyPath: corruptionDuration
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1419833093248718662, guid: 1d76812737c807846b5894124d5ce617, type: 3}
+      propertyPath: corruptionMaxDuration
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1419833093248718662, guid: 1d76812737c807846b5894124d5ce617, type: 3}
+      propertyPath: corruptionMinDuration
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4104382372064449832, guid: 1d76812737c807846b5894124d5ce617, type: 3}

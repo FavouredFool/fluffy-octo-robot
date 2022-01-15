@@ -13,7 +13,8 @@ public class HexGrid : NetworkBehaviour
 
     public GameObject playerPrefab;
 
-    public int corruptionDuration;
+    public int corruptionMinDuration;
+    public int corruptionMaxDuration;
 
     public int corruptionDivision;
 
@@ -58,7 +59,10 @@ public class HexGrid : NetworkBehaviour
 
         foreach (HexCell activeCell in startCells)
         {
-            activeCell.AddTile();
+            for (int i = 0; i<Random.Range(1, 5); i++)
+            {
+                activeCell.AddTile();
+            }
         }
 
         ReformWorld();
@@ -167,21 +171,31 @@ public class HexGrid : NetworkBehaviour
 
     public void InstantiateTiles()
     {
-        StartCoroutine(CreateCellsFromList(PlayersManager.Instance.SerializedHexCells));
+        CreateCellsFromList(PlayersManager.Instance.SerializedHexCells);
     }
 
     public void CorruptRandomCells()
     {
         HexCell cellToCorrupt = null;
         int failSaveCounter = 0;
-        int cellCorruptionAmount = Mathf.Max(GetCells().Count / corruptionDivision, 1);
+
+        int cellCount = 0;
+        foreach (HexCell activeCell in cells)
+        {
+            if (activeCell.GetHeight() > 0)
+            {
+                cellCount++;
+            }
+        }
+
+        int cellCorruptionAmount = Mathf.Max(cellCount / corruptionDivision, 1);
         int outerLoopCounter = 0;
         do
         {
             outerLoopCounter++;
             do
             {
-                cellToCorrupt = cells[UnityEngine.Random.Range(0, cells.Count - 1)];
+                cellToCorrupt = cells[Random.Range(0, cells.Count - 1)];
                 failSaveCounter++;
             } while ((cellToCorrupt == GetCell(Player.Instance.activeCellCoordinates) || cellToCorrupt.GetHeight() == 0 || cellToCorrupt == GetCell(startCellCoordinates) || cellToCorrupt.GetRoundsTillCorrupted() >= 0) && failSaveCounter <= 1000);
 
@@ -192,7 +206,7 @@ public class HexGrid : NetworkBehaviour
             }
             if (cellToCorrupt)
             {
-                cellToCorrupt.CorruptCell(corruptionDuration);
+                cellToCorrupt.CorruptCell(Random.Range(corruptionMinDuration, corruptionMaxDuration+1));
             }
 
         } while (outerLoopCounter < cellCorruptionAmount);
@@ -214,7 +228,7 @@ public class HexGrid : NetworkBehaviour
     }
 
 
-    public IEnumerator CreateCellsFromList(NetworkList<SerializedNetworkHex> newHexList)
+    public void CreateCellsFromList(NetworkList<SerializedNetworkHex> newHexList)
     {
         // Step 1: Delete entire grid and clear List
 
@@ -225,7 +239,6 @@ public class HexGrid : NetworkBehaviour
         foreach (Transform child in transform) {
             Destroy(child.gameObject);
         }
-        yield return new WaitForFixedUpdate();
 
         gridRadius = float.NegativeInfinity;
 
