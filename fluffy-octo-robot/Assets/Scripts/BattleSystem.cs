@@ -31,27 +31,57 @@ public class BattleSystem : NetworkBehaviour
         endTurnButton.onClick.AddListener(() => {
             if (!hexGrid.blockActions)
             {
-                if (PlayersManager.Instance.CurrentGameState.Equals(GameState.GODTURN))
+                switch (PlayersManager.Instance.CurrentGameState)
                 {
-                    PlayerTurn();
-                }
-                else if (PlayersManager.Instance.CurrentGameState.Equals(GameState.HUMANTURN))
-                {
-                    CorruptionTurn();
-                }
-                else if (PlayersManager.Instance.CurrentGameState.Equals(GameState.CORRUPTION))
-                {
-                    GodTurn();
-                }
-                else if (PlayersManager.Instance.CurrentGameState.Equals(GameState.START))
-                {
-                    GodTurn();
+                    case GameState.GODTURN:
+                        PlayerTurn();
+                        break;
+
+                    case GameState.HUMANTURN:
+                        CorruptionTurn();
+                        break;
+
+                    case GameState.START:
+                        GodTurn();
+                        break;
+
+                    case GameState.CORRUPTION:
+                        GodTurn();
+                        break;
+                    default:
+                        Debug.LogWarning("FEHLER");
+                        break;
                 }
             }
         });
 
 
         StartGame();
+    }
+
+    protected void Update()
+    {
+        switch(PlayersManager.Instance.CurrentGameState)
+        {
+            case GameState.GODTURN:
+                endTurnLabel.text = "End God-Turn";
+                break;
+
+            case GameState.HUMANTURN:
+                endTurnLabel.text = "End Human-Turn";
+                break;
+
+            case GameState.START:
+                endTurnLabel.text = "Start Game";
+                break;
+
+            case GameState.CORRUPTION:
+                endTurnLabel.text = "End Corruption-Turn";
+                break;
+            default:
+                endTurnLabel.text = "FEHLER";
+                break;
+        }
     }
 
     private void PlayerTurn()
