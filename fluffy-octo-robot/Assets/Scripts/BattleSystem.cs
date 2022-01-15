@@ -71,8 +71,9 @@ public class BattleSystem : NetworkBehaviour
     {
         PlayersManager.Instance.UpdateGameStateServerRpc(GameState.CORRUPTION);
 
-        //hexGrid.ReduceCorruptionTimer();
-        //hexGrid.CorruptRandomCells();
+        hexGrid.ReduceCorruptionTimer();
+        hexGrid.CorruptRandomCells();
+        hexGrid.ReformWorld();
 
         endTurnLabel.text = "End Corruption-Turn";
 

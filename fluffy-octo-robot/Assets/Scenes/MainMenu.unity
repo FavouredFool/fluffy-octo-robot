@@ -153,9 +153,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b84c2d8dfe509a34fb59e2b81f8e1319, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MessageBufferSize: 5120
+  MessageBufferSize: 20480
   MaxConnections: 2
-  MaxSentMessageQueueSize: 128
+  MaxSentMessageQueueSize: 512
   ConnectAddress: 127.0.0.1
   ConnectPort: 7777
   ServerListenPort: 7777
@@ -178,13 +178,8 @@ MonoBehaviour:
   NetworkConfig:
     ProtocolVersion: 0
     NetworkTransport: {fileID: 235350343}
-    PlayerPrefab: {fileID: 8867970884611671887, guid: ca4f874fb99b3b64baff48588a9ea6e6, type: 3}
-    NetworkPrefabs:
-    - Override: 0
-      Prefab: {fileID: 8867970884611671887, guid: ca4f874fb99b3b64baff48588a9ea6e6, type: 3}
-      SourcePrefabToOverride: {fileID: 0}
-      SourceHashToOverride: 0
-      OverridingTargetPrefab: {fileID: 0}
+    PlayerPrefab: {fileID: 0}
+    NetworkPrefabs: []
     TickRate: 30
     ClientConnectionBufferTimeout: 10
     ConnectionApproval: 0

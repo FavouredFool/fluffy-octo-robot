@@ -27,13 +27,8 @@ public struct SerializedNetworkHex : INetworkSerializable, IEquatable<Serialized
         serializer.SerializeValue(ref RoundsTillCorrupted);
     }
 
-    public void NetworkSerialize<T>()
-    {
-
-    }
-
     public bool Equals(SerializedNetworkHex other)
     {
-        return X == other.X && Height == other.Height && Z == other.Z && PlayerActive == other.PlayerActive && RoundsTillCorrupted == other.RoundsTillCorrupted;
+        return X == other.X && Height == other.Height && Z == other.Z;
     }
 }

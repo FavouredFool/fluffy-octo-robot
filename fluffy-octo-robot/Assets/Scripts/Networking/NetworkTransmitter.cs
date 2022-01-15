@@ -8,7 +8,7 @@ public class NetworkTransmitter : NetworkBehaviour
 {
 
     private static readonly string LOG_PREFIX = "[" + typeof(NetworkTransmitter).Name + "]: ";
-    //public const int RELIABLE_SEQUENCED_CHANNEL = MyNetworkManager.CHANNEL_RELIABLE_SEQUENCED;
+    //public const int RELIABLE_SEQUENCED_CHANNEL = NetworkManager.Singleton.CHANNEL_RELIABLE_SEQUENCED;
     private static int defaultBufferSize = 1024; //max ethernet MTU is ~1400
 
     private class TransmissionData

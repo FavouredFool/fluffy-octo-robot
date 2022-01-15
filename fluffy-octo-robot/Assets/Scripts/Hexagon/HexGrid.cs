@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
+using System.Collections;
 
 public class HexGrid : NetworkBehaviour
 {
@@ -30,10 +31,6 @@ public class HexGrid : NetworkBehaviour
     private void Start()
     {
         currentGridVersion = PlayersManager.Instance.CurrentGridVersion;
-
-        Debug.Log(PlayersManager.Instance.CurrentGridVersion);
-        Debug.Log(IsHost);
-        Debug.Log(PlayersManager.Instance.SerializedHexCells.Count);
 
         // initiale Capacity bereitstellen
         cells = new(TriangleNumber(size) + TriangleNumber(size - 1) - 2 * TriangleNumber(size / 2));
@@ -77,7 +74,7 @@ public class HexGrid : NetworkBehaviour
     public void ReformWorld()
     {
         // send cells to Networking
-        PlayersManager.Instance.SerializeAndUpdateHexCells(cells);
+        StartCoroutine(PlayersManager.Instance.SerializeAndUpdateHexCells(cells));
     }
 
     public HexCell CreateCell(int x, int z)
@@ -166,7 +163,7 @@ public class HexGrid : NetworkBehaviour
 
     public void InstantiateTiles()
     {
-        CreateCellsFromList(PlayersManager.Instance.SerializedHexCells);
+        StartCoroutine(CreateCellsFromList(PlayersManager.Instance.SerializedHexCells));
     }
 
     public void CorruptRandomCells()
@@ -196,7 +193,7 @@ public class HexGrid : NetworkBehaviour
 
         } while (outerLoopCounter < cellCorruptionAmount);
 
-        ReformWorld();
+        
 
     }
 
@@ -210,32 +207,28 @@ public class HexGrid : NetworkBehaviour
                 activeCell.CorruptCellWithoutRebuild(activeCell.GetRoundsTillCorrupted() - 1);
             }
         }
-
-        ReformWorld();
     }
 
 
-    public void CreateCellsFromList(NetworkList<SerializedNetworkHex> newHexList)
+    public IEnumerator CreateCellsFromList(NetworkList<SerializedNetworkHex> newHexList)
     {
-        Debug.Log("HexGrid neu bauen");
-
         // Step 1: Delete entire grid and clear List
+
+        // Clear List
+        GetCells().Clear();
 
         // Delete Grid
         foreach (Transform child in transform) {
             Destroy(child.gameObject);
         }
-
-        // Clear List
-        GetCells().Clear();
+        yield return new WaitForFixedUpdate();
 
         gridRadius = float.NegativeInfinity;
+
 
         foreach (SerializedNetworkHex newHex in newHexList)
         {
             // 0 rausfiltern, da diese Tiles sowieso automatisch bei cell.AddTile() erzeugt werden
-            if (newHex.Height != 0)
-            {
                 // Step 2: Build new Cells
                 HexCell cell = CreateCellFromHexCoordinate(new HexCoordinates(newHex.X, newHex.Z));
                 cell.SetRoundsTillCorrupted(newHex.RoundsTillCorrupted);
@@ -250,7 +243,6 @@ public class HexGrid : NetworkBehaviour
                 {
                     cell.AddTile();
                 }
-            }
         }
 
         tempCells = new List<HexCell>(cells);
@@ -269,10 +261,13 @@ public class HexGrid : NetworkBehaviour
             
         }
 
+        tempCells = new List<HexCell>(cells);
+
 
         // Add Tiles of Height 0
         foreach (HexCell activeCell in tempCells)
         {
+            //Debug.Log("All Cells: " + activeCell.coordinates);
             foreach (HexCoordinates hexCoordinate in activeCell.GenerateCellCoordinatesInRadius(1))
             {
                 HexCell neighbour = GetCell(hexCoordinate);
@@ -291,7 +286,10 @@ public class HexGrid : NetworkBehaviour
         {
             // calculate preview Tiles
             GetCell(Player.Instance.activeCellCoordinates).CalculatePreviewTilesForHuman(true);
-        } 
+        }
+
+        
+
     }
 
     HexCell CreateCellFromHexCoordinate(HexCoordinates hexCoordinate)

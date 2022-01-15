@@ -2,6 +2,7 @@ using FluffyRobot.Core.Singeltons;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using System.Collections;
 
 public class PlayersManager : Singelton<PlayersManager> {
 
@@ -18,6 +19,8 @@ public class PlayersManager : Singelton<PlayersManager> {
     private NetworkList<SerializedNetworkHex> hexCellsSerialized;
 
     HexGrid hexGrid;
+
+    private int bufferOverloadPrevention = 5;
 
     private void Awake()
     {
@@ -84,7 +87,7 @@ public class PlayersManager : Singelton<PlayersManager> {
         };
     }
 
-    public void SerializeAndUpdateHexCells(List<HexCell> hexCells)
+    public IEnumerator SerializeAndUpdateHexCells(List<HexCell> hexCells)
     {
         hexGrid = FindObjectOfType<HexGrid>();
 
@@ -92,22 +95,28 @@ public class PlayersManager : Singelton<PlayersManager> {
         bool playerActive;
 
         SerializeClearHexCellListServerRpc();
-        Debug.Log(SerializedHexCells.Count);
 
+        int counter = 0;
         // Convert to serialized List
         foreach (HexCell activeCell in hexCells)
         {
-            if (hexGrid.GetCell(Player.Instance.activeCellCoordinates) == activeCell)
-                playerActive = true;
-            else
-                playerActive = false;
+            // Hexes that dont hold tiles can be recreated locally
+            if (activeCell.GetHeight() > 0)
+            {
+                counter++;
+                if (counter % bufferOverloadPrevention == 0)
+                {
+                    yield return new WaitForEndOfFrame();
+                }
+                if (hexGrid.GetCell(Player.Instance.activeCellCoordinates) == activeCell)
+                    playerActive = true;
+                else
+                    playerActive = false;
 
-            SerializeAndUpdateHexCellsServerRpc(new SerializedNetworkHex(activeCell.coordinates.X, activeCell.coordinates.Z, activeCell.GetHeight(), playerActive, activeCell.GetRoundsTillCorrupted()));
+                SerializeAndUpdateHexCellsServerRpc(new SerializedNetworkHex(activeCell.coordinates.X, activeCell.coordinates.Z, activeCell.GetHeight(), playerActive, activeCell.GetRoundsTillCorrupted()));
+            }
         }
-
         UpdateGridVersionServerRpc();
-        Debug.Log("Should Update Grid");
-        Debug.Log(SerializedHexCells.Count);
     }
 
     public void UpdateGameState(GameState newGamestate)

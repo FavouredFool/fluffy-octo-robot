@@ -263,6 +263,9 @@ public class HexCell : MonoBehaviour
 
     public void CorruptCell(int corruptionDuration)
     {
+
+        Debug.Log("Corrupt A Cell");
+
         // Redraw Tile-Color / Change Material
         roundsTillCorrupted = corruptionDuration;
 

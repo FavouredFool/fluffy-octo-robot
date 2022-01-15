@@ -1270,7 +1270,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1979862272
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1473,7 +1473,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1419833093248718662, guid: 1d76812737c807846b5894124d5ce617, type: 3}
       propertyPath: size
-      value: 3
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 1419833093248718662, guid: 1d76812737c807846b5894124d5ce617, type: 3}
       propertyPath: corruptionDivision
