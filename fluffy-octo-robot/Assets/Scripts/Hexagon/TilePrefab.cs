@@ -9,8 +9,7 @@ public class TilePrefab : MonoBehaviour
         transform.localScale = new Vector3(HexMetrics.outerRadius, HexMetrics.outerRadius, HexMetrics.outerRadius);
 
         // Create random rotation that is always the same based on position
-        Debug.Log((int)(transform.position.x * transform.position.z));
-        transform.localRotation = Quaternion.Euler(new Vector3(0, ((int)(transform.position.x * transform.position.z) % 5) * 60, 0));
+        transform.localRotation = Quaternion.Euler(new Vector3(0, ((int)(transform.position.x * transform.position.z * 2048) % 5) * 60, 0));
 
         // Calculate Rotation based on Position
     }

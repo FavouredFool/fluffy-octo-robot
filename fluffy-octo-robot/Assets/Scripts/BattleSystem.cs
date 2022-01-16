@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using ObserverPattern;
 using Unity.Netcode;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public enum GameState
 {
@@ -78,10 +79,20 @@ public class BattleSystem : NetworkBehaviour
             case GameState.CORRUPTION:
                 endTurnLabel.text = "End Corruption-Turn";
                 break;
+
+            case GameState.WON:
+                GameWon();
+                break;
+
+            case GameState.LOST:
+                GameLost();
+                break;
+
             default:
                 endTurnLabel.text = "FEHLER";
                 break;
         }
+
     }
 
     private void PlayerTurn()
@@ -122,5 +133,17 @@ public class BattleSystem : NetworkBehaviour
 
         endTurnLabel.text = "Start Game";
 
+    }
+
+    private void GameWon()
+    {
+        Debug.Log("SPIEL GEWONNEN!");
+        SceneManager.LoadScene(sceneName: "MainMenu");
+    }
+
+    private void GameLost()
+    {
+        Debug.Log("SPIEL VERLOREN!");
+        SceneManager.LoadScene(sceneName: "MainMenu");
     }
 }

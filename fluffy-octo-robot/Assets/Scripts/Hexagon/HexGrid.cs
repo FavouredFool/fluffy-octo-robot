@@ -3,6 +3,7 @@ using UnityEngine;
 using Unity.Netcode;
 using System.Collections;
 using static HexCell;
+using UnityEngine.SceneManagement;
 
 public class HexGrid : NetworkBehaviour
 {
@@ -13,6 +14,8 @@ public class HexGrid : NetworkBehaviour
     public HexCell cellPrefab;
 
     public GameObject playerPrefab;
+
+    public int startTileCorruptionDuration;
 
     public int corruptionMinDuration;
     public int corruptionMaxDuration;
@@ -29,7 +32,6 @@ public class HexGrid : NetworkBehaviour
 
     [HideInInspector]
     public bool blockActions = false;
-
     
     private void Start()
     {
@@ -63,6 +65,9 @@ public class HexGrid : NetworkBehaviour
                 activeCell.AddTileNoReform();
             }
         }
+
+        // Corrupt HomeHex
+        GetCell(startCellCoordinates).CorruptCell(startTileCorruptionDuration);
 
         ReformWorld();
     }
@@ -304,20 +309,31 @@ public class HexGrid : NetworkBehaviour
             }
         }
 
-        // Place Player
-        GetCell(Player.Instance.activeCellCoordinates).PlacePlayerForRebuild();
-
-        // Calculate Preview Tiles
-        if (PlayersManager.Instance.CurrentGameState == GameState.HUMANTURN)
+        if (GetCell(startCellCoordinates).GetHeight() <= 0)
         {
-            // calculate preview Tiles
-            GetCell(Player.Instance.activeCellCoordinates).CalculatePreviewTilesForHuman(true);
+            // Game Over
+            PlayersManager.Instance.UpdateGameStateServerRpc(GameState.LOST);
         }
 
+        if (GetCell(Player.Instance.activeCellCoordinates) && GetCell(Player.Instance.activeCellCoordinates).GetHeight() > 0)
+        {
+            // Place Player
+            GetCell(Player.Instance.activeCellCoordinates).PlacePlayerForRebuild();
+
+            // Calculate Preview Tiles
+            if (PlayersManager.Instance.CurrentGameState == GameState.HUMANTURN)
+            {
+                // calculate preview Tiles
+                GetCell(Player.Instance.activeCellCoordinates).CalculatePreviewTilesForHuman(true);
+            }
+        } else
+        {
+            // Game Over
+            PlayersManager.Instance.UpdateGameStateServerRpc(GameState.LOST);
+        }
 
         blockActions = false;
         
-
     }
 
     HexCell CreateCellFromHexCoordinate(HexCoordinates hexCoordinate)
