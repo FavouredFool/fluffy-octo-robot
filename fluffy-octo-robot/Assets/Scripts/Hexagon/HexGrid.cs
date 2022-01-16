@@ -9,7 +9,9 @@ public class HexGrid : NetworkBehaviour
 {
     private int currentGridVersion;
 
-    public int size = 5;
+    public int radialSize = 2;
+
+    public int radialMaxSize = 5;
 
     public HexCell cellPrefab;
 
@@ -32,13 +34,16 @@ public class HexGrid : NetworkBehaviour
 
     [HideInInspector]
     public bool blockActions = false;
+
+    List<HexCoordinates> worldBorderCells;
     
     private void Start()
     {
+        worldBorderCells = new();
         currentGridVersion = PlayersManager.Instance.CurrentGridVersion;
 
         // initiale Capacity bereitstellen
-        cells = new(TriangleNumber(size) + TriangleNumber(size - 1) - 2 * TriangleNumber(size / 2));
+        cells = new(TriangleNumber(radialSize) + TriangleNumber(radialSize - 1) - 2 * TriangleNumber(radialSize / 2));
 
         // Terraingeneration
         HexCell startCell = CreateCellFromHexCoordinate(startCellCoordinates);
@@ -46,7 +51,7 @@ public class HexGrid : NetworkBehaviour
         Instantiate(playerPrefab);
         Player.Instance.activeCellCoordinates = startCellCoordinates;
 
-        foreach (HexCoordinates coordinates in startCell.GenerateCellCoordinatesInRadius(size / 2))
+        foreach (HexCoordinates coordinates in startCell.GenerateCellCoordinatesInRadius(radialSize))
         {
             if (!coordinates.Equals(startCellCoordinates))
             {
@@ -56,15 +61,49 @@ public class HexGrid : NetworkBehaviour
             }
         }
 
+        // Define World-Borders
+        foreach (HexCoordinates coordinates in GetCell(startCellCoordinates).GenerateCellCoordinatesOnBorderOfRadius(radialMaxSize+1))
+        {
+            worldBorderCells.Add(coordinates);
+        }
+
         List<HexCell> startCells = new List<HexCell>(cells);
 
+        // Generate StartIsland
         foreach (HexCell activeCell in startCells)
         {
-            for (int i = 0; i<Random.Range(1, 5); i++)
+            for (int i = 0; i<Random.Range(4, 8); i++)
             {
                 activeCell.AddTileNoReform();
             }
         }
+
+        // GenerateGoalTerrain
+        GenerateGoalTerrain();
+
+        // Generate Surrounding Terrain
+        foreach (HexCoordinates activeCoordinates in GetCell(startCellCoordinates).GenerateCellCoordinatesInRadius(radialMaxSize))
+        {
+            HexCell activeCell = GetCell(activeCoordinates);
+
+            if (!(activeCell && activeCell.GetHeight() > 0))
+            {
+                if (Random.Range(0, 6) == 0)
+                {
+
+                    if (!activeCell)
+                    {
+                        activeCell = CreateCellFromHexCoordinate(activeCoordinates);
+                    }
+
+                    for (int i = 0; i < Random.Range(3, 8); i++)
+                    {
+                        activeCell.AddTileNoReform();
+                    }
+                }
+            }
+        }
+        
 
         // Corrupt HomeHex
         GetCell(startCellCoordinates).CorruptCell(startTileCorruptionDuration);
@@ -301,11 +340,15 @@ public class HexGrid : NetworkBehaviour
         {
             foreach (HexCoordinates hexCoordinate in activeCell.GenerateCellCoordinatesInRadius(1))
             {
-                HexCell neighbour = GetCell(hexCoordinate);
-                if (!neighbour)
+                if (!worldBorderCells.Contains(hexCoordinate))
                 {
-                    CreateCellFromHexCoordinate(hexCoordinate);
+                    HexCell neighbour = GetCell(hexCoordinate);
+                    if (!neighbour)
+                    {
+                        CreateCellFromHexCoordinate(hexCoordinate);
+                    }
                 }
+                
             }
         }
 
@@ -346,5 +389,76 @@ public class HexGrid : NetworkBehaviour
     public HexCoordinates GetStartCellCoordiantes()
     {
         return startCellCoordinates;
+    }
+
+    public void GenerateGoalTerrain()
+    {
+        // Generate Goal-Terrain
+
+        List<HexCoordinates> ringCoordinates = new();
+        HexCell cellToUse;
+        HexCoordinates cellCoordinatesToUse;
+
+        // Tiefes Tile
+        foreach (HexCoordinates activeCoordinates in GetCell(startCellCoordinates).GenerateCellCoordinatesOnBorderOfRadius(radialMaxSize - 1))
+        {
+            ringCoordinates.Add(activeCoordinates);
+        }
+        cellCoordinatesToUse = ringCoordinates[Random.Range(0, ringCoordinates.Count)];
+        cellToUse = GetCell(cellCoordinatesToUse);
+
+        if (!cellToUse)
+        {
+            cellToUse = CreateCellFromHexCoordinate(cellCoordinatesToUse);
+        }
+
+        for (int i = 0; i < Random.Range(1, 3); i++)
+        {
+            cellToUse.AddTileNoReform();
+            cellToUse.cellBiome = Biome.HOME;
+        }
+
+        ringCoordinates.Clear();
+
+        // Hohes fernes Tile
+
+        foreach (HexCoordinates activeCoordinates in GetCell(startCellCoordinates).GenerateCellCoordinatesOnBorderOfRadius(radialMaxSize))
+        {
+            ringCoordinates.Add(activeCoordinates);
+        }
+        cellCoordinatesToUse = ringCoordinates[Random.Range(0, ringCoordinates.Count)];
+        cellToUse = GetCell(cellCoordinatesToUse);
+
+        if (!cellToUse)
+        {
+            cellToUse = CreateCellFromHexCoordinate(cellCoordinatesToUse);
+        }
+
+        for (int i = 0; i < Random.Range(10, 12); i++)
+        {
+            cellToUse.AddTileNoReform();
+            cellToUse.cellBiome = Biome.HOME;
+        }
+
+        ringCoordinates.Clear();
+
+        // Hohes nahes Tile
+        foreach (HexCoordinates activeCoordinates in GetCell(startCellCoordinates).GenerateCellCoordinatesOnBorderOfRadius(radialMaxSize - 2))
+        {
+            ringCoordinates.Add(activeCoordinates);
+        }
+        cellCoordinatesToUse = ringCoordinates[Random.Range(0, ringCoordinates.Count)];
+        cellToUse = GetCell(cellCoordinatesToUse);
+
+        if (!cellToUse)
+        {
+            cellToUse = CreateCellFromHexCoordinate(cellCoordinatesToUse);
+        }
+
+        for (int i = 0; i < Random.Range(7, 10); i++)
+        {
+            cellToUse.AddTileNoReform();
+            cellToUse.cellBiome = Biome.HOME;
+        }
     }
 }

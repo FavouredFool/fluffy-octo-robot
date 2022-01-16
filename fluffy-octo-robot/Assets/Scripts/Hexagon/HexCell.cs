@@ -173,8 +173,6 @@ public class HexCell : MonoBehaviour
 
     public IEnumerable GenerateCellCoordinatesInRadius(int radius)
     {
-        // Step 1: Find all surrounding Hexes
-
         int centerX = coordinates.X;
         int centerZ = coordinates.Z;
 
@@ -194,6 +192,34 @@ public class HexCell : MonoBehaviour
         }
     }
 
+    public IEnumerable GenerateCellCoordinatesOnBorderOfRadius(int radius)
+    {
+        int centerX = coordinates.X;
+        int centerZ = coordinates.Z;
+
+        for (int r = 0, z = centerZ - radius; z <= centerZ; z++, r++)
+        {
+            for (int x = centerX - r; x <= centerX + radius; x++)
+            {
+                if (r == 0 || x==centerX-r || x==centerX+radius)
+                {
+                    yield return (new HexCoordinates(x, z));
+                }
+                
+            }
+        }
+        for (int r = 0, z = centerZ + radius; z > centerZ; z--, r++)
+        {
+            for (int x = centerX - radius; x <= centerX + r; x++)
+            {
+                if (r==0 || x == centerX - radius || x == centerX + r)
+                {
+                    yield return (new HexCoordinates(x, z));
+                }
+                
+            }
+        }
+    }
 
 
     public void ShowTilePreview(bool active)
@@ -252,17 +278,20 @@ public class HexCell : MonoBehaviour
         foreach (HexCoordinates activeCoordinates in hexGrid.GetCell(Player.Instance.activeCellCoordinates).GenerateCellCoordinatesInRadius(1))
         {
             HexCell activeCell = hexGrid.GetCell(activeCoordinates);
-
-            if (active)
+            if (activeCell)
             {
-                // Calculate if they should be on -> they are previously all turned off; no turning off necessary
-                if (activeCell.ValdiatePlacement())
+                if (active)
                 {
-                    activeCell.ShowTilePreview(true);
+                    // Calculate if they should be on -> they are previously all turned off; no turning off necessary
+                    if (activeCell.ValdiatePlacement())
+                    {
+                        activeCell.ShowTilePreview(true);
+                    }
                 }
-            } else
-            {
-                activeCell.ShowTilePreview(false);
+                else
+                {
+                    activeCell.ShowTilePreview(false);
+                }
             }
         }
     }
