@@ -88,7 +88,7 @@ public class HexGrid : NetworkBehaviour
 
             if (!(activeCell && activeCell.GetHeight() > 0))
             {
-                if (Random.Range(0, 6) == 0)
+                if (Random.Range(0, 2) == 0)
                 {
 
                     if (!activeCell)

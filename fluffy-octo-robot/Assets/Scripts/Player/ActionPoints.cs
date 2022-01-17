@@ -1,13 +1,18 @@
 using UnityEngine;
 using TMPro;
 using Unity.Netcode;
+using UnityEngine.UI;
 
 public class ActionPoints : NetworkBehaviour
 {
     [SerializeField]
-    private TextMeshProUGUI playerInGameText;
+    public Sprite APEmpty;
+    public Sprite APFull;
+
+    public Image [] APImages;
 
     [SerializeField]
+    [Range(1, 5)]
     private int actionPoints = 5;
 
     private int currentActionPoints;
@@ -15,21 +20,27 @@ public class ActionPoints : NetworkBehaviour
     private void Awake()
     {
         currentActionPoints = actionPoints;
+
+        foreach(Image activeImage in APImages)
+        {
+            activeImage.gameObject.SetActive(false);
+        }
     }
 
     private void Start()
     {
-        playerInGameText.gameObject.SetActive(false);
+        
+
+        for (int i = actionPoints-1; i >= 0; i--)
+        {
+            APImages[i].gameObject.SetActive(true);
+        }
+
     }
 
     private void Update()
     {
-        playerInGameText.gameObject.SetActive(CheckShowLabel());
 
-        if (CheckShowLabel())
-        {
-            playerInGameText.text = $"Remaining Action Points: {currentActionPoints}";
-        }
     }
 
     private bool CheckShowLabel()
@@ -40,6 +51,7 @@ public class ActionPoints : NetworkBehaviour
     public void UpdateActionPoints()
     {
         currentActionPoints--;
+        UpdateVisual();
     }
 
     public int GetCurrentActionPoints()
@@ -50,5 +62,21 @@ public class ActionPoints : NetworkBehaviour
     public void ResetActionPoints()
     {
         currentActionPoints = actionPoints;
+        UpdateVisual();
+    }
+
+    public void UpdateVisual()
+    {
+        for (int i = 0; i < actionPoints; i++)
+        {
+            if (i < currentActionPoints)
+            {
+                APImages[i].sprite = APFull;
+            }
+            else
+            {
+                APImages[i].sprite = APEmpty;
+            }
+        }
     }
 }
