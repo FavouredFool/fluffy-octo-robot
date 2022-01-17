@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using ObserverPattern;
 using Unity.Netcode;
+using TMPro;
+using UnityEngine.SceneManagement;
 
 public enum GameState
 {
@@ -13,8 +15,8 @@ public class BattleSystem : NetworkBehaviour
     public GameObject player;
     public HexGrid hexGrid;
 
-    public Button finishPlayerTurn;
-    public Button finishGodTurn;
+    public Button endTurnButton;
+    public Text endTurnLabel;
 
     private ActionPoints actionPoints;
 
@@ -25,24 +27,71 @@ public class BattleSystem : NetworkBehaviour
 
     private void Start()
     {
-        finishPlayerTurn.gameObject.SetActive(false);
-        finishGodTurn.gameObject.SetActive(false);
 
-        finishPlayerTurn.onClick.AddListener(() => {
-            GodTurn();
+        endTurnButton.onClick.AddListener(() => {
+            if (!hexGrid.blockActions)
+            {
+                switch (PlayersManager.Instance.CurrentGameState)
+                {
+                    case GameState.GODTURN:
+                        PlayerTurn();
+                        break;
+
+                    case GameState.HUMANTURN:
+                        CorruptionTurn();
+                        break;
+
+                    case GameState.START:
+                        GodTurn();
+                        break;
+
+                    case GameState.CORRUPTION:
+                        GodTurn();
+                        break;
+                    default:
+                        Debug.LogWarning("FEHLER");
+                        break;
+                }
+            }
         });
 
-        finishGodTurn.onClick.AddListener(() => {
-            PlayerTurn();
-        });
 
-        PlayerTurn();
+        StartGame();
     }
 
-    private void Update()
+    protected void Update()
     {
-        finishPlayerTurn.gameObject.SetActive(IsHost && PlayersManager.Instance.CurrentGameState.Equals(GameState.HUMANTURN));
-        finishGodTurn.gameObject.SetActive(IsClient && PlayersManager.Instance.CurrentGameState.Equals(GameState.GODTURN));
+        switch(PlayersManager.Instance.CurrentGameState)
+        {
+            case GameState.GODTURN:
+                endTurnLabel.text = "End God-Turn";
+                break;
+
+            case GameState.HUMANTURN:
+                endTurnLabel.text = "End Human-Turn";
+                break;
+
+            case GameState.START:
+                endTurnLabel.text = "Start Game";
+                break;
+
+            case GameState.CORRUPTION:
+                endTurnLabel.text = "End Corruption-Turn";
+                break;
+
+            case GameState.WON:
+                GameWon();
+                break;
+
+            case GameState.LOST:
+                GameLost();
+                break;
+
+            default:
+                endTurnLabel.text = "FEHLER";
+                break;
+        }
+
     }
 
     private void PlayerTurn()
@@ -51,6 +100,8 @@ public class BattleSystem : NetworkBehaviour
         hexGrid.ReformWorld();
 
         actionPoints.ResetActionPoints();
+
+        endTurnLabel.text = "End Human-Turn";
     }
 
     private void GodTurn()
@@ -59,5 +110,39 @@ public class BattleSystem : NetworkBehaviour
         hexGrid.ReformWorld();
 
         actionPoints.ResetActionPoints();
+
+        endTurnLabel.text = "End God-Turn";
+    }
+
+    private void CorruptionTurn()
+    {
+        PlayersManager.Instance.UpdateGameStateServerRpc(GameState.CORRUPTION);
+
+        hexGrid.ReduceCorruptionTimer();
+        hexGrid.CorruptRandomCells();
+        hexGrid.ReformWorld();
+
+        endTurnLabel.text = "End Corruption-Turn";
+
+    }
+
+    private void StartGame()
+    {
+        PlayersManager.Instance.UpdateGameState(GameState.START);
+
+        endTurnLabel.text = "Start Game";
+
+    }
+
+    private void GameWon()
+    {
+        Debug.Log("SPIEL GEWONNEN!");
+        SceneManager.LoadScene(sceneName: "MainMenu");
+    }
+
+    private void GameLost()
+    {
+        Debug.Log("SPIEL VERLOREN!");
+        SceneManager.LoadScene(sceneName: "MainMenu");
     }
 }

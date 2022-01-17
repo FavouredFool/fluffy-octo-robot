@@ -6,11 +6,15 @@ using TMPro;
 public class HexCell : MonoBehaviour
 {
 
-    public GameObject hexPrefab;
+    public GameObject[] hexPrefabs;
+
     public GameObject hexPreviewPrefab;
     public GameObject hexCellPreviewPrefab;
 
     public TMP_Text cellLabelPrefab;
+    public TMP_Text corruptionLabelPrefab;
+
+    public Material corruptionMaterial;
 
     private ActionPoints actionPoints;
 
@@ -28,8 +32,13 @@ public class HexCell : MonoBehaviour
     GameObject hexPreviewObj = null;
     GameObject hexCellPreviewObj = null;
 
-    Canvas gridCanvas;
     TMP_Text label;
+
+    int roundsTillCorrupted = -1;
+
+    public enum Biome { GROUND, HOME, WOOD, STONE }
+
+    public Biome cellBiome = Biome.WOOD;
 
 
     protected void Awake()
@@ -40,7 +49,6 @@ public class HexCell : MonoBehaviour
         // Bei Awake kann noch nicht ueber das Parentobjekt gegangen werden
         hexGrid = GameObject.Find("HexGrid").GetComponent<HexGrid>();
 
-        gridCanvas = GetComponentInChildren<Canvas>();
 
         // Add Preview Prefab
         hexCellPreviewObj = Instantiate(hexCellPreviewPrefab, transform.position + new Vector3(0f, height * HexMetrics.hexHeight, 0f), Quaternion.identity, transform);
@@ -53,19 +61,6 @@ public class HexCell : MonoBehaviour
         DefineLabel();
     }
 
-    /*
-    private void InstantiatePlayer()
-    {
-        Debug.Log("instantiate Player");
-        playerControl = FindObjectOfType<PlayerControl>();
-    }
-
-    private bool CheckIfPlayerIsInstantiated()
-    {
-        return playerControl == null;
-    }
-    */
-
     protected void DefineLabel()
     {
         label = GetComponentInChildren<TMP_Text>();
@@ -73,16 +68,10 @@ public class HexCell : MonoBehaviour
         label.color = Color.black;
     }
 
-    public void AddTile()
+    public void AddTile(Biome biome)
     {
-        if (GetHeight() == 0)
-        {
-            Destroy(hexCellPreviewObj);
-        }
-
         // Tile in Stack auf korrekter Hoehe hinzufuegen
-        hexStack.Push(Instantiate(hexPrefab, transform.position + new Vector3(0f, height * HexMetrics.hexHeight, 0f), Quaternion.identity, transform));
-
+        hexStack.Push(Instantiate(hexPrefabs[(int)biome], transform.position + new Vector3(0f, height * HexMetrics.hexHeight, 0f), Quaternion.identity, transform));
         // Height des Konstrukts erhoehen
         SetHeight(height + 1);
     }
@@ -103,6 +92,31 @@ public class HexCell : MonoBehaviour
         } 
     }
 
+    public void AddTileNoReform()
+    {
+        // Biome wird gesetzt
+        GameObject prefabToPlace;
+
+        if (coordinates.Equals(hexGrid.GetStartCellCoordiantes()))
+        {
+            prefabToPlace = hexPrefabs[1];
+            cellBiome = Biome.HOME;
+        }
+        else
+        {
+            int BiomeNumber = Random.Range(2, hexPrefabs.Length);
+            prefabToPlace = hexPrefabs[BiomeNumber];
+            cellBiome = (Biome)BiomeNumber;
+        }
+
+        // Tile in Stack auf korrekter Hoehe hinzufuegen
+        hexStack.Push(Instantiate(prefabToPlace, transform.position + new Vector3(0f, height * HexMetrics.hexHeight, 0f), Quaternion.identity, transform));
+
+
+        // Height des Konstrukts erhöhen
+        SetHeight(height + 1);
+    }
+
     public void AddTileManually()
     {
         if (actionPoints.GetCurrentActionPoints() == 0)
@@ -110,12 +124,28 @@ public class HexCell : MonoBehaviour
             return;
         }
 
+        // Biome wird gesetzt
+        GameObject prefabToPlace;
+
+        if (coordinates.Equals(hexGrid.GetStartCellCoordiantes()))
+        {
+            prefabToPlace = hexPrefabs[1];
+        } else
+        {
+            int BiomeNumber = Random.Range(2, hexPrefabs.Length);
+            prefabToPlace = hexPrefabs[BiomeNumber];
+            cellBiome = (Biome) BiomeNumber;
+        }
+
+        // Tile in Stack auf korrekter Hoehe hinzufuegen
+        hexStack.Push(Instantiate(prefabToPlace, transform.position + new Vector3(0f, height * HexMetrics.hexHeight, 0f), Quaternion.identity, transform));
+
+
         // Height des Konstrukts erhöhen
         SetHeight(height + 1);
 
         actionPoints.UpdateActionPoints();
 
-        // Reform World
         hexGrid.ReformWorld();
     }
 
@@ -141,78 +171,8 @@ public class HexCell : MonoBehaviour
     }
 
 
-    /*
-    void UpdatePropagating()
-    {
-        if (height == 0 && propagating)
-        {
-            propagating = false;
-            hexCellPreviewObj = Instantiate(hexCellPreviewPrefab, transform.position + new Vector3(0f, height * HexMetrics.hexHeight, 0f), Quaternion.identity, transform);
-
-            // Update surrounding HexCells -> Remove Hexcells
-            foreach (HexCoordinates activeCoordinates in GenerateCellCoordinatesInRadius(1))
-            {
-                HexCell activeCell = hexGrid.GetCell(activeCoordinates);
-                
-                if (activeCell && !activeCell.GetPropagating())
-                {
-
-                    // Cell exists and isnt propagating -> Check if it has other neighbours
-                    bool neighbourFound = false;
-                    
-                    foreach (HexCoordinates neighbourCoordinates in activeCell.GenerateCellCoordinatesInRadius(1))
-                    {
-                        HexCell neighboursNeighbour = hexGrid.GetCell(neighbourCoordinates);
-
-                        if (neighboursNeighbour && neighboursNeighbour != activeCell && neighboursNeighbour != this && neighboursNeighbour.GetPropagating())
-                        {
-                            neighbourFound = true;
-                            //Debug.Log(activeCell.coordinates);
-                            break;
-                        }
-                    }
-
-                    if (!neighbourFound)
-                    {
-                        // Wichtig, beim Destroyed von HexCells, diese auch aus der Liste l�schen
-                        hexGrid.GetCells().Remove(activeCell);
-                        Destroy(activeCell.gameObject);
-                        hexGrid.RemoveCell(activeCell);
-                        
-                    }
-                }
-            }
-
-
-        } else if (height != 0 && !propagating)
-        {
-            propagating = true;
-
-            Destroy(hexCellPreviewObj);
-            hexCellPreviewObj = null;
-
-            // Update surrounding HexCells -> Add new HexCells
-            foreach(HexCoordinates activeCoordinates in GenerateCellCoordinatesInRadius(1))
-            {
-                HexCell activeCell = hexGrid.GetCell(activeCoordinates);
-                if (!activeCell)
-                {
-                    // Cell doesnt exist yet -> use Coordinates to create new Cell at position
-                    Vector3 offsetCoordinates = HexCoordinates.ToOffsetCoordinates(activeCoordinates);
-
-                    hexGrid.CreateCell((int)offsetCoordinates.x, (int)offsetCoordinates.z);
-
-                }
-            }
-        }
-    }
-
-    */
-
     public IEnumerable GenerateCellCoordinatesInRadius(int radius)
     {
-        // Step 1: Find all surrounding Hexes
-
         int centerX = coordinates.X;
         int centerZ = coordinates.Z;
 
@@ -232,6 +192,34 @@ public class HexCell : MonoBehaviour
         }
     }
 
+    public IEnumerable GenerateCellCoordinatesOnBorderOfRadius(int radius)
+    {
+        int centerX = coordinates.X;
+        int centerZ = coordinates.Z;
+
+        for (int r = 0, z = centerZ - radius; z <= centerZ; z++, r++)
+        {
+            for (int x = centerX - r; x <= centerX + radius; x++)
+            {
+                if (r == 0 || x==centerX-r || x==centerX+radius)
+                {
+                    yield return (new HexCoordinates(x, z));
+                }
+                
+            }
+        }
+        for (int r = 0, z = centerZ + radius; z > centerZ; z--, r++)
+        {
+            for (int x = centerX - radius; x <= centerX + r; x++)
+            {
+                if (r==0 || x == centerX - radius || x == centerX + r)
+                {
+                    yield return (new HexCoordinates(x, z));
+                }
+                
+            }
+        }
+    }
 
 
     public void ShowTilePreview(bool active)
@@ -290,17 +278,20 @@ public class HexCell : MonoBehaviour
         foreach (HexCoordinates activeCoordinates in hexGrid.GetCell(Player.Instance.activeCellCoordinates).GenerateCellCoordinatesInRadius(1))
         {
             HexCell activeCell = hexGrid.GetCell(activeCoordinates);
-
-            if (active)
+            if (activeCell)
             {
-                // Calculate if they should be on -> they are previously all turned off; no turning off necessary
-                if (activeCell.ValdiatePlacement())
+                if (active)
                 {
-                    activeCell.ShowTilePreview(true);
+                    // Calculate if they should be on -> they are previously all turned off; no turning off necessary
+                    if (activeCell.ValdiatePlacement())
+                    {
+                        activeCell.ShowTilePreview(true);
+                    }
                 }
-            } else
-            {
-                activeCell.ShowTilePreview(false);
+                else
+                {
+                    activeCell.ShowTilePreview(false);
+                }
             }
         }
     }
@@ -316,6 +307,42 @@ public class HexCell : MonoBehaviour
         return false;
     }
 
+    public void CorruptCellWithoutRebuild(int corruptionDuration)
+    {
+        roundsTillCorrupted = corruptionDuration;
+
+        if (roundsTillCorrupted == 0)
+        {
+            hexGrid.GetCells().Remove(this);
+        }
+    }
+
+    public void CorruptCell(int corruptionDuration)
+    {
+
+        // Redraw Tile-Color / Change Material
+        roundsTillCorrupted = corruptionDuration;
+
+        if (roundsTillCorrupted == 0)
+        {
+            hexGrid.GetCells().Remove(this);
+        }
+    }
+
+    public void CorruptCellForRebuild(int corruptionDuration)
+    {
+         
+        roundsTillCorrupted = corruptionDuration;
+        corruptionLabelPrefab.text = roundsTillCorrupted.ToString();
+
+        // Redraw Tile-Color / Change Material
+        foreach (GameObject activeTile in hexStack)
+        {
+            activeTile.GetComponent<Renderer>().material = corruptionMaterial;
+        }
+
+    }
+
     public int GetHeight()
     {
         return height;
@@ -328,6 +355,87 @@ public class HexCell : MonoBehaviour
         height = newHeight;
 
         // Change CanvasPosition
-        gridCanvas.transform.localPosition = new Vector3(0f, (newHeight - 1/2f) * HexMetrics.hexHeight, 0f);
+        cellLabelPrefab.transform.parent.localPosition = new Vector3(0f, (newHeight - 1/2f) * HexMetrics.hexHeight, 0f);
+        corruptionLabelPrefab.transform.parent.localPosition = new Vector3(0f, (newHeight - 1 / 2f) * HexMetrics.hexHeight + 15, 0f);
+    }
+
+    public int GetRoundsTillCorrupted()
+    {
+        return roundsTillCorrupted;
+    }
+
+    public void SetRoundsTillCorrupted(int rounds)
+    {
+        roundsTillCorrupted = rounds;
     }
 }
+
+
+
+/*
+void UpdatePropagating()
+{
+    if (height == 0 && propagating)
+    {
+        propagating = false;
+        hexCellPreviewObj = Instantiate(hexCellPreviewPrefab, transform.position + new Vector3(0f, height * HexMetrics.hexHeight, 0f), Quaternion.identity, transform);
+
+        // Update surrounding HexCells -> Remove Hexcells
+        foreach (HexCoordinates activeCoordinates in GenerateCellCoordinatesInRadius(1))
+        {
+            HexCell activeCell = hexGrid.GetCell(activeCoordinates);
+
+            if (activeCell && !activeCell.GetPropagating())
+            {
+
+                // Cell exists and isnt propagating -> Check if it has other neighbours
+                bool neighbourFound = false;
+
+                foreach (HexCoordinates neighbourCoordinates in activeCell.GenerateCellCoordinatesInRadius(1))
+                {
+                    HexCell neighboursNeighbour = hexGrid.GetCell(neighbourCoordinates);
+
+                    if (neighboursNeighbour && neighboursNeighbour != activeCell && neighboursNeighbour != this && neighboursNeighbour.GetPropagating())
+                    {
+                        neighbourFound = true;
+                        //Debug.Log(activeCell.coordinates);
+                        break;
+                    }
+                }
+
+                if (!neighbourFound)
+                {
+                    // Wichtig, beim Destroyed von HexCells, diese auch aus der Liste l�schen
+                    hexGrid.GetCells().Remove(activeCell);
+                    Destroy(activeCell.gameObject);
+                    hexGrid.RemoveCell(activeCell);
+
+                }
+            }
+        }
+
+
+    } else if (height != 0 && !propagating)
+    {
+        propagating = true;
+
+        Destroy(hexCellPreviewObj);
+        hexCellPreviewObj = null;
+
+        // Update surrounding HexCells -> Add new HexCells
+        foreach(HexCoordinates activeCoordinates in GenerateCellCoordinatesInRadius(1))
+        {
+            HexCell activeCell = hexGrid.GetCell(activeCoordinates);
+            if (!activeCell)
+            {
+                // Cell doesnt exist yet -> use Coordinates to create new Cell at position
+                Vector3 offsetCoordinates = HexCoordinates.ToOffsetCoordinates(activeCoordinates);
+
+                hexGrid.CreateCell((int)offsetCoordinates.x, (int)offsetCoordinates.z);
+
+            }
+        }
+    }
+}
+
+*/

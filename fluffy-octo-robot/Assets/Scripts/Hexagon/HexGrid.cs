@@ -1,14 +1,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
+using System.Collections;
+using static HexCell;
+using UnityEngine.SceneManagement;
 
 public class HexGrid : NetworkBehaviour
 {
     private int currentGridVersion;
 
-    public int size = 5;
+    public int radialSize = 2;
+
+    public int radialMaxSize = 5;
 
     public HexCell cellPrefab;
+
+    public GameObject playerPrefab;
+
+    public int startTileCorruptionDuration;
+
+    public int corruptionMinDuration;
+    public int corruptionMaxDuration;
+
+    public int corruptionDivision;
 
     List<HexCell> cells;
 
@@ -18,18 +32,18 @@ public class HexGrid : NetworkBehaviour
 
     List<HexCell> tempCells;
 
-    public GameObject playerPrefab;
+    [HideInInspector]
+    public bool blockActions = false;
 
+    List<HexCoordinates> worldBorderCells;
+    
     private void Start()
     {
+        worldBorderCells = new();
         currentGridVersion = PlayersManager.Instance.CurrentGridVersion;
 
-        Debug.Log(PlayersManager.Instance.CurrentGridVersion);
-        Debug.Log(IsHost);
-        Debug.Log(PlayersManager.Instance.SerializedHexCells.Count);
-
         // initiale Capacity bereitstellen
-        cells = new(TriangleNumber(size) + TriangleNumber(size - 1) - 2 * TriangleNumber(size / 2));
+        cells = new(TriangleNumber(radialSize) + TriangleNumber(radialSize - 1) - 2 * TriangleNumber(radialSize / 2));
 
         // Terraingeneration
         HexCell startCell = CreateCellFromHexCoordinate(startCellCoordinates);
@@ -37,7 +51,7 @@ public class HexGrid : NetworkBehaviour
         Instantiate(playerPrefab);
         Player.Instance.activeCellCoordinates = startCellCoordinates;
 
-        foreach (HexCoordinates coordinates in startCell.GenerateCellCoordinatesInRadius(size / 2))
+        foreach (HexCoordinates coordinates in startCell.GenerateCellCoordinatesInRadius(radialSize))
         {
             if (!coordinates.Equals(startCellCoordinates))
             {
@@ -47,12 +61,52 @@ public class HexGrid : NetworkBehaviour
             }
         }
 
+        // Define World-Borders
+        foreach (HexCoordinates coordinates in GetCell(startCellCoordinates).GenerateCellCoordinatesOnBorderOfRadius(radialMaxSize+1))
+        {
+            worldBorderCells.Add(coordinates);
+        }
+
         List<HexCell> startCells = new List<HexCell>(cells);
 
+        // Generate StartIsland
         foreach (HexCell activeCell in startCells)
         {
-            activeCell.AddTile();
+            for (int i = 0; i<Random.Range(4, 8); i++)
+            {
+                activeCell.AddTileNoReform();
+            }
         }
+
+        // GenerateGoalTerrain
+        GenerateGoalTerrain();
+
+        // Generate Surrounding Terrain
+        foreach (HexCoordinates activeCoordinates in GetCell(startCellCoordinates).GenerateCellCoordinatesInRadius(radialMaxSize))
+        {
+            HexCell activeCell = GetCell(activeCoordinates);
+
+            if (!(activeCell && activeCell.GetHeight() > 0))
+            {
+                if (Random.Range(0, 2) == 0)
+                {
+
+                    if (!activeCell)
+                    {
+                        activeCell = CreateCellFromHexCoordinate(activeCoordinates);
+                    }
+
+                    for (int i = 0; i < Random.Range(3, 8); i++)
+                    {
+                        activeCell.AddTileNoReform();
+                    }
+                }
+            }
+        }
+        
+
+        // Corrupt HomeHex
+        GetCell(startCellCoordinates).CorruptCell(startTileCorruptionDuration);
 
         ReformWorld();
     }
@@ -70,7 +124,8 @@ public class HexGrid : NetworkBehaviour
     public void ReformWorld()
     {
         // send cells to Networking
-        PlayersManager.Instance.SerializeAndUpdateHexCells(cells);
+        blockActions = true;
+        StartCoroutine(PlayersManager.Instance.SerializeAndUpdateHexCells(cells));
     }
 
     public HexCell CreateCell(int x, int z)
@@ -95,8 +150,8 @@ public class HexGrid : NetworkBehaviour
         }
 
         return cell;
-
     }
+
 
     public void RemoveCell(HexCell cell)
     {
@@ -116,6 +171,11 @@ public class HexGrid : NetworkBehaviour
         }
 
         Destroy(cell.gameObject);
+    }
+
+    public void RemoveCellFromList(HexCell cell)
+    {
+        cells.Remove(cell);
     }
 
 
@@ -157,66 +217,166 @@ public class HexGrid : NetworkBehaviour
         CreateCellsFromList(PlayersManager.Instance.SerializedHexCells);
     }
 
-    public void CreateCellsFromList(NetworkList<SerializedNetworkHex> newTileList)
+    public void CorruptRandomCells()
     {
-        Debug.Log("HexGrid neu bauen");
+        HexCell cellToCorrupt = null;
+        int failSaveCounter = 0;
 
+        int cellCount = 0;
+        foreach (HexCell activeCell in cells)
+        {
+            if (activeCell.GetHeight() > 0)
+            {
+                cellCount++;
+            }
+        }
+
+        int cellCorruptionAmount = Mathf.Max(cellCount / corruptionDivision, 1);
+        int outerLoopCounter = 0;
+        do
+        {
+            outerLoopCounter++;
+            do
+            {
+                cellToCorrupt = cells[Random.Range(0, cells.Count - 1)];
+                failSaveCounter++;
+            } while ((cellToCorrupt == GetCell(Player.Instance.activeCellCoordinates) || cellToCorrupt.GetHeight() == 0 || cellToCorrupt == GetCell(startCellCoordinates) || cellToCorrupt.GetRoundsTillCorrupted() >= 0) && failSaveCounter <= 1000);
+
+            if (failSaveCounter > 1000)
+            {
+                cellToCorrupt = null;
+                Debug.LogWarning("Endlosschleife entkommen");
+            }
+            if (cellToCorrupt)
+            {
+                cellToCorrupt.CorruptCell(Random.Range(corruptionMinDuration, corruptionMaxDuration+1));
+            }
+
+        } while (outerLoopCounter < cellCorruptionAmount);
+
+        
+
+    }
+
+    public void ReduceCorruptionTimer()
+    {
+        tempCells = new List<HexCell>(cells);
+        foreach (HexCell activeCell in tempCells) {
+
+            if (activeCell.GetRoundsTillCorrupted() > 0)
+            {
+                activeCell.CorruptCellWithoutRebuild(activeCell.GetRoundsTillCorrupted() - 1);
+            }
+        }
+    }
+
+
+    public void CreateCellsFromList(NetworkList<SerializedNetworkHex> newHexList)
+    {
         // Step 1: Delete entire grid and clear List
+
+        // Clear List
+        GetCells().Clear();
 
         // Delete Grid
         foreach (Transform child in transform) {
             Destroy(child.gameObject);
         }
 
-        // Clear List
-        GetCells().Clear();
-
         gridRadius = float.NegativeInfinity;
 
-        foreach (SerializedNetworkHex newTile in newTileList)
+
+        foreach (SerializedNetworkHex newHex in newHexList)
         {
+            
             // 0 rausfiltern, da diese Tiles sowieso automatisch bei cell.AddTile() erzeugt werden
-            if (newTile.Height != 0)
+            // Step 2: Build new Cells
+            HexCell cell = CreateCellFromHexCoordinate(new HexCoordinates(newHex.X, newHex.Z));
+            cell.SetRoundsTillCorrupted(newHex.RoundsTillCorrupted);
+            cell.cellBiome = newHex.Biome;
+            
+
+            if (newHex.PlayerActive)
             {
-                // Step 2: Build new Cells
-                HexCell cell = CreateCellFromHexCoordinate(new HexCoordinates(newTile.X, newTile.Z));
+                Player.Instance.activeCellCoordinates = new HexCoordinates(newHex.X, newHex.Z);
+            }
 
-                if (newTile.PlayerActive)
-                {
-                    Player.Instance.activeCellCoordinates = new HexCoordinates(newTile.X, newTile.Z);
-                }
+            // Step 3: Add Tiles 
+            for (int i = 0; i < newHex.Height; i++)
+            {
 
-                // Step 3: Add Tiles 
-                for (int i = 0; i < newTile.Height; i++)
+                if (i == newHex.Height-1)
                 {
-                    cell.AddTile();
+                    cell.AddTile(cell.cellBiome);
+                } else
+                {
+                    cell.AddTile(Biome.GROUND);
                 }
+                
             }
         }
 
-        // Add Tiles of Height 0
         tempCells = new List<HexCell>(cells);
+
+        // Add Corruption
+        foreach (HexCell activeCell in tempCells)
+        {
+            if (activeCell.GetRoundsTillCorrupted() >= 0)
+            {
+                activeCell.corruptionLabelPrefab.transform.parent.gameObject.SetActive(true);
+                activeCell.CorruptCellForRebuild(activeCell.GetRoundsTillCorrupted());
+            } else
+            {
+                activeCell.corruptionLabelPrefab.transform.parent.gameObject.SetActive(false);
+            }
+            
+        }
+
+        tempCells = new List<HexCell>(cells);
+
+
+        // Add Tiles of Height 0
         foreach (HexCell activeCell in tempCells)
         {
             foreach (HexCoordinates hexCoordinate in activeCell.GenerateCellCoordinatesInRadius(1))
             {
-                HexCell neighbour = GetCell(hexCoordinate);
-                if (!neighbour)
+                if (!worldBorderCells.Contains(hexCoordinate))
                 {
-                    CreateCellFromHexCoordinate(hexCoordinate);
+                    HexCell neighbour = GetCell(hexCoordinate);
+                    if (!neighbour)
+                    {
+                        CreateCellFromHexCoordinate(hexCoordinate);
+                    }
                 }
+                
             }
         }
 
-        // Place Player
-        GetCell(Player.Instance.activeCellCoordinates).PlacePlayerForRebuild();
-
-        // Calculate Preview Tiles
-        if (PlayersManager.Instance.CurrentGameState == GameState.HUMANTURN)
+        if (GetCell(startCellCoordinates).GetHeight() <= 0)
         {
-            // calculate preview Tiles
-            GetCell(Player.Instance.activeCellCoordinates).CalculatePreviewTilesForHuman(true);
-        } 
+            // Game Over
+            PlayersManager.Instance.UpdateGameStateServerRpc(GameState.LOST);
+        }
+
+        if (GetCell(Player.Instance.activeCellCoordinates) && GetCell(Player.Instance.activeCellCoordinates).GetHeight() > 0)
+        {
+            // Place Player
+            GetCell(Player.Instance.activeCellCoordinates).PlacePlayerForRebuild();
+
+            // Calculate Preview Tiles
+            if (PlayersManager.Instance.CurrentGameState == GameState.HUMANTURN)
+            {
+                // calculate preview Tiles
+                GetCell(Player.Instance.activeCellCoordinates).CalculatePreviewTilesForHuman(true);
+            }
+        } else
+        {
+            // Game Over
+            PlayersManager.Instance.UpdateGameStateServerRpc(GameState.LOST);
+        }
+
+        blockActions = false;
+        
     }
 
     HexCell CreateCellFromHexCoordinate(HexCoordinates hexCoordinate)
@@ -229,5 +389,76 @@ public class HexGrid : NetworkBehaviour
     public HexCoordinates GetStartCellCoordiantes()
     {
         return startCellCoordinates;
+    }
+
+    public void GenerateGoalTerrain()
+    {
+        // Generate Goal-Terrain
+
+        List<HexCoordinates> ringCoordinates = new();
+        HexCell cellToUse;
+        HexCoordinates cellCoordinatesToUse;
+
+        // Tiefes Tile
+        foreach (HexCoordinates activeCoordinates in GetCell(startCellCoordinates).GenerateCellCoordinatesOnBorderOfRadius(radialMaxSize - 1))
+        {
+            ringCoordinates.Add(activeCoordinates);
+        }
+        cellCoordinatesToUse = ringCoordinates[Random.Range(0, ringCoordinates.Count)];
+        cellToUse = GetCell(cellCoordinatesToUse);
+
+        if (!cellToUse)
+        {
+            cellToUse = CreateCellFromHexCoordinate(cellCoordinatesToUse);
+        }
+
+        for (int i = 0; i < Random.Range(1, 3); i++)
+        {
+            cellToUse.AddTileNoReform();
+            cellToUse.cellBiome = Biome.HOME;
+        }
+
+        ringCoordinates.Clear();
+
+        // Hohes fernes Tile
+
+        foreach (HexCoordinates activeCoordinates in GetCell(startCellCoordinates).GenerateCellCoordinatesOnBorderOfRadius(radialMaxSize))
+        {
+            ringCoordinates.Add(activeCoordinates);
+        }
+        cellCoordinatesToUse = ringCoordinates[Random.Range(0, ringCoordinates.Count)];
+        cellToUse = GetCell(cellCoordinatesToUse);
+
+        if (!cellToUse)
+        {
+            cellToUse = CreateCellFromHexCoordinate(cellCoordinatesToUse);
+        }
+
+        for (int i = 0; i < Random.Range(10, 12); i++)
+        {
+            cellToUse.AddTileNoReform();
+            cellToUse.cellBiome = Biome.HOME;
+        }
+
+        ringCoordinates.Clear();
+
+        // Hohes nahes Tile
+        foreach (HexCoordinates activeCoordinates in GetCell(startCellCoordinates).GenerateCellCoordinatesOnBorderOfRadius(radialMaxSize - 2))
+        {
+            ringCoordinates.Add(activeCoordinates);
+        }
+        cellCoordinatesToUse = ringCoordinates[Random.Range(0, ringCoordinates.Count)];
+        cellToUse = GetCell(cellCoordinatesToUse);
+
+        if (!cellToUse)
+        {
+            cellToUse = CreateCellFromHexCoordinate(cellCoordinatesToUse);
+        }
+
+        for (int i = 0; i < Random.Range(7, 10); i++)
+        {
+            cellToUse.AddTileNoReform();
+            cellToUse.cellBiome = Biome.HOME;
+        }
     }
 }

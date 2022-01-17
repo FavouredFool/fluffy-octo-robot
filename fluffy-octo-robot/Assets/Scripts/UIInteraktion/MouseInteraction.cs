@@ -20,44 +20,49 @@ public class MouseInteraction : MonoBehaviour
     // Update is called once per frame
     protected void Update()
     {
-        if (PlayersManager.Instance.CurrentGameState.Equals(GameState.GODTURN))
+        if (!hexGrid.blockActions)
         {
-            if (Input.GetMouseButtonDown(0))
+            if (PlayersManager.Instance.CurrentGameState.Equals(GameState.GODTURN))
             {
-                HexCell activeHex = SelectedHexCell();
-                if (activeHex)
+                if (Input.GetMouseButtonDown(0))
                 {
-                    activeHex.AddTileManually();
-                }
-            }
-
-            if (Input.GetMouseButtonDown(1))
-            {
-                HexCell activeHex = SelectedHexCell();
-                if (activeHex)
-                {
-                    activeHex.RemoveTileManually();
-                }
-            }
-        } else if (PlayersManager.Instance.CurrentGameState.Equals(GameState.HUMANTURN))
-        {
-
-            if (Input.GetMouseButtonDown(0))
-            {
-                HexCell pressedCell = SelectedHexCell();
-                if (pressedCell && pressedCell.GetHeight() > 0)
-                {
-                    // Move Towards that Tile if possible
-                    foreach (HexCoordinates activeCoordinates in hexGrid.GetCell(Player.Instance.activeCellCoordinates).GenerateCellCoordinatesInRadius(1))
+                    HexCell activeHex = SelectedHexCell();
+                    if (activeHex)
                     {
-                        HexCell activeCell = hexGrid.GetCell(activeCoordinates);
+                        activeHex.AddTileManually();
+                        
+                    }
+                }
 
-                        if (pressedCell == activeCell && pressedCell.ValdiatePlacement())
+                if (Input.GetMouseButtonDown(1))
+                {
+                    HexCell activeHex = SelectedHexCell();
+                    if (activeHex)
+                    {
+                        activeHex.RemoveTileManually();
+                    }
+                }
+            }
+            else if (PlayersManager.Instance.CurrentGameState.Equals(GameState.HUMANTURN))
+            {
+
+                if (Input.GetMouseButtonDown(0))
+                {
+                    HexCell pressedCell = SelectedHexCell();
+                    if (pressedCell && pressedCell.GetHeight() > 0)
+                    {
+                        // Move Towards that Tile if possible
+                        foreach (HexCoordinates activeCoordinates in hexGrid.GetCell(Player.Instance.activeCellCoordinates).GenerateCellCoordinatesInRadius(1))
                         {
-                            pressedCell.PlacePlayer();
-                            return;
-                        }
+                            HexCell activeCell = hexGrid.GetCell(activeCoordinates);
 
+                            if (pressedCell == activeCell && pressedCell.ValdiatePlacement())
+                            {
+                                pressedCell.PlacePlayer();
+                                return;
+                            }
+
+                        }
                     }
                 }
             }
