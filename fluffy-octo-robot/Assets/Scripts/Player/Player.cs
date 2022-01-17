@@ -13,6 +13,9 @@ public class Player : NetworkBehaviour
     [HideInInspector]
     public int maxWalkHeight;
 
+    [HideInInspector]
+    public int collected = 0;
+
     private void Awake()
     {
         maxWalkHeight = 1;

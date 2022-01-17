@@ -22,9 +22,12 @@ public class HexGrid : NetworkBehaviour
     public int corruptionMinDuration;
     public int corruptionMaxDuration;
 
-    public int corruptionDivision;
+    public int cellCorruptionAmount = 1;
 
     List<HexCell> cells;
+
+    public List<HexCoordinates> goalCellCoordinates;
+    public List<bool> goalCollected;
 
     HexCoordinates startCellCoordinates = new HexCoordinates(0, 0);
 
@@ -40,8 +43,11 @@ public class HexGrid : NetworkBehaviour
     private void Start()
     {
         worldBorderCells = new();
-        currentGridVersion = PlayersManager.Instance.CurrentGridVersion;
+        goalCollected = new();
+        goalCellCoordinates = new();
 
+        currentGridVersion = PlayersManager.Instance.CurrentGridVersion;
+        
         // initiale Capacity bereitstellen
         cells = new(TriangleNumber(radialSize) + TriangleNumber(radialSize - 1) - 2 * TriangleNumber(radialSize / 2));
 
@@ -231,16 +237,27 @@ public class HexGrid : NetworkBehaviour
             }
         }
 
-        int cellCorruptionAmount = Mathf.Max(cellCount / corruptionDivision, 1);
         int outerLoopCounter = 0;
+        bool goalIsFinishedFlag = false;
+        int index;
         do
         {
             outerLoopCounter++;
             do
             {
+                goalIsFinishedFlag = false;
+
                 cellToCorrupt = cells[Random.Range(0, cells.Count - 1)];
                 failSaveCounter++;
-            } while ((cellToCorrupt == GetCell(Player.Instance.activeCellCoordinates) || cellToCorrupt.GetHeight() == 0 || cellToCorrupt == GetCell(startCellCoordinates) || cellToCorrupt.GetRoundsTillCorrupted() >= 0) && failSaveCounter <= 1000);
+
+                index = goalCellCoordinates.IndexOf(cellToCorrupt.coordinates);
+
+                if (index != -1)
+                    goalIsFinishedFlag = goalCollected[index];
+                else
+                    goalIsFinishedFlag = true;
+
+            } while ((cellToCorrupt == GetCell(Player.Instance.activeCellCoordinates) || cellToCorrupt.GetHeight() == 0 || cellToCorrupt == GetCell(startCellCoordinates) || cellToCorrupt.GetRoundsTillCorrupted() >= 0 || !goalIsFinishedFlag) && failSaveCounter <= 1000);
 
             if (failSaveCounter > 1000)
             {
@@ -407,6 +424,9 @@ public class HexGrid : NetworkBehaviour
         cellCoordinatesToUse = ringCoordinates[Random.Range(0, ringCoordinates.Count)];
         cellToUse = GetCell(cellCoordinatesToUse);
 
+        goalCellCoordinates.Add(cellCoordinatesToUse);
+        goalCollected.Add(false);
+
         if (!cellToUse)
         {
             cellToUse = CreateCellFromHexCoordinate(cellCoordinatesToUse);
@@ -418,6 +438,8 @@ public class HexGrid : NetworkBehaviour
             cellToUse.cellBiome = Biome.HOME;
         }
 
+        
+
         ringCoordinates.Clear();
 
         // Hohes fernes Tile
@@ -428,6 +450,9 @@ public class HexGrid : NetworkBehaviour
         }
         cellCoordinatesToUse = ringCoordinates[Random.Range(0, ringCoordinates.Count)];
         cellToUse = GetCell(cellCoordinatesToUse);
+
+        goalCellCoordinates.Add(cellCoordinatesToUse);
+        goalCollected.Add(false);
 
         if (!cellToUse)
         {
@@ -449,6 +474,9 @@ public class HexGrid : NetworkBehaviour
         }
         cellCoordinatesToUse = ringCoordinates[Random.Range(0, ringCoordinates.Count)];
         cellToUse = GetCell(cellCoordinatesToUse);
+
+        goalCellCoordinates.Add(cellCoordinatesToUse);
+        goalCollected.Add(false);
 
         if (!cellToUse)
         {

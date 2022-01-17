@@ -11,6 +11,8 @@ public class HexCell : MonoBehaviour
     public GameObject hexPreviewPrefab;
     public GameObject hexCellPreviewPrefab;
 
+    public GameObject collectable;
+
     public TMP_Text cellLabelPrefab;
     public TMP_Text corruptionLabelPrefab;
 
@@ -40,6 +42,7 @@ public class HexCell : MonoBehaviour
 
     public Biome cellBiome = Biome.WOOD;
 
+    int collectedIndex;
 
     protected void Awake()
     {
@@ -57,8 +60,24 @@ public class HexCell : MonoBehaviour
 
     protected void Start()
     {
+
         // Coordinate-Grids 
         DefineLabel();
+
+        for (int i=0; i<hexGrid.goalCellCoordinates.Count; i++)
+        {
+            if (hexGrid.goalCellCoordinates[i].Equals(coordinates))
+            {
+                collectedIndex = i;
+                if (!hexGrid.goalCollected[i])
+                {
+                    collectable.SetActive(true);
+                    break;
+                }
+            }
+            collectable.SetActive(false);
+        }
+
     }
 
     protected void DefineLabel()
@@ -123,7 +142,8 @@ public class HexCell : MonoBehaviour
         {
             return;
         }
-
+        
+        /*
         // Biome wird gesetzt
         GameObject prefabToPlace;
 
@@ -136,9 +156,10 @@ public class HexCell : MonoBehaviour
             prefabToPlace = hexPrefabs[BiomeNumber];
             cellBiome = (Biome) BiomeNumber;
         }
+        */
 
         // Tile in Stack auf korrekter Hoehe hinzufuegen
-        hexStack.Push(Instantiate(prefabToPlace, transform.position + new Vector3(0f, height * HexMetrics.hexHeight, 0f), Quaternion.identity, transform));
+        hexStack.Push(Instantiate(hexPrefabs[(int)cellBiome], transform.position + new Vector3(0f, height * HexMetrics.hexHeight, 0f), Quaternion.identity, transform));
 
 
         // Height des Konstrukts erhöhen
@@ -158,6 +179,13 @@ public class HexCell : MonoBehaviour
 
         if (height > 0 && (height != 1 || (!coordinates.Equals(hexGrid.GetStartCellCoordiantes()) && hexGrid.GetCell(Player.Instance.activeCellCoordinates) != this)))
         {
+            foreach (HexCoordinates hexCoordinates in hexGrid.goalCellCoordinates)
+            {
+                if (!(height > 0 && (height != 1 || (!coordinates.Equals(hexCoordinates)))))
+                {
+                    return;
+                }
+            }
 
             // Height des Konstrukts verringern
             SetHeight(height - 1);
@@ -254,7 +282,6 @@ public class HexCell : MonoBehaviour
         Player.Instance.transform.position = transform.position + new Vector3(0f, height * HexMetrics.hexHeight + HexMetrics.hexHeight / 2, 0f);
     }
 
-
     
     public void PlacePlayer()
     {
@@ -267,6 +294,18 @@ public class HexCell : MonoBehaviour
         Player.Instance.transform.position = transform.position + new Vector3(0f, height * HexMetrics.hexHeight + HexMetrics.hexHeight / 2, 0f);
 
         actionPoints.UpdateActionPoints();
+
+        if(collectable.activeSelf)
+        {
+            Player.Instance.collected++;
+            hexGrid.goalCollected[collectedIndex] = true;
+            hexGrid.cellCorruptionAmount++;
+        }
+
+        if (hexGrid.GetStartCellCoordiantes().Equals(coordinates) && Player.Instance.collected >= 3)
+        {
+            PlayersManager.Instance.UpdateGameStateServerRpc(GameState.WON);
+        }
 
         //Reform World
         hexGrid.ReformWorld();
@@ -361,6 +400,7 @@ public class HexCell : MonoBehaviour
         // Change CanvasPosition
         cellLabelPrefab.transform.parent.localPosition = new Vector3(0f, (newHeight - 1/2f) * HexMetrics.hexHeight, 0f);
         corruptionLabelPrefab.transform.parent.localPosition = new Vector3(0f, (newHeight - 1 / 2f) * HexMetrics.hexHeight + 15, 0f);
+        collectable.transform.localPosition = new Vector3(0f, (newHeight - 1 / 2f) * HexMetrics.hexHeight + 10, 0f);
     }
 
     public int GetRoundsTillCorrupted()
