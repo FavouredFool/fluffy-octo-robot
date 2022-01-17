@@ -66,7 +66,7 @@ public class BattleSystem : NetworkBehaviour
             PlayersManager.Instance.CurrentGameState.Equals(GameState.HUMANTURN) && PlayersManager.Instance.IsHuman
         );
 
-        switch(PlayersManager.Instance.CurrentGameState)
+        switch (PlayersManager.Instance.CurrentGameState)
         {
             case GameState.GODTURN:
                 endTurnLabel.text = "End God-Turn";
@@ -142,14 +142,14 @@ public class BattleSystem : NetworkBehaviour
     private void GameWon()
     {
         Debug.Log("SPIEL GEWONNEN!");
-        NetworkManager.Singleton.Shutdown();
+        //NetworkManager.Singleton.Shutdown();
         SceneManager.LoadScene(sceneName: "MainMenu");
     }
 
     private void GameLost()
     {
         Debug.Log("SPIEL VERLOREN!");
-        NetworkManager.Singleton.Shutdown();
+        //NetworkManager.Singleton.Shutdown();
         SceneManager.LoadScene(sceneName: "MainMenu");
     }
 }
