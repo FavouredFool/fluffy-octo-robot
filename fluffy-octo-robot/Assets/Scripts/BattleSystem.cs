@@ -64,11 +64,11 @@ public class BattleSystem : NetworkBehaviour
         switch(PlayersManager.Instance.CurrentGameState)
         {
             case GameState.GODTURN:
-                endTurnLabel.text = "End God-Turn";
+                endTurnLabel.text = "End\nGod-Turn";
                 break;
 
             case GameState.HUMANTURN:
-                endTurnLabel.text = "End Human-Turn";
+                endTurnLabel.text = "End\nHuman-Turn";
                 break;
 
             case GameState.START:
@@ -76,7 +76,7 @@ public class BattleSystem : NetworkBehaviour
                 break;
 
             case GameState.CORRUPTION:
-                endTurnLabel.text = "End Corruption-Turn";
+                endTurnLabel.text = "End\nCorruption-Turn";
                 break;
 
             case GameState.WON:
