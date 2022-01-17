@@ -1,8 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
-using ObserverPattern;
 using Unity.Netcode;
-using TMPro;
 using UnityEngine.SceneManagement;
 
 public enum GameState
@@ -61,6 +59,13 @@ public class BattleSystem : NetworkBehaviour
 
     protected void Update()
     {
+        endTurnButton.gameObject.SetActive(
+            PlayersManager.Instance.CurrentGameState.Equals(GameState.START) ||
+            PlayersManager.Instance.CurrentGameState.Equals(GameState.CORRUPTION) ||
+            PlayersManager.Instance.CurrentGameState.Equals(GameState.GODTURN) && PlayersManager.Instance.IsGod ||
+            PlayersManager.Instance.CurrentGameState.Equals(GameState.HUMANTURN) && PlayersManager.Instance.IsHuman
+        );
+
         switch(PlayersManager.Instance.CurrentGameState)
         {
             case GameState.GODTURN:

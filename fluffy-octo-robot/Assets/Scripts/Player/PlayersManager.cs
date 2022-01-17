@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 using System.Collections;
-using static HexCell;
+
+public enum Role
+{
+    HUMAN, GOD
+}
 
 public class PlayersManager : Singelton<PlayersManager> {
 
@@ -18,6 +22,8 @@ public class PlayersManager : Singelton<PlayersManager> {
 
     [SerializeField]
     private NetworkList<SerializedNetworkHex> hexCellsSerialized;
+
+    private Role role;
 
     HexGrid hexGrid;
 
@@ -61,16 +67,29 @@ public class PlayersManager : Singelton<PlayersManager> {
         }
     }
 
+    public bool IsHuman
+    {
+        get
+        {
+            return role.Equals(Role.HUMAN);
+        }
+    }
+
+    public bool IsGod
+    {
+        get
+        {
+            return role.Equals(Role.GOD);
+        }
+    }
+
     private void Start() {
 
         NetworkManager.Singleton.OnClientConnectedCallback += (id) => {
-
-            if(IsServer) {
-
+            if (IsServer) {
                 playersInGame.Value++;
 
                 Debug.Log("Player Added");
-
             }
         };
 
@@ -113,6 +132,11 @@ public class PlayersManager : Singelton<PlayersManager> {
             }
         }
         UpdateGridVersionServerRpc();
+    }
+
+    public void SetRole(Role role)
+    {
+        this.role = role;
     }
 
     public void UpdateGameState(GameState newGamestate)

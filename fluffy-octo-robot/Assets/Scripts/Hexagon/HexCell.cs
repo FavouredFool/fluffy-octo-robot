@@ -119,7 +119,7 @@ public class HexCell : MonoBehaviour
 
     public void AddTileManually()
     {
-        if (actionPoints.GetCurrentActionPoints() == 0)
+        if (actionPoints.GetCurrentActionPoints() == 0 || !PlayersManager.Instance.IsGod)
         {
             return;
         }
@@ -151,7 +151,7 @@ public class HexCell : MonoBehaviour
 
     public void RemoveTileManually()
     {
-        if (actionPoints.GetCurrentActionPoints() == 0)
+        if (actionPoints.GetCurrentActionPoints() == 0 || !PlayersManager.Instance.IsGod)
         {
             return;
         }
@@ -258,7 +258,7 @@ public class HexCell : MonoBehaviour
     
     public void PlacePlayer()
     {
-        if (actionPoints.GetCurrentActionPoints() == 0)
+        if (actionPoints.GetCurrentActionPoints() == 0 || !PlayersManager.Instance.IsHuman)
         {
             return;
         }
@@ -275,25 +275,29 @@ public class HexCell : MonoBehaviour
 
     public void CalculatePreviewTilesForHuman(bool active)
     {
-        foreach (HexCoordinates activeCoordinates in hexGrid.GetCell(Player.Instance.activeCellCoordinates).GenerateCellCoordinatesInRadius(1))
+        if (actionPoints.GetCurrentActionPoints() != 0 && PlayersManager.Instance.IsHuman)
         {
-            HexCell activeCell = hexGrid.GetCell(activeCoordinates);
-            if (activeCell)
+            foreach (HexCoordinates activeCoordinates in hexGrid.GetCell(Player.Instance.activeCellCoordinates).GenerateCellCoordinatesInRadius(1))
             {
-                if (active)
+                HexCell activeCell = hexGrid.GetCell(activeCoordinates);
+                if (activeCell)
                 {
-                    // Calculate if they should be on -> they are previously all turned off; no turning off necessary
-                    if (activeCell.ValdiatePlacement())
+                    if (active)
                     {
-                        activeCell.ShowTilePreview(true);
+                        // Calculate if they should be on -> they are previously all turned off; no turning off necessary
+                        if (activeCell.ValdiatePlacement())
+                        {
+                            activeCell.ShowTilePreview(true);
+                        }
                     }
-                }
-                else
-                {
-                    activeCell.ShowTilePreview(false);
+                    else
+                    {
+                        activeCell.ShowTilePreview(false);
+                    }
                 }
             }
         }
+        
     }
 
     public bool ValdiatePlacement()

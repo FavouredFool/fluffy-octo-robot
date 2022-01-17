@@ -7,7 +7,6 @@ public class MenuHexGrid : NetworkBehaviour
 {
     public float rotationSpeed = 0.2f;
     
-
     public int size = 5;
 
     public MenuHexCell cellPrefab;
@@ -21,7 +20,6 @@ public class MenuHexGrid : NetworkBehaviour
 
     protected void Awake()
     {
-
         // initiale Capacity bereitstellen
         cells = new(TriangleNumber(size) + TriangleNumber(size - 1) - 2 * TriangleNumber(size / 2));
 
@@ -36,8 +34,6 @@ public class MenuHexGrid : NetworkBehaviour
 
                 CreateCell((int)offsetCoordinates.x, (int)offsetCoordinates.z);
             }
-
-
         }
 
         List<MenuHexCell> startCells = new List<MenuHexCell>(cells);
@@ -57,7 +53,7 @@ public class MenuHexGrid : NetworkBehaviour
     {
         yield return new WaitForSeconds(1f);
 
-        // Hier könnte die Insel immer wieder ein wenig umgebaut werden
+        // Hier k?nnte die Insel immer wieder ein wenig umgebaut werden
 
         /*
         while (true)
@@ -67,7 +63,6 @@ public class MenuHexGrid : NetworkBehaviour
 
         }
         */
-
     }
 
 
@@ -100,10 +95,7 @@ public class MenuHexGrid : NetworkBehaviour
         }
 
         return cell;
-
     }
-
-
 
     protected int TriangleNumber(int i)
     {
@@ -118,7 +110,6 @@ public class MenuHexGrid : NetworkBehaviour
 
     public MenuHexCell GetCell(HexCoordinates searchCoordinates)
     {
-
         MenuHexCell foundHexCell;
 
         foreach (MenuHexCell activeCell in GetCells())

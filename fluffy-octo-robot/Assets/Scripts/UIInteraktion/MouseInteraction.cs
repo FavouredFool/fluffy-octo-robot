@@ -5,6 +5,8 @@ using UnityEngine;
 public class MouseInteraction : MonoBehaviour
 {
 
+    private ActionPoints actionPoints;
+
     public HexGrid hexGrid;
 
     HexCell hoveredHex;
@@ -13,8 +15,9 @@ public class MouseInteraction : MonoBehaviour
     // Start is called before the first frame update
     protected void Start()
     {
-        StartCoroutine(HandleHover());
+        actionPoints = FindObjectOfType<ActionPoints>();
 
+        StartCoroutine(HandleHover());
     }
 
     // Update is called once per frame
@@ -22,8 +25,11 @@ public class MouseInteraction : MonoBehaviour
     {
         if (!hexGrid.blockActions)
         {
-            if (PlayersManager.Instance.CurrentGameState.Equals(GameState.GODTURN))
-            {
+            if (
+                PlayersManager.Instance.CurrentGameState.Equals(GameState.GODTURN) &&
+                PlayersManager.Instance.IsGod &&
+                actionPoints.GetCurrentActionPoints() != 0
+            ) {
                 if (Input.GetMouseButtonDown(0))
                 {
                     HexCell activeHex = SelectedHexCell();
@@ -43,8 +49,11 @@ public class MouseInteraction : MonoBehaviour
                     }
                 }
             }
-            else if (PlayersManager.Instance.CurrentGameState.Equals(GameState.HUMANTURN))
-            {
+            else if (
+                PlayersManager.Instance.CurrentGameState.Equals(GameState.HUMANTURN) &&
+                PlayersManager.Instance.IsHuman &&
+                actionPoints.GetCurrentActionPoints() != 0
+            ) {
 
                 if (Input.GetMouseButtonDown(0))
                 {
@@ -77,8 +86,11 @@ public class MouseInteraction : MonoBehaviour
             // Refresh jeden zweiten Frame
             yield return new WaitForSeconds(Time.deltaTime * 4);
             
-            if (PlayersManager.Instance.CurrentGameState.Equals(GameState.GODTURN))
-            {
+            if (
+                PlayersManager.Instance.CurrentGameState.Equals(GameState.GODTURN) &&
+                PlayersManager.Instance.IsGod &&
+                actionPoints.GetCurrentActionPoints() != 0
+            ) {
                 // ber�hrte Cell finden
                 hoveredHex = SelectedHexCell();
 

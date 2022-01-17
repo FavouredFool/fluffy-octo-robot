@@ -29,8 +29,6 @@ public class ActionPoints : NetworkBehaviour
 
     private void Start()
     {
-        
-
         for (int i = actionPoints-1; i >= 0; i--)
         {
             APImages[i].gameObject.SetActive(true);
@@ -40,12 +38,23 @@ public class ActionPoints : NetworkBehaviour
 
     private void Update()
     {
-
-    }
-
-    private bool CheckShowLabel()
-    {
-        return IsHost && PlayersManager.Instance.CurrentGameState.Equals(GameState.HUMANTURN) || IsClient && PlayersManager.Instance.CurrentGameState.Equals(GameState.GODTURN);
+        if (
+            PlayersManager.Instance.CurrentGameState.Equals(GameState.GODTURN) && PlayersManager.Instance.IsGod ||
+            PlayersManager.Instance.CurrentGameState.Equals(GameState.HUMANTURN) && PlayersManager.Instance.IsHuman
+        ) {
+            foreach (Image i in APImages)
+            {
+                i.enabled = true;
+            }
+        }
+        else
+        {
+            foreach (Image i in APImages)
+            {
+                i.enabled = false;
+            }
+        }
+        
     }
 
     public void UpdateActionPoints()

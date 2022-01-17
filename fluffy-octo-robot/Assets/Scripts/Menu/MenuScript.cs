@@ -19,6 +19,7 @@ public class MenuScript : NetworkBehaviour
         if (NetworkManager.Singleton.StartHost())
         {
             Debug.Log("host game");
+            PlayersManager.Instance.SetRole(Role.GOD);
 
             SceneManager.LoadScene(sceneName: "TileScene");
         }
@@ -33,6 +34,7 @@ public class MenuScript : NetworkBehaviour
             // Versuchen eine Verbindung aufzubauen
             if (NetworkManager.Singleton.StartClient()) {
                 Debug.Log("search for host");
+                PlayersManager.Instance.SetRole(Role.HUMAN);
             }
         }
 
