@@ -282,7 +282,6 @@ public class HexCell : MonoBehaviour
         Player.Instance.transform.position = transform.position + new Vector3(0f, height * HexMetrics.hexHeight + HexMetrics.hexHeight / 2, 0f);
     }
 
-
     
     public void PlacePlayer()
     {
@@ -300,7 +299,12 @@ public class HexCell : MonoBehaviour
         {
             Player.Instance.collected++;
             hexGrid.goalCollected[collectedIndex] = true;
+            hexGrid.cellCorruptionAmount++;
+        }
 
+        if (hexGrid.GetStartCellCoordiantes().Equals(coordinates) && Player.Instance.collected >= 3)
+        {
+            PlayersManager.Instance.UpdateGameStateServerRpc(GameState.WON);
         }
 
         //Reform World

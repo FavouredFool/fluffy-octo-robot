@@ -22,7 +22,7 @@ public class HexGrid : NetworkBehaviour
     public int corruptionMinDuration;
     public int corruptionMaxDuration;
 
-    public int corruptionDivision;
+    public int cellCorruptionAmount = 1;
 
     List<HexCell> cells;
 
@@ -237,7 +237,6 @@ public class HexGrid : NetworkBehaviour
             }
         }
 
-        int cellCorruptionAmount = Mathf.Max(cellCount / corruptionDivision, 1);
         int outerLoopCounter = 0;
         bool goalIsFinishedFlag = false;
         int index;
