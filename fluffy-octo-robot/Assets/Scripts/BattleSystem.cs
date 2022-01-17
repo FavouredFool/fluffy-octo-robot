@@ -142,12 +142,14 @@ public class BattleSystem : NetworkBehaviour
     private void GameWon()
     {
         Debug.Log("SPIEL GEWONNEN!");
+        NetworkManager.Singleton.Shutdown();
         SceneManager.LoadScene(sceneName: "MainMenu");
     }
 
     private void GameLost()
     {
         Debug.Log("SPIEL VERLOREN!");
+        NetworkManager.Singleton.Shutdown();
         SceneManager.LoadScene(sceneName: "MainMenu");
     }
 }
