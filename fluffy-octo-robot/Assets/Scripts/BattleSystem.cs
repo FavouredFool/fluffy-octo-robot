@@ -16,13 +16,12 @@ public class BattleSystem : NetworkBehaviour
     public HexGrid hexGrid;
 
     public Button endTurnButton;
-    private TMP_Text endTurnLabel;
+    public Text endTurnLabel;
 
     private ActionPoints actionPoints;
 
     private void Awake()
     {
-        endTurnLabel = endTurnButton.transform.GetChild(0).GetComponent<TMP_Text>();
         actionPoints = FindObjectOfType<ActionPoints>();
     }
 
