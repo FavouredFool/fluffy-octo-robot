@@ -128,6 +128,8 @@ public class PlayersManager : Singelton<PlayersManager> {
                 else
                     playerActive = false;
 
+
+
                 SerializeAndUpdateHexCellsServerRpc(new SerializedNetworkHex(activeCell.coordinates.X, activeCell.coordinates.Z, activeCell.GetHeight(), playerActive, activeCell.GetRoundsTillCorrupted(), activeCell.cellBiome));
             }
         }

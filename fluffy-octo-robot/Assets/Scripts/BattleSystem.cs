@@ -43,9 +43,9 @@ public class BattleSystem : NetworkBehaviour
                         GodTurn();
                         break;
 
-                    case GameState.CORRUPTION:
-                        GodTurn();
-                        break;
+                   // case GameState.CORRUPTION:
+                        //GodTurn();
+                        //break;
                     default:
                         Debug.LogWarning("FEHLER");
                         break;
@@ -53,18 +53,23 @@ public class BattleSystem : NetworkBehaviour
             }
         });
 
-
-        StartGame();
+        if (IsHost)
+        {
+            StartGame();
+        }
+        
     }
 
     protected void Update()
     {
+        
         endTurnButton.gameObject.SetActive(
             PlayersManager.Instance.CurrentGameState.Equals(GameState.START) ||
             PlayersManager.Instance.CurrentGameState.Equals(GameState.CORRUPTION) ||
             PlayersManager.Instance.CurrentGameState.Equals(GameState.GODTURN) && PlayersManager.Instance.IsGod ||
             PlayersManager.Instance.CurrentGameState.Equals(GameState.HUMANTURN) && PlayersManager.Instance.IsHuman
         );
+        
 
         switch (PlayersManager.Instance.CurrentGameState)
         {
@@ -80,9 +85,9 @@ public class BattleSystem : NetworkBehaviour
                 endTurnLabel.text = "Start Game";
                 break;
 
-            case GameState.CORRUPTION:
-                endTurnLabel.text = "End\nCorruption-Turn";
-                break;
+            //case GameState.CORRUPTION:
+                //endTurnLabel.text = "End\nCorruption-Turn";
+                //break;
 
             case GameState.WON:
                 GameWon();
@@ -106,7 +111,6 @@ public class BattleSystem : NetworkBehaviour
 
         actionPoints.ResetActionPoints();
 
-        endTurnLabel.text = "End Human-Turn";
     }
 
     private void GodTurn()
@@ -116,7 +120,6 @@ public class BattleSystem : NetworkBehaviour
 
         actionPoints.ResetActionPoints();
 
-        endTurnLabel.text = "End God-Turn";
     }
 
     private void CorruptionTurn()
@@ -125,17 +128,13 @@ public class BattleSystem : NetworkBehaviour
 
         hexGrid.ReduceCorruptionTimer();
         hexGrid.CorruptRandomCells();
-        hexGrid.ReformWorld();
 
-        endTurnLabel.text = "End Corruption-Turn";
-
+        GodTurn();
     }
 
     private void StartGame()
     {
         PlayersManager.Instance.UpdateGameState(GameState.START);
-
-        endTurnLabel.text = "Start Game";
 
     }
 

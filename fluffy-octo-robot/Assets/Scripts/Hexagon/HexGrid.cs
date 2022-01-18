@@ -26,7 +26,9 @@ public class HexGrid : NetworkBehaviour
 
     List<HexCell> cells;
 
+    [HideInInspector]
     public List<HexCoordinates> goalCellCoordinates;
+    [HideInInspector]
     public List<bool> goalCollected;
 
     HexCoordinates startCellCoordinates = new HexCoordinates(0, 0);
@@ -74,11 +76,11 @@ public class HexGrid : NetworkBehaviour
         }
 
         List<HexCell> startCells = new List<HexCell>(cells);
-
+        
         // Generate StartIsland
         foreach (HexCell activeCell in startCells)
         {
-            for (int i = 0; i<Random.Range(4, 8); i++)
+            for (int i = 0; i<Random.Range(6, 8); i++)
             {
                 activeCell.AddTileNoReform();
             }
@@ -87,34 +89,42 @@ public class HexGrid : NetworkBehaviour
         // GenerateGoalTerrain
         GenerateGoalTerrain();
 
-        // Generate Surrounding Terrain
-        foreach (HexCoordinates activeCoordinates in GetCell(startCellCoordinates).GenerateCellCoordinatesInRadius(radialMaxSize))
+
+
+        for(int i = radialSize+1; i<=radialMaxSize;i++)
         {
-            HexCell activeCell = GetCell(activeCoordinates);
-
-            if (!(activeCell && activeCell.GetHeight() > 0))
+            foreach(HexCoordinates activeCoordinates in GetCell(startCellCoordinates).GenerateCellCoordinatesOnBorderOfRadius(i))
             {
-                if (Random.Range(0, 2) == 0)
+                HexCell activeCell = GetCell(activeCoordinates);
+                if (Random.Range(0,7) != 0)
                 {
-
-                    if (!activeCell)
+                    if (!(activeCell && activeCell.GetHeight() > 0))
                     {
-                        activeCell = CreateCellFromHexCoordinate(activeCoordinates);
-                    }
 
-                    for (int i = 0; i < Random.Range(3, 8); i++)
-                    {
-                        activeCell.AddTileNoReform();
+                        if (!activeCell)
+                        {
+                            activeCell = CreateCellFromHexCoordinate(activeCoordinates);
+                        }
+
+                        for (int j = 0; j < Random.Range(i, i * 3); j++)
+                        {
+                            activeCell.AddTileNoReform();
+                        }
+
                     }
                 }
+                
             }
         }
+
+        
         
 
         // Corrupt HomeHex
         GetCell(startCellCoordinates).CorruptCell(startTileCorruptionDuration);
 
         ReformWorld();
+        
     }
 
     private void Update()
@@ -416,39 +426,11 @@ public class HexGrid : NetworkBehaviour
         HexCell cellToUse;
         HexCoordinates cellCoordinatesToUse;
 
-        // Tiefes Tile
-        foreach (HexCoordinates activeCoordinates in GetCell(startCellCoordinates).GenerateCellCoordinatesOnBorderOfRadius(radialMaxSize - 1))
-        {
-            ringCoordinates.Add(activeCoordinates);
-        }
-        cellCoordinatesToUse = ringCoordinates[Random.Range(0, ringCoordinates.Count)];
-        cellToUse = GetCell(cellCoordinatesToUse);
-
-        goalCellCoordinates.Add(cellCoordinatesToUse);
-        goalCollected.Add(false);
-
-        if (!cellToUse)
-        {
-            cellToUse = CreateCellFromHexCoordinate(cellCoordinatesToUse);
-        }
-
-        for (int i = 0; i < Random.Range(1, 3); i++)
-        {
-            cellToUse.AddTileNoReform();
-            cellToUse.cellBiome = Biome.HOME;
-        }
-
-        
-
-        ringCoordinates.Clear();
-
-        // Hohes fernes Tile
-
         foreach (HexCoordinates activeCoordinates in GetCell(startCellCoordinates).GenerateCellCoordinatesOnBorderOfRadius(radialMaxSize))
         {
             ringCoordinates.Add(activeCoordinates);
         }
-        cellCoordinatesToUse = ringCoordinates[Random.Range(0, ringCoordinates.Count)];
+        cellCoordinatesToUse = ringCoordinates[ringCoordinates.Count/2+6];
         cellToUse = GetCell(cellCoordinatesToUse);
 
         goalCellCoordinates.Add(cellCoordinatesToUse);
@@ -459,20 +441,13 @@ public class HexGrid : NetworkBehaviour
             cellToUse = CreateCellFromHexCoordinate(cellCoordinatesToUse);
         }
 
-        for (int i = 0; i < Random.Range(10, 12); i++)
+        for (int i = 0; i < Random.Range(radialMaxSize*2, radialMaxSize*3); i++)
         {
             cellToUse.AddTileNoReform();
             cellToUse.cellBiome = Biome.HOME;
         }
 
-        ringCoordinates.Clear();
-
-        // Hohes nahes Tile
-        foreach (HexCoordinates activeCoordinates in GetCell(startCellCoordinates).GenerateCellCoordinatesOnBorderOfRadius(radialMaxSize - 2))
-        {
-            ringCoordinates.Add(activeCoordinates);
-        }
-        cellCoordinatesToUse = ringCoordinates[Random.Range(0, ringCoordinates.Count)];
+        cellCoordinatesToUse = ringCoordinates[ringCoordinates.Count-1];
         cellToUse = GetCell(cellCoordinatesToUse);
 
         goalCellCoordinates.Add(cellCoordinatesToUse);
@@ -483,7 +458,24 @@ public class HexGrid : NetworkBehaviour
             cellToUse = CreateCellFromHexCoordinate(cellCoordinatesToUse);
         }
 
-        for (int i = 0; i < Random.Range(7, 10); i++)
+        for (int i = 0; i < Random.Range(radialMaxSize*2, radialMaxSize*3); i++)
+        {
+            cellToUse.AddTileNoReform();
+            cellToUse.cellBiome = Biome.HOME;
+        }
+
+        cellCoordinatesToUse = ringCoordinates[0];
+        cellToUse = GetCell(cellCoordinatesToUse);
+
+        goalCellCoordinates.Add(cellCoordinatesToUse);
+        goalCollected.Add(false);
+
+        if (!cellToUse)
+        {
+            cellToUse = CreateCellFromHexCoordinate(cellCoordinatesToUse);
+        }
+
+        for (int i = 0; i < Random.Range(radialMaxSize*2, radialMaxSize*3); i++)
         {
             cellToUse.AddTileNoReform();
             cellToUse.cellBiome = Biome.HOME;

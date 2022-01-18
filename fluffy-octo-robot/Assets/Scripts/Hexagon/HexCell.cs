@@ -177,11 +177,13 @@ public class HexCell : MonoBehaviour
             return;
         }
 
-        if (height > 0 && (height != 1 || (!coordinates.Equals(hexGrid.GetStartCellCoordiantes()) && hexGrid.GetCell(Player.Instance.activeCellCoordinates) != this)))
+        //if (height > 0 && (height != 1 || (!coordinates.Equals(hexGrid.GetStartCellCoordiantes()) && hexGrid.GetCell(Player.Instance.activeCellCoordinates) != this)))
+        if (height > 0 && (!coordinates.Equals(hexGrid.GetStartCellCoordiantes()) && hexGrid.GetCell(Player.Instance.activeCellCoordinates) != this))
         {
             foreach (HexCoordinates hexCoordinates in hexGrid.goalCellCoordinates)
             {
-                if (!(height > 0 && (height != 1 || (!coordinates.Equals(hexCoordinates)))))
+                //if (!(height > 0 && (height != 1 || (!coordinates.Equals(hexCoordinates)))))
+                if (!(height > 0 && (!coordinates.Equals(hexCoordinates))))
                 {
                     return;
                 }
@@ -285,17 +287,18 @@ public class HexCell : MonoBehaviour
     
     public void PlacePlayer()
     {
-        if (actionPoints.GetCurrentActionPoints() == 0 || !PlayersManager.Instance.IsHuman)
+        if (actionPoints.GetCurrentActionPoints() == 0 || PlayersManager.Instance.IsGod)
         {
             return;
         }
 
-        Player.Instance.activeCellCoordinates = coordinates;
-        Player.Instance.transform.position = transform.position + new Vector3(0f, height * HexMetrics.hexHeight + HexMetrics.hexHeight / 2, 0f);
+      
+            Player.Instance.activeCellCoordinates = coordinates;
+            Player.Instance.transform.position = transform.position + new Vector3(0f, height * HexMetrics.hexHeight + HexMetrics.hexHeight / 2, 0f);
 
-        actionPoints.UpdateActionPoints();
+            actionPoints.UpdateActionPoints();
 
-        if(collectable.activeSelf)
+        if (collectable.activeSelf)
         {
             Player.Instance.collected++;
             hexGrid.goalCollected[collectedIndex] = true;
@@ -309,8 +312,9 @@ public class HexCell : MonoBehaviour
 
         //Reform World
         hexGrid.ReformWorld();
+
+
     }
-    
 
     public void CalculatePreviewTilesForHuman(bool active)
     {

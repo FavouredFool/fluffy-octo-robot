@@ -19,8 +19,6 @@ public struct SerializedNetworkHex : INetworkSerializable, IEquatable<Serialized
         PlayerActive = playerActive;
         RoundsTillCorrupted = roundsTillCorrupted;
         Biome = biome;
-
-
     }
 
     public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
