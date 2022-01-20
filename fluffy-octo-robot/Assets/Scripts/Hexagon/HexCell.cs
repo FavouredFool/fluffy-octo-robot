@@ -46,6 +46,8 @@ public class HexCell : MonoBehaviour
 
     int collectedIndex;
 
+    public bool collectableActive;
+
     protected void Awake()
     {
         actionPoints = FindObjectOfType<ActionPoints>();
@@ -58,6 +60,8 @@ public class HexCell : MonoBehaviour
         // Add Preview Prefab
         hexCellPreviewObj = Instantiate(hexCellPreviewPrefab, transform.position + new Vector3(0f, height * HexMetrics.hexHeight, 0f), Quaternion.identity, transform);
 
+
+
     }
 
     protected void Start()
@@ -68,22 +72,30 @@ public class HexCell : MonoBehaviour
             // Coordinate-Grids 
             DefineLabel();
         }
-        
 
-        for (int i=0; i<hexGrid.goalCellCoordinates.Count; i++)
+        /*
+        for (int i = 0; i < hexGrid.goalCellCoordinates.Count; i++)
         {
             if (hexGrid.goalCellCoordinates[i].Equals(coordinates))
             {
                 collectedIndex = i;
                 if (!hexGrid.goalCollected[i])
                 {
-                    collectable.SetActive(true);
+                    collectableActive = true;
                     break;
                 }
             }
-            collectable.SetActive(false);
+            collectableActive = false;
+            collectedIndex = -1;
         }
+        */
 
+    }
+
+    public void ActiveCollectable(bool active)
+    {
+        collectable.SetActive(active);
+        collectableActive = active;
     }
 
     protected void DefineLabel()
@@ -299,16 +311,16 @@ public class HexCell : MonoBehaviour
         }
 
       
-            Player.Instance.activeCellCoordinates = coordinates;
-            Player.Instance.transform.position = transform.position + new Vector3(0f, height * HexMetrics.hexHeight + HexMetrics.hexHeight / 2, 0f);
+        Player.Instance.activeCellCoordinates = coordinates;
+        Player.Instance.transform.position = transform.position + new Vector3(0f, height * HexMetrics.hexHeight + HexMetrics.hexHeight / 2, 0f);
 
-            actionPoints.UpdateActionPoints();
+        actionPoints.UpdateActionPoints();
 
-        if (collectable.activeSelf)
+        if (collectableActive)
         {
-            Player.Instance.collected++;
-            hexGrid.goalCollected[collectedIndex] = true;
+            //Player.Instance.collected++;
             hexGrid.cellCorruptionAmount++;
+            collectableActive = false;
         }
 
         if (hexGrid.GetStartCellCoordiantes().Equals(coordinates) && Player.Instance.collected >= 3)

@@ -28,8 +28,6 @@ public class HexGrid : NetworkBehaviour
 
     [HideInInspector]
     public List<HexCoordinates> goalCellCoordinates;
-    [HideInInspector]
-    public List<bool> goalCollected;
 
     HexCoordinates startCellCoordinates = new HexCoordinates(0, 0);
 
@@ -45,7 +43,6 @@ public class HexGrid : NetworkBehaviour
     private void Start()
     {
         worldBorderCells = new();
-        goalCollected = new();
         goalCellCoordinates = new();
 
         currentGridVersion = PlayersManager.Instance.CurrentGridVersion;
@@ -117,11 +114,15 @@ public class HexGrid : NetworkBehaviour
             }
         }
 
-        
-        
 
         // Corrupt HomeHex
         GetCell(startCellCoordinates).CorruptCell(startTileCorruptionDuration);
+
+        foreach (HexCoordinates hexCoordinates in goalCellCoordinates)
+        {
+            GetCell(hexCoordinates).ActiveCollectable(true);
+        }
+
 
         ReformWorld();
         
@@ -248,26 +249,16 @@ public class HexGrid : NetworkBehaviour
         }
 
         int outerLoopCounter = 0;
-        bool goalIsFinishedFlag = false;
-        int index;
+
         do
         {
             outerLoopCounter++;
             do
             {
-                goalIsFinishedFlag = false;
-
                 cellToCorrupt = cells[Random.Range(0, cells.Count - 1)];
                 failSaveCounter++;
 
-                index = goalCellCoordinates.IndexOf(cellToCorrupt.coordinates);
-
-                if (index != -1)
-                    goalIsFinishedFlag = goalCollected[index];
-                else
-                    goalIsFinishedFlag = true;
-
-            } while ((cellToCorrupt == GetCell(Player.Instance.activeCellCoordinates) || cellToCorrupt.GetHeight() == 0 || cellToCorrupt == GetCell(startCellCoordinates) || cellToCorrupt.GetRoundsTillCorrupted() >= 0 || !goalIsFinishedFlag) && failSaveCounter <= 1000);
+            } while ((cellToCorrupt == GetCell(Player.Instance.activeCellCoordinates) || cellToCorrupt.GetHeight() == 0 || cellToCorrupt == GetCell(startCellCoordinates) || cellToCorrupt.GetRoundsTillCorrupted() >= 0 || cellToCorrupt.collectableActive) && failSaveCounter <= 1000);
 
             if (failSaveCounter > 1000)
             {
@@ -312,7 +303,6 @@ public class HexGrid : NetworkBehaviour
 
         gridRadius = float.NegativeInfinity;
 
-
         foreach (SerializedNetworkHex newHex in newHexList)
         {
             
@@ -320,8 +310,11 @@ public class HexGrid : NetworkBehaviour
             // Step 2: Build new Cells
             HexCell cell = CreateCellFromHexCoordinate(new HexCoordinates(newHex.X, newHex.Z));
             cell.SetRoundsTillCorrupted(newHex.RoundsTillCorrupted);
+
             cell.cellBiome = newHex.Biome;
-            
+
+            cell.ActiveCollectable(newHex.ShowCollectable);
+
 
             if (newHex.PlayerActive)
             {
@@ -342,6 +335,22 @@ public class HexGrid : NetworkBehaviour
                 
             }
         }
+
+
+        
+        // GUI-Corruption Update
+        int counter = 0;
+        foreach (HexCoordinates hexCoordinates in goalCellCoordinates)
+        {
+            HexCell activeCell = GetCell(hexCoordinates);
+            if (activeCell && activeCell.collectableActive)
+            {
+                counter++;
+            }
+        }
+
+        Player.Instance.collected = 3 - counter;
+        
 
         tempCells = new List<HexCell>(cells);
 
@@ -434,7 +443,7 @@ public class HexGrid : NetworkBehaviour
         cellToUse = GetCell(cellCoordinatesToUse);
 
         goalCellCoordinates.Add(cellCoordinatesToUse);
-        goalCollected.Add(false);
+        //GetCell(cellCoordinatesToUse).ActiveCollectable(true);
 
         if (!cellToUse)
         {
@@ -451,7 +460,7 @@ public class HexGrid : NetworkBehaviour
         cellToUse = GetCell(cellCoordinatesToUse);
 
         goalCellCoordinates.Add(cellCoordinatesToUse);
-        goalCollected.Add(false);
+        //GetCell(cellCoordinatesToUse).ActiveCollectable(true);
 
         if (!cellToUse)
         {
@@ -468,7 +477,7 @@ public class HexGrid : NetworkBehaviour
         cellToUse = GetCell(cellCoordinatesToUse);
 
         goalCellCoordinates.Add(cellCoordinatesToUse);
-        goalCollected.Add(false);
+        //GetCell(cellCoordinatesToUse).ActiveCollectable(true);
 
         if (!cellToUse)
         {

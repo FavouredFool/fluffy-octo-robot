@@ -64,7 +64,7 @@ public class BattleSystem : NetworkBehaviour
     {
         
         endTurnButton.gameObject.SetActive(
-            PlayersManager.Instance.CurrentGameState.Equals(GameState.START) ||
+            PlayersManager.Instance.CurrentGameState.Equals(GameState.START) && IsHost ||
             PlayersManager.Instance.CurrentGameState.Equals(GameState.CORRUPTION) ||
             PlayersManager.Instance.CurrentGameState.Equals(GameState.GODTURN) && PlayersManager.Instance.IsGod ||
             PlayersManager.Instance.CurrentGameState.Equals(GameState.HUMANTURN) && PlayersManager.Instance.IsHuman

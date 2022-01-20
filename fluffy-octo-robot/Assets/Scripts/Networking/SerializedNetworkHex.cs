@@ -10,8 +10,9 @@ public struct SerializedNetworkHex : INetworkSerializable, IEquatable<Serialized
     public bool PlayerActive;
     public int RoundsTillCorrupted;
     public Biome Biome;
+    public bool ShowCollectable;
 
-    public SerializedNetworkHex(int x, int z, int height, bool playerActive, int roundsTillCorrupted, Biome biome)
+    public SerializedNetworkHex(int x, int z, int height, bool playerActive, int roundsTillCorrupted, Biome biome, bool showCollectable)
     {
         X = x;
         Z = z;
@@ -19,6 +20,7 @@ public struct SerializedNetworkHex : INetworkSerializable, IEquatable<Serialized
         PlayerActive = playerActive;
         RoundsTillCorrupted = roundsTillCorrupted;
         Biome = biome;
+        ShowCollectable = showCollectable;
     }
 
     public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
@@ -29,6 +31,7 @@ public struct SerializedNetworkHex : INetworkSerializable, IEquatable<Serialized
         serializer.SerializeValue(ref PlayerActive);
         serializer.SerializeValue(ref RoundsTillCorrupted);
         serializer.SerializeValue(ref Biome);
+        serializer.SerializeValue(ref ShowCollectable);
     }
 
     public bool Equals(SerializedNetworkHex other)
