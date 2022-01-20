@@ -58,6 +58,7 @@ MonoBehaviour:
   hexPreviewPrefab: {fileID: 3524458371709084534, guid: cb72ca3b71b26504fad3b9b258409ae9, type: 3}
   hexCellPreviewPrefab: {fileID: 3524458371709084534, guid: 6f4dc7ae943786549ba7109e4d844a05, type: 3}
   cellLabelPrefab: {fileID: 6694183529702686237}
+  numberGrid: {fileID: 6058347052198269331}
   coordinates:
     x: 0
     z: 0
@@ -222,7 +223,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &991038435343421014
 RectTransform:
   m_ObjectHideFlags: 0
@@ -287,4 +288,4 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 10
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1

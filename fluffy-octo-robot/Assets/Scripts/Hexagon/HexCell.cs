@@ -18,6 +18,8 @@ public class HexCell : MonoBehaviour
 
     public Material corruptionMaterial;
 
+    public GameObject numberCanvas;
+
     private ActionPoints actionPoints;
 
     [HideInInspector]
@@ -61,8 +63,12 @@ public class HexCell : MonoBehaviour
     protected void Start()
     {
 
-        // Coordinate-Grids 
-        DefineLabel();
+        if (numberCanvas.activeSelf)
+        {
+            // Coordinate-Grids 
+            DefineLabel();
+        }
+        
 
         for (int i=0; i<hexGrid.goalCellCoordinates.Count; i++)
         {
@@ -402,7 +408,11 @@ public class HexCell : MonoBehaviour
         height = newHeight;
 
         // Change CanvasPosition
-        cellLabelPrefab.transform.parent.localPosition = new Vector3(0f, (newHeight - 1/2f) * HexMetrics.hexHeight, 0f);
+        if (numberCanvas.activeSelf)
+        {
+            cellLabelPrefab.transform.parent.localPosition = new Vector3(0f, (newHeight - 1 / 2f) * HexMetrics.hexHeight, 0f);
+        }
+        
         corruptionLabelPrefab.transform.parent.localPosition = new Vector3(0f, (newHeight - 1 / 2f) * HexMetrics.hexHeight + 15, 0f);
         collectable.transform.localPosition = new Vector3(0f, (newHeight - 1 / 2f) * HexMetrics.hexHeight + 10, 0f);
     }

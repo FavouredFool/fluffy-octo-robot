@@ -58,6 +58,7 @@ MonoBehaviour:
   cellLabelPrefab: {fileID: 6694183529702686237}
   corruptionLabelPrefab: {fileID: 5465399066367493575}
   corruptionMaterial: {fileID: 2100000, guid: e92eeccfccac7e64d9d96ad38657959e, type: 2}
+  numberCanvas: {fileID: 6058347052198269331}
   coordinates:
     x: 0
     z: 0
@@ -426,7 +427,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &991038435343421014
 RectTransform:
   m_ObjectHideFlags: 0

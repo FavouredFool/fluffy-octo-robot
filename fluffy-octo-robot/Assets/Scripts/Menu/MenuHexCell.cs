@@ -13,6 +13,8 @@ public class MenuHexCell : MonoBehaviour
 
     public TMP_Text cellLabelPrefab;
 
+    public GameObject numberGrid;
+
     [HideInInspector]
     public HexCoordinates coordinates;
 
@@ -21,6 +23,7 @@ public class MenuHexCell : MonoBehaviour
 
     [HideInInspector]
     public Stack<GameObject> hexStack;
+
 
     MenuHexGrid menuHexGrid;
 
@@ -54,9 +57,13 @@ public class MenuHexCell : MonoBehaviour
 
     protected void DefineLabel()
     {
-        label = GetComponentInChildren<TMP_Text>();
-        label.text = coordinates.ToStringOnSeperateLines();
-        label.color = Color.black;
+        if (numberGrid.activeSelf)
+        {
+            label = GetComponentInChildren<TMP_Text>();
+            label.text = coordinates.ToStringOnSeperateLines();
+            label.color = Color.black;
+        }
+        
     }
 
     public void AddTile()
@@ -150,7 +157,11 @@ public class MenuHexCell : MonoBehaviour
         height = newHeight;
 
         // Change CanvasPosition
-        gridCanvas.transform.localPosition = new Vector3(0f, (newHeight - 1/2f) * HexMetrics.hexHeight, 0f);
+        if (numberGrid.activeSelf)
+        {
+            gridCanvas.transform.localPosition = new Vector3(0f, (newHeight - 1 / 2f) * HexMetrics.hexHeight, 0f);
+        }
+        
     }
 
 
