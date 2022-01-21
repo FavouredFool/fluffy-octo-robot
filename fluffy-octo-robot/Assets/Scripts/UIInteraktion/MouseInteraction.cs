@@ -84,7 +84,7 @@ public class MouseInteraction : MonoBehaviour
         while(true)
         {
             // Refresh jeden zweiten Frame
-            yield return new WaitForSeconds(Time.deltaTime * 4);
+            yield return new WaitForSeconds(Time.deltaTime * 2);
             
             if (
                 PlayersManager.Instance.CurrentGameState.Equals(GameState.GODTURN) &&
