@@ -83,16 +83,12 @@ public class BattleSystem : NetworkBehaviour
             case GameState.HUMANTURN:
                 endTurnLabel.text = "End Human-Turn";
                 if (IsClient && actionPoints.GetCurrentActionPoints() == 0)
-                    GodTurnNoReform();
+                    CorruptionTurnNoReform();
                 break;
 
             case GameState.START:
                 endTurnLabel.text = "Start Game";
                 break;
-
-            //case GameState.CORRUPTION:
-                //endTurnLabel.text = "End\nCorruption-Turn";
-                //break;
 
             case GameState.WON:
                 GameWon();
@@ -151,6 +147,16 @@ public class BattleSystem : NetworkBehaviour
         hexGrid.CorruptRandomCells();
 
         GodTurn();
+    }
+
+    private void CorruptionTurnNoReform()
+    {
+        PlayersManager.Instance.UpdateGameStateServerRpc(GameState.CORRUPTION);
+
+        hexGrid.ReduceCorruptionTimer();
+        hexGrid.CorruptRandomCells();
+
+        GodTurnNoReform();
     }
 
     private void StartGame()
