@@ -160,21 +160,19 @@ public class HexCell : MonoBehaviour
         {
             return;
         }
-        
-        /*
-        // Biome wird gesetzt
-        GameObject prefabToPlace;
 
-        if (coordinates.Equals(hexGrid.GetStartCellCoordiantes()))
-        {
-            prefabToPlace = hexPrefabs[1];
-        } else
-        {
-            int BiomeNumber = Random.Range(2, hexPrefabs.Length);
-            prefabToPlace = hexPrefabs[BiomeNumber];
-            cellBiome = (Biome) BiomeNumber;
+        if (coordinates.Equals(hexGrid.GetStartCellCoordiantes())) {
+            return;
         }
-        */
+
+        foreach (HexCoordinates hexCoordinates in hexGrid.goalCellCoordinates)
+        {
+            //if (!(height > 0 && (height != 1 || (!coordinates.Equals(hexCoordinates)))))
+            if (!(height > 0 && (!coordinates.Equals(hexCoordinates))))
+            {
+                return;
+            }
+        }
 
         // Tile in Stack auf korrekter Hoehe hinzufuegen
         hexStack.Push(Instantiate(hexPrefabs[(int)cellBiome], transform.position + new Vector3(0f, height * HexMetrics.hexHeight, 0f), Quaternion.identity, transform));
