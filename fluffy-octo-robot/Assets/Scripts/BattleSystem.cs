@@ -74,11 +74,15 @@ public class BattleSystem : NetworkBehaviour
         switch (PlayersManager.Instance.CurrentGameState)
         {
             case GameState.GODTURN:
-                endTurnLabel.text = "End\nGod-Turn";
+                endTurnLabel.text = "End God-Turn";
+                if (IsHost && actionPoints.GetCurrentActionPoints() == 0)
+                    PlayerTurnNoReform();
                 break;
 
             case GameState.HUMANTURN:
-                endTurnLabel.text = "End\nHuman-Turn";
+                endTurnLabel.text = "End Human-Turn";
+                if (IsClient && actionPoints.GetCurrentActionPoints() == 0)
+                    GodTurnNoReform();
                 break;
 
             case GameState.START:
@@ -117,6 +121,22 @@ public class BattleSystem : NetworkBehaviour
     {   
         PlayersManager.Instance.UpdateGameStateServerRpc(GameState.GODTURN);
         hexGrid.ReformWorld();
+
+        actionPoints.ResetActionPoints();
+
+    }
+
+    private void PlayerTurnNoReform()
+    {
+        PlayersManager.Instance.UpdateGameStateServerRpc(GameState.HUMANTURN);
+
+        actionPoints.ResetActionPoints();
+
+    }
+
+    private void GodTurnNoReform()
+    {
+        PlayersManager.Instance.UpdateGameStateServerRpc(GameState.GODTURN);
 
         actionPoints.ResetActionPoints();
 
