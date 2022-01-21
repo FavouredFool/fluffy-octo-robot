@@ -11,4 +11,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/TileScene.unity
     guid: 65d34382cfd1ed543969bf5c936e917f
+  - enabled: 1
+    path: Assets/Scenes/GameLost.unity
+    guid: 66d37f237f71f0442a1d014346f8c51b
+  - enabled: 1
+    path: Assets/Scenes/GameWon.unity
+    guid: 61e94c53f9b5dbb42a03d6f82f71cf89
   m_configObjects: {}
