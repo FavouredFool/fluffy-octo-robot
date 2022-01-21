@@ -305,7 +305,9 @@ public class HexCell : MonoBehaviour
             return;
         }
 
-      
+        Vector3 newStuff = Player.Instance.transform.position - hexGrid.GetCell(coordinates).transform.position;
+        Player.Instance.transform.rotation = Quaternion.Euler(0,Vector3.SignedAngle(Vector3.forward, new Vector3(newStuff.x, 0, newStuff.z), Vector3.up), 0);
+
         Player.Instance.activeCellCoordinates = coordinates;
         Player.Instance.transform.position = transform.position + new Vector3(0f, height * HexMetrics.hexHeight + HexMetrics.hexHeight / 2, 0f);
 
@@ -323,8 +325,8 @@ public class HexCell : MonoBehaviour
             PlayersManager.Instance.UpdateGameStateServerRpc(GameState.WON);
         }
 
-        //Reform World
-        hexGrid.ReformWorld();
+        if (actionPoints.GetCurrentActionPoints() != 0)
+            hexGrid.ReformWorld();
     }
 
     public void CalculatePreviewTilesForHuman(bool active)
