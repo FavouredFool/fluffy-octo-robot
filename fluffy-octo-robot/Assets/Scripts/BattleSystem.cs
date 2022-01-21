@@ -62,12 +62,13 @@ public class BattleSystem : NetworkBehaviour
 
     protected void Update()
     {
-        
         endTurnButton.gameObject.SetActive(
             PlayersManager.Instance.CurrentGameState.Equals(GameState.START) && IsHost ||
             PlayersManager.Instance.CurrentGameState.Equals(GameState.CORRUPTION) ||
             PlayersManager.Instance.CurrentGameState.Equals(GameState.GODTURN) && PlayersManager.Instance.IsGod ||
-            PlayersManager.Instance.CurrentGameState.Equals(GameState.HUMANTURN) && PlayersManager.Instance.IsHuman
+            PlayersManager.Instance.CurrentGameState.Equals(GameState.GODTURN) && PlayersManager.Instance.IsSingle ||
+            PlayersManager.Instance.CurrentGameState.Equals(GameState.HUMANTURN) && PlayersManager.Instance.IsHuman ||
+            PlayersManager.Instance.CurrentGameState.Equals(GameState.HUMANTURN) && PlayersManager.Instance.IsSingle
         );
         
 
