@@ -54,6 +54,7 @@ public class HexGrid : NetworkBehaviour
         HexCell startCell = CreateCellFromHexCoordinate(startCellCoordinates);
 
         Instantiate(playerPrefab);
+
         Player.Instance.activeCellCoordinates = startCellCoordinates;
 
         foreach (HexCoordinates coordinates in startCell.GenerateCellCoordinatesInRadius(radialSize))

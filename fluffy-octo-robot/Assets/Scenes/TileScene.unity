@@ -1775,6 +1775,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1419833093248718662, guid: 1d76812737c807846b5894124d5ce617, type: 3}
+      propertyPath: playerPrefab
+      value: 
+      objectReference: {fileID: 8867970884611671887, guid: 07b8b838d7453734a91c09782ff06e7d, type: 3}
+    - target: {fileID: 1419833093248718662, guid: 1d76812737c807846b5894124d5ce617, type: 3}
       propertyPath: radialMaxSize
       value: 4
       objectReference: {fileID: 0}

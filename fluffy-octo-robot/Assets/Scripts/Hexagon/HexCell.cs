@@ -299,7 +299,7 @@ public class HexCell : MonoBehaviour
     public void PlacePlayerForRebuild()
     {
         Player.Instance.activeCellCoordinates = coordinates;
-        Player.Instance.transform.position = transform.position + new Vector3(0f, height * HexMetrics.hexHeight + HexMetrics.hexHeight / 2, 0f);
+        Player.Instance.transform.position = transform.position + new Vector3(0f, height * HexMetrics.hexHeight + HexMetrics.hexHeight / 2 - 2, 0f);
     }
 
     
