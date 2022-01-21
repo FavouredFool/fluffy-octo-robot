@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
 using Unity.Netcode;
+using static MenuHexCell;
 
 public class MenuHexGrid : NetworkBehaviour
 {
@@ -40,9 +41,25 @@ public class MenuHexGrid : NetworkBehaviour
         foreach (MenuHexCell activeCell in startCells)
         {
 
-            for (int i = 0; i < Random.Range(1, 5); i++)
+            int size = Random.Range(1, 6);
+
+            for (int i = 0; i < size; i++)
             {
-                activeCell.AddTile();
+                if (i+1 == size)
+                {
+                    if (GetStartCellCoordiantes().Equals(activeCell.coordinates))
+                    {
+                        activeCell.AddTile(Biome.HOME);
+                    }
+                    else
+                    {
+                        activeCell.AddTile((Biome)Random.Range(2, activeCell.hexPrefabs.Length));
+                    }
+                } else
+                {
+                    activeCell.AddTile(Biome.GROUND);
+                }
+                
             }
         }
 

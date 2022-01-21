@@ -33,6 +33,9 @@ public class MenuHexCell : MonoBehaviour
     Canvas gridCanvas;
     TMP_Text label;
 
+    public enum Biome { GROUND, HOME, WOOD, STONE }
+
+
 
     protected void Awake()
     {
@@ -66,31 +69,20 @@ public class MenuHexCell : MonoBehaviour
         
     }
 
-    public void AddTile()
+    public void AddTile(Biome biome)
     {
         if (GetHeight() == 0)
         {
             Destroy(hexCellPreviewObj);
         }
 
-
-        GameObject prefabToPlace;
-        if (menuHexGrid.GetStartCellCoordiantes().Equals(coordinates))
-        {
-            prefabToPlace = hexPrefabs[0];
-        } else
-        {
-            prefabToPlace = hexPrefabs[Random.Range(1, hexPrefabs.Length)];
-        }
-
         // Tile in Stack auf korrekter Hoehe hinzufuegen
-        hexStack.Push(Instantiate(prefabToPlace, transform.position + new Vector3(0f, height * HexMetrics.hexHeight, 0f), Quaternion.identity, transform));
-        
-
+        hexStack.Push(Instantiate(hexPrefabs[(int) biome], transform.position + new Vector3(0f, height * HexMetrics.hexHeight, 0f), Quaternion.identity, transform));
 
         // Height des Konstrukts erh�hen
         SetHeight(height + 1);
     }
+
 
 
 

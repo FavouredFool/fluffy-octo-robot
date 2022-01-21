@@ -328,6 +328,7 @@ public class HexGrid : NetworkBehaviour
 
                 if (i == newHex.Height-1)
                 {
+
                     cell.AddTile(cell.cellBiome);
                 } else
                 {

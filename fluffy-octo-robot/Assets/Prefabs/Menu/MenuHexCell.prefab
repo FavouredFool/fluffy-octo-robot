@@ -52,9 +52,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hexPrefabs:
+  - {fileID: 3524458371709084534, guid: 9a8cae4be16dcc349b6a65214df7ee9c, type: 3}
   - {fileID: 3524458371709084534, guid: df848389b1c3d4d40b734d2a15bc3c59, type: 3}
-  - {fileID: 3524458371709084534, guid: b63849dc24beeed4bb2e88924f08d812, type: 3}
   - {fileID: 3524458371709084534, guid: be297464481dafc469680956ecae8734, type: 3}
+  - {fileID: 3524458371709084534, guid: b63849dc24beeed4bb2e88924f08d812, type: 3}
   hexPreviewPrefab: {fileID: 3524458371709084534, guid: cb72ca3b71b26504fad3b9b258409ae9, type: 3}
   hexCellPreviewPrefab: {fileID: 3524458371709084534, guid: 6f4dc7ae943786549ba7109e4d844a05, type: 3}
   cellLabelPrefab: {fileID: 6694183529702686237}
