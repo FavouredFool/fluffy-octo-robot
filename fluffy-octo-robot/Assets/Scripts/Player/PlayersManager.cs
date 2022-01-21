@@ -6,7 +6,7 @@ using System.Collections;
 
 public enum Role
 {
-    HUMAN, GOD
+    HUMAN, GOD, SINGLE
 }
 
 public class PlayersManager : Singelton<PlayersManager> {
@@ -83,6 +83,14 @@ public class PlayersManager : Singelton<PlayersManager> {
         }
     }
 
+    public bool IsSingle
+    {
+        get
+        {
+            return role.Equals(Role.SINGLE);
+        }
+    }
+
     private void Start() {
 
         NetworkManager.Singleton.OnClientConnectedCallback += (id) => {
@@ -133,6 +141,7 @@ public class PlayersManager : Singelton<PlayersManager> {
                 SerializeAndUpdateHexCellsServerRpc(new SerializedNetworkHex(activeCell.coordinates.X, activeCell.coordinates.Z, activeCell.GetHeight(), playerActive, activeCell.GetRoundsTillCorrupted(), activeCell.cellBiome, activeCell.collectableActive));
             }
         }
+
         UpdateGridVersionServerRpc();
     }
 

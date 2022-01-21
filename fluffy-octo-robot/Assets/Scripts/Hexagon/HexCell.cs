@@ -156,63 +156,60 @@ public class HexCell : MonoBehaviour
 
     public void AddTileManually()
     {
-        if (actionPoints.GetCurrentActionPoints() == 0 || !PlayersManager.Instance.IsGod)
+        if (actionPoints.GetCurrentActionPoints() > 0 && (PlayersManager.Instance.IsGod || PlayersManager.Instance.IsSingle))
         {
-            return;
-        }
-
-        if (coordinates.Equals(hexGrid.GetStartCellCoordiantes())) {
-            return;
-        }
-
-        foreach (HexCoordinates hexCoordinates in hexGrid.goalCellCoordinates)
-        {
-            //if (!(height > 0 && (height != 1 || (!coordinates.Equals(hexCoordinates)))))
-            if (coordinates.Equals(hexCoordinates))
+            if (coordinates.Equals(hexGrid.GetStartCellCoordiantes()))
             {
                 return;
             }
-        }
 
-        // Tile in Stack auf korrekter Hoehe hinzufuegen
-        hexStack.Push(Instantiate(hexPrefabs[(int)cellBiome], transform.position + new Vector3(0f, height * HexMetrics.hexHeight, 0f), Quaternion.identity, transform));
-
-
-        // Height des Konstrukts erhöhen
-        SetHeight(height + 1);
-
-        actionPoints.UpdateActionPoints();
-
-        hexGrid.ReformWorld();
-    }
-
-    public void RemoveTileManually()
-    {
-        if (actionPoints.GetCurrentActionPoints() == 0 || !PlayersManager.Instance.IsGod)
-        {
-            return;
-        }
-
-        //if (height > 0 && (height != 1 || (!coordinates.Equals(hexGrid.GetStartCellCoordiantes()) && hexGrid.GetCell(Player.Instance.activeCellCoordinates) != this)))
-        if (height > 0 && (!coordinates.Equals(hexGrid.GetStartCellCoordiantes()) && hexGrid.GetCell(Player.Instance.activeCellCoordinates) != this))
-        {
             foreach (HexCoordinates hexCoordinates in hexGrid.goalCellCoordinates)
             {
                 //if (!(height > 0 && (height != 1 || (!coordinates.Equals(hexCoordinates)))))
-                if (!(height > 0 && (!coordinates.Equals(hexCoordinates))))
+                if (coordinates.Equals(hexCoordinates))
                 {
                     return;
                 }
             }
 
-            // Height des Konstrukts verringern
-            SetHeight(height - 1);
+            // Tile in Stack auf korrekter Hoehe hinzufuegen
+            hexStack.Push(Instantiate(hexPrefabs[(int)cellBiome], transform.position + new Vector3(0f, height * HexMetrics.hexHeight, 0f), Quaternion.identity, transform));
+
+
+            // Height des Konstrukts erhöhen
+            SetHeight(height + 1);
 
             actionPoints.UpdateActionPoints();
 
-            // Reform World
             hexGrid.ReformWorld();
+        }
+    }
 
+    public void RemoveTileManually()
+    {
+        if (actionPoints.GetCurrentActionPoints() > 0 && (PlayersManager.Instance.IsGod || PlayersManager.Instance.IsSingle))
+        {
+            //if (height > 0 && (height != 1 || (!coordinates.Equals(hexGrid.GetStartCellCoordiantes()) && hexGrid.GetCell(Player.Instance.activeCellCoordinates) != this)))
+            if (height > 0 && (!coordinates.Equals(hexGrid.GetStartCellCoordiantes()) && hexGrid.GetCell(Player.Instance.activeCellCoordinates) != this))
+            {
+                foreach (HexCoordinates hexCoordinates in hexGrid.goalCellCoordinates)
+                {
+                    //if (!(height > 0 && (height != 1 || (!coordinates.Equals(hexCoordinates)))))
+                    if (!(height > 0 && (!coordinates.Equals(hexCoordinates))))
+                    {
+                        return;
+                    }
+                }
+
+                // Height des Konstrukts verringern
+                SetHeight(height - 1);
+
+                actionPoints.UpdateActionPoints();
+
+                // Reform World
+                hexGrid.ReformWorld();
+
+            }
         }
     }
 
@@ -328,13 +325,11 @@ public class HexCell : MonoBehaviour
 
         //Reform World
         hexGrid.ReformWorld();
-
-
     }
 
     public void CalculatePreviewTilesForHuman(bool active)
     {
-        if (actionPoints.GetCurrentActionPoints() != 0 && PlayersManager.Instance.IsHuman)
+        if (actionPoints.GetCurrentActionPoints() != 0 && PlayersManager.Instance.IsHuman || PlayersManager.Instance.IsSingle)
         {
             foreach (HexCoordinates activeCoordinates in hexGrid.GetCell(Player.Instance.activeCellCoordinates).GenerateCellCoordinatesInRadius(1))
             {

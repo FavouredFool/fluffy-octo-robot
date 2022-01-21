@@ -27,7 +27,7 @@ public class MouseInteraction : MonoBehaviour
         {
             if (
                 PlayersManager.Instance.CurrentGameState.Equals(GameState.GODTURN) &&
-                PlayersManager.Instance.IsGod &&
+                (PlayersManager.Instance.IsGod || PlayersManager.Instance.IsSingle) &&
                 actionPoints.GetCurrentActionPoints() != 0
             ) {
                 if (Input.GetMouseButtonDown(0))
@@ -51,7 +51,7 @@ public class MouseInteraction : MonoBehaviour
             }
             else if (
                 PlayersManager.Instance.CurrentGameState.Equals(GameState.HUMANTURN) &&
-                PlayersManager.Instance.IsHuman &&
+                (PlayersManager.Instance.IsHuman || PlayersManager.Instance.IsSingle) &&
                 actionPoints.GetCurrentActionPoints() != 0
             ) {
 
@@ -88,7 +88,7 @@ public class MouseInteraction : MonoBehaviour
             
             if (
                 PlayersManager.Instance.CurrentGameState.Equals(GameState.GODTURN) &&
-                PlayersManager.Instance.IsGod &&
+                (PlayersManager.Instance.IsGod || PlayersManager.Instance.IsSingle) &&
                 actionPoints.GetCurrentActionPoints() != 0
             ) {
                 // ber�hrte Cell finden

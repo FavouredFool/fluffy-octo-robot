@@ -39,8 +39,8 @@ public class ActionPoints : NetworkBehaviour
     private void Update()
     {
         if (
-            PlayersManager.Instance.CurrentGameState.Equals(GameState.GODTURN) && PlayersManager.Instance.IsGod ||
-            PlayersManager.Instance.CurrentGameState.Equals(GameState.HUMANTURN) && PlayersManager.Instance.IsHuman
+            PlayersManager.Instance.CurrentGameState.Equals(GameState.GODTURN) && (PlayersManager.Instance.IsGod || PlayersManager.Instance.IsSingle) ||
+            PlayersManager.Instance.CurrentGameState.Equals(GameState.HUMANTURN) && (PlayersManager.Instance.IsHuman || PlayersManager.Instance.IsSingle)
         ) {
             foreach (Image i in APImages)
             {

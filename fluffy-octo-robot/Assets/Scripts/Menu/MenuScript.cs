@@ -13,6 +13,17 @@ public class MenuScript : NetworkBehaviour
     string IP;
     string errormessage;
 
+    public void ButtonPlayAsSinglePlayer()
+    {
+        if (NetworkManager.Singleton.StartHost())
+        {
+            Debug.Log("host game, play in single player");
+            PlayersManager.Instance.SetRole(Role.SINGLE);
+
+            SceneManager.LoadScene(sceneName: "TileScene");
+        }
+    }
+
 
     public void ButtonPlayAsHost()
     {
