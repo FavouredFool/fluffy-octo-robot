@@ -168,7 +168,7 @@ public class HexCell : MonoBehaviour
         foreach (HexCoordinates hexCoordinates in hexGrid.goalCellCoordinates)
         {
             //if (!(height > 0 && (height != 1 || (!coordinates.Equals(hexCoordinates)))))
-            if (!(height > 0 && (!coordinates.Equals(hexCoordinates))))
+            if (coordinates.Equals(hexCoordinates))
             {
                 return;
             }

@@ -1356,7 +1356,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2658292315120875011, guid: c73d2beaeb9cb6541a3969a459dbf80a, type: 3}
       propertyPath: size
-      value: 7
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2658292315120875011, guid: c73d2beaeb9cb6541a3969a459dbf80a, type: 3}
       propertyPath: camera
