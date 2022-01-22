@@ -321,7 +321,7 @@ public class HexGrid : NetworkBehaviour
 
             if (newHex.PlayerActive)
             {
-                if (IsHost)
+                if (IsHost && PlayersManager.Instance.PlayersInGame > 1)
                 {
                     Vector3 rotationVector = Player.Instance.transform.position - GetCell(new HexCoordinates(newHex.X, newHex.Z)).transform.position;
                     Player.Instance.transform.rotation = Quaternion.Euler(0, Vector3.SignedAngle(Vector3.forward, new Vector3(rotationVector.x, 0, rotationVector.z), Vector3.up), 0);

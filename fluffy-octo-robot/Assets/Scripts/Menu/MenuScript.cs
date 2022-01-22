@@ -93,4 +93,9 @@ public class MenuScript : NetworkBehaviour
         Debug.Log("Quit game");
         Application.Quit();
     }
+
+    public void ButtonTutorial()
+    {
+        SceneManager.LoadScene("Tutorial");
+    }
 }

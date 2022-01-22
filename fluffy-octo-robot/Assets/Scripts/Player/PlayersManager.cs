@@ -11,7 +11,6 @@ public enum Role
 
 public class PlayersManager : Singelton<PlayersManager> {
 
-    [SerializeField]
     private NetworkVariable<int> playersInGame = new NetworkVariable<int>();
 
     [SerializeField]
