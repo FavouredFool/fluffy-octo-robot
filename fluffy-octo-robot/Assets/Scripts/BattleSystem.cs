@@ -16,6 +16,8 @@ public class BattleSystem : NetworkBehaviour
     public Button endTurnButton;
     public Text endTurnLabel;
 
+    public Text turnName;
+
     private ActionPoints actionPoints;
 
     private void Awake()
@@ -76,17 +78,20 @@ public class BattleSystem : NetworkBehaviour
         {
             case GameState.GODTURN:
                 endTurnLabel.text = "End God-Turn";
+                turnName.text = "Turn: God";
                 if (IsHost && actionPoints.GetCurrentActionPoints() == 0)
                     PlayerTurnNoReform();
                 break;
 
             case GameState.HUMANTURN:
                 endTurnLabel.text = "End Human-Turn";
+                turnName.text = "Turn: Human";
                 if (IsClient && actionPoints.GetCurrentActionPoints() == 0)
                     CorruptionTurn();
                 break;
 
             case GameState.START:
+                turnName.text = "";
                 endTurnLabel.text = "Start Game";
                 break;
 
