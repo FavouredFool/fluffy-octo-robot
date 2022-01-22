@@ -8,7 +8,7 @@ public class CameraMovement : MonoBehaviour
     public float cameraRotationSpeed = 1f;
     public float cameraZoomSpeed = 1f;
 
-    readonly float cameraDistanceMultiplier = 2.1f;
+    readonly float cameraDistanceMultiplier = 2.2f;
     float minCameraDistance;
     float cameraDistance;
 
