@@ -88,44 +88,46 @@ public class HexGrid : NetworkBehaviour
         GenerateGoalTerrain();
 
 
-
-        for(int i = radialSize+1; i<=radialMaxSize;i++)
+        if (IsHost)
         {
-            foreach(HexCoordinates activeCoordinates in GetCell(startCellCoordinates).GenerateCellCoordinatesOnBorderOfRadius(i))
+            for(int i = radialSize+1; i<=radialMaxSize;i++)
             {
-                HexCell activeCell = GetCell(activeCoordinates);
-                if (Random.Range(0,7) != 0)
+                foreach(HexCoordinates activeCoordinates in GetCell(startCellCoordinates).GenerateCellCoordinatesOnBorderOfRadius(i))
                 {
-                    if (!(activeCell && activeCell.GetHeight() > 0))
+                    HexCell activeCell = GetCell(activeCoordinates);
+                    if (Random.Range(0,7) != 0)
                     {
-
-                        if (!activeCell)
+                        if (!(activeCell && activeCell.GetHeight() > 0))
                         {
-                            activeCell = CreateCellFromHexCoordinate(activeCoordinates);
-                        }
 
-                        for (int j = 0; j < Random.Range(i, i * 3); j++)
-                        {
-                            activeCell.AddTileNoReform();
-                        }
+                            if (!activeCell)
+                            {
+                                activeCell = CreateCellFromHexCoordinate(activeCoordinates);
+                            }
 
+                            for (int j = 0; j < Random.Range(i, i * 3); j++)
+                            {
+                                activeCell.AddTileNoReform();
+                            }
+
+                        }
                     }
-                }
                 
+                }
             }
+
+
+            // Corrupt HomeHex
+            GetCell(startCellCoordinates).CorruptCell(startTileCorruptionDuration);
+
+            foreach (HexCoordinates hexCoordinates in goalCellCoordinates)
+            {
+                GetCell(hexCoordinates).ActiveCollectable(true);
+            }
+
+            ReformWorld();
         }
-
-
-        // Corrupt HomeHex
-        GetCell(startCellCoordinates).CorruptCell(startTileCorruptionDuration);
-
-        foreach (HexCoordinates hexCoordinates in goalCellCoordinates)
-        {
-            GetCell(hexCoordinates).ActiveCollectable(true);
-        }
-
-
-        ReformWorld();
+        
         
     }
 

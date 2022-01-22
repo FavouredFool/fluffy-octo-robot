@@ -98,6 +98,11 @@ public class PlayersManager : Singelton<PlayersManager> {
                 playersInGame.Value++;
 
                 Debug.Log("Player Added");
+
+                if (playersInGame.Value == 2)
+                {
+                    hexGrid.ReformWorld();
+                }
             }
         };
 
