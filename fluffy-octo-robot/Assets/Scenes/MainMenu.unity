@@ -935,7 +935,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1016696754}
   m_LocalRotation: {x: -0.45804256, y: 0.007196762, z: -0.0037089512, w: -0.88889337}
-  m_LocalPosition: {x: -0.9742116, y: 54.69197, z: 62.312923}
+  m_LocalPosition: {x: 3, y: 54.69197, z: 63}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1695,7 +1695,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 22475538, guid: 751f7137cfffd4a16b1a4c191e687d64, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -0.09036255
+      value: -0.09039307
       objectReference: {fileID: 0}
     - target: {fileID: 22475538, guid: 751f7137cfffd4a16b1a4c191e687d64, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -1985,8 +1985,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a812895e01124b59b0605b8380348b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playersInGame:
-    m_InternalValue: 0
   gridVersion:
     m_InternalValue: 0
   currentGameState:
