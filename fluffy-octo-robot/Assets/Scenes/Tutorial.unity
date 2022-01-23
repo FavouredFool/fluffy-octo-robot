@@ -230,14 +230,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11476820, guid: 7919987dcce6e459aa48526f95c4c988, type: 3}
       propertyPath: m_Text
-      value: 'To play on different clients, one client will have to host the game.
+      value: "To play on different clients, one client will have to host the game.
         The other client can join by inputting the hosting-clients IPv4-address.
-        The hosting client is always playing the God-Role.
-
-
-        If you want
-        to play with two clients locally, just use "127.0.0.1" (localhost) as your
-        IPv4-address.'
+        The hosting client is always playing the God-Role. If you want to play with
+        two clients locally, just use \"127.0.0.1\" (localhost) as your IPv4-address.
+        \n\nIf you want to play on one client, you can simply press \"Couch Coop\"."
       objectReference: {fileID: 0}
     - target: {fileID: 11476820, guid: 7919987dcce6e459aa48526f95c4c988, type: 3}
       propertyPath: m_FontData.m_MinSize
