@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 using System.Collections;
+using System;
 
 public enum Role
 {
@@ -28,9 +29,17 @@ public class PlayersManager : Singelton<PlayersManager> {
 
     private int bufferOverloadPrevention = 5;
 
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    public static void LoadMain()
+    {
+        Debug.Log(Resources.Load("Manager/PlayersManager"));
+        PlayersManager main = GameObject.Instantiate(Resources.Load<PlayersManager>("Manager/PlayersManager"));
+        GameObject.DontDestroyOnLoad(main);
+    }
+
     private void Awake()
     {
-        DontDestroyOnLoad(this);
+        //DontDestroyOnLoad(this);
 
         hexCellsSerialized = new NetworkList<SerializedNetworkHex>();
     }
@@ -97,17 +106,20 @@ public class PlayersManager : Singelton<PlayersManager> {
                 playersInGame.Value++;
 
                 Debug.Log("Player Added");
+                Debug.Log(playersInGame.Value);
 
                 if (playersInGame.Value == 2)
                 {
+                    hexGrid = FindObjectOfType<HexGrid>();
                     hexGrid.ReformWorld();
                 }
             }
         };
 
         NetworkManager.Singleton.OnClientDisconnectCallback += (id) => {
-            if (IsServer) {
-                playersInGame.Value--;
+            if (IsServer)
+            {
+                playersInGame.Value = 0;
 
                 Debug.Log("Player Removed");
             }
@@ -147,6 +159,18 @@ public class PlayersManager : Singelton<PlayersManager> {
         }
 
         UpdateGridVersionServerRpc();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void IncreasePlayersServerRpc()
+    {
+        Debug.Log("should remove player");
+        if (IsServer)
+        {
+            playersInGame.Value = 0;
+
+            Debug.Log("Player Removed");
+        }
     }
 
     public void SetRole(Role role)
