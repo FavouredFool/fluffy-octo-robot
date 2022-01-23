@@ -164,14 +164,14 @@ public class BattleSystem : NetworkBehaviour
     private void GameWon()
     {
         Debug.Log("SPIEL GEWONNEN!");
-        //NetworkManager.Singleton.Shutdown();
+        NetworkManager.Singleton.Shutdown();
         SceneManager.LoadScene(sceneName: "GameWon");
     }
 
     private void GameLost()
     {
         Debug.Log("SPIEL VERLOREN!");
-        //NetworkManager.Singleton.Shutdown();
+        NetworkManager.Singleton.Shutdown();
         SceneManager.LoadScene(sceneName: "GameLost");
     }
 }
