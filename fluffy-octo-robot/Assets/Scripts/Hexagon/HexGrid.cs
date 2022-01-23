@@ -78,7 +78,7 @@ public class HexGrid : NetworkBehaviour
         // Generate StartIsland
         foreach (HexCell activeCell in startCells)
         {
-            for (int i = 0; i<Random.Range(6, 8); i++)
+            for (int i = 0; i<Random.Range(5, 6); i++)
             {
                 activeCell.AddTileNoReform();
             }
@@ -104,8 +104,8 @@ public class HexGrid : NetworkBehaviour
                             {
                                 activeCell = CreateCellFromHexCoordinate(activeCoordinates);
                             }
-
-                            for (int j = 0; j < Random.Range(i, i * 3); j++)
+                            Debug.Log(i + " " + (i * 2 + i / 2));
+                            for (int j = 0; j < Random.Range(i, i * 4); j++)
                             {
                                 activeCell.AddTileNoReform();
                             }
@@ -461,7 +461,7 @@ public class HexGrid : NetworkBehaviour
             cellToUse = CreateCellFromHexCoordinate(cellCoordinatesToUse);
         }
 
-        for (int i = 0; i < Random.Range(radialMaxSize*2, radialMaxSize*3); i++)
+        for (int i = 0; i < Random.Range(radialMaxSize*2, radialMaxSize * 2 + radialMaxSize / 2); i++)
         {
             cellToUse.AddTileNoReform();
             cellToUse.cellBiome = Biome.HOME;
@@ -478,7 +478,7 @@ public class HexGrid : NetworkBehaviour
             cellToUse = CreateCellFromHexCoordinate(cellCoordinatesToUse);
         }
 
-        for (int i = 0; i < Random.Range(radialMaxSize*2, radialMaxSize*3); i++)
+        for (int i = 0; i < Random.Range(radialMaxSize*2, radialMaxSize*2 + radialMaxSize/2); i++)
         {
             cellToUse.AddTileNoReform();
             cellToUse.cellBiome = Biome.HOME;
@@ -495,7 +495,7 @@ public class HexGrid : NetworkBehaviour
             cellToUse = CreateCellFromHexCoordinate(cellCoordinatesToUse);
         }
 
-        for (int i = 0; i < Random.Range(radialMaxSize*2, radialMaxSize*3); i++)
+        for (int i = 0; i < Random.Range(radialMaxSize*2, radialMaxSize * 2 + radialMaxSize / 2); i++)
         {
             cellToUse.AddTileNoReform();
             cellToUse.cellBiome = Biome.HOME;
