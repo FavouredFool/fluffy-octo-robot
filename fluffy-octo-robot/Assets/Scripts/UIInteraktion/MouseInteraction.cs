@@ -106,7 +106,7 @@ public class MouseInteraction : MonoBehaviour
                         }
                     }
 
-                    if (!hoveredHex.coordinates.Equals(hexGrid.GetStartCellCoordiantes()) && counter == 0)
+                    if (!hoveredHex.coordinates.Equals(hexGrid.GetStartCellCoordiantes()) && counter == 0 && !Player.Instance.activeCellCoordinates.Equals(hoveredHex.coordinates))
                     {
                         if (hoveredHex != previouslyhoveredHex)
                         {
