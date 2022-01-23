@@ -158,7 +158,7 @@ public class HexCell : MonoBehaviour
     {
         if (actionPoints.GetCurrentActionPoints() > 0 && (PlayersManager.Instance.IsGod || PlayersManager.Instance.IsSingle))
         {
-            if (coordinates.Equals(hexGrid.GetStartCellCoordiantes()))
+            if (coordinates.Equals(hexGrid.GetStartCellCoordiantes()) || hexGrid.GetCell(Player.Instance.activeCellCoordinates) == this)
             {
                 return;
             }
