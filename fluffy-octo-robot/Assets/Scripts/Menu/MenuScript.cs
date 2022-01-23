@@ -13,6 +13,13 @@ public class MenuScript : NetworkBehaviour
     string IP;
     string errormessage;
 
+    private void Start()
+    {
+        Test t = FindObjectOfType<Test>();
+
+        t.disconnect();
+    }
+
     public void ButtonPlayAsSinglePlayer()
     {
         if (NetworkManager.Singleton.StartHost())

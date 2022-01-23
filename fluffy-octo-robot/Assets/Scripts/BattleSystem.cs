@@ -27,7 +27,6 @@ public class BattleSystem : NetworkBehaviour
 
     private void Start()
     {
-
         endTurnButton.onClick.AddListener(() => {
             if (!hexGrid.blockActions)
             {
@@ -100,6 +99,7 @@ public class BattleSystem : NetworkBehaviour
                 break;
 
             case GameState.LOST:
+                Debug.Log("bad");
                 GameLost();
                 break;
 
@@ -157,21 +157,35 @@ public class BattleSystem : NetworkBehaviour
 
     private void StartGame()
     {
-        PlayersManager.Instance.UpdateGameState(GameState.START);
-
+        PlayersManager.Instance.UpdateGameStateServerRpc(GameState.START);
     }
 
     private void GameWon()
     {
         Debug.Log("SPIEL GEWONNEN!");
-        NetworkManager.Singleton.Shutdown();
+        StartGame();
+
+        if (IsHost)
+        {
+            PlayersManager.Instance.IncreasePlayersServerRpc();
+            //NetworkManager.Singleton.Shutdown();
+        }
+        
         SceneManager.LoadScene(sceneName: "GameWon");
     }
 
     private void GameLost()
     {
         Debug.Log("SPIEL VERLOREN!");
-        NetworkManager.Singleton.Shutdown();
+        StartGame();
+
+        if (IsHost)
+        {
+            PlayersManager.Instance.IncreasePlayersServerRpc();
+            //NetworkManager.Singleton.Shutdown();
+            
+        }
+
         SceneManager.LoadScene(sceneName: "GameLost");
     }
 }
