@@ -100,6 +100,7 @@ public class PlayersManager : Singelton<PlayersManager> {
 
                 if (playersInGame.Value == 2)
                 {
+                    hexGrid = FindObjectOfType<HexGrid>();
                     hexGrid.ReformWorld();
                 }
             }
