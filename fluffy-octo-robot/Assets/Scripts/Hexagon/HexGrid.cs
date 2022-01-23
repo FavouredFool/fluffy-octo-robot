@@ -104,7 +104,6 @@ public class HexGrid : NetworkBehaviour
                             {
                                 activeCell = CreateCellFromHexCoordinate(activeCoordinates);
                             }
-                            Debug.Log(i + " " + (i * 2 + i / 2));
                             for (int j = 0; j < Random.Range(i, i * 4); j++)
                             {
                                 activeCell.AddTileNoReform();
@@ -454,14 +453,13 @@ public class HexGrid : NetworkBehaviour
         cellToUse = GetCell(cellCoordinatesToUse);
 
         goalCellCoordinates.Add(cellCoordinatesToUse);
-        //GetCell(cellCoordinatesToUse).ActiveCollectable(true);
 
         if (!cellToUse)
         {
             cellToUse = CreateCellFromHexCoordinate(cellCoordinatesToUse);
         }
 
-        for (int i = 0; i < Random.Range(radialMaxSize*2, radialMaxSize * 2 + radialMaxSize / 2); i++)
+        for (int i = 0; i < Random.Range(radialMaxSize * 2 - 1, radialMaxSize * 2 + 1); i++)
         {
             cellToUse.AddTileNoReform();
             cellToUse.cellBiome = Biome.HOME;
@@ -471,14 +469,13 @@ public class HexGrid : NetworkBehaviour
         cellToUse = GetCell(cellCoordinatesToUse);
 
         goalCellCoordinates.Add(cellCoordinatesToUse);
-        //GetCell(cellCoordinatesToUse).ActiveCollectable(true);
 
         if (!cellToUse)
         {
             cellToUse = CreateCellFromHexCoordinate(cellCoordinatesToUse);
         }
 
-        for (int i = 0; i < Random.Range(radialMaxSize*2, radialMaxSize*2 + radialMaxSize/2); i++)
+        for (int i = 0; i < Random.Range(radialMaxSize * 2 - 1, radialMaxSize * 2 + 1); i++)
         {
             cellToUse.AddTileNoReform();
             cellToUse.cellBiome = Biome.HOME;
@@ -488,14 +485,12 @@ public class HexGrid : NetworkBehaviour
         cellToUse = GetCell(cellCoordinatesToUse);
 
         goalCellCoordinates.Add(cellCoordinatesToUse);
-        //GetCell(cellCoordinatesToUse).ActiveCollectable(true);
 
         if (!cellToUse)
         {
             cellToUse = CreateCellFromHexCoordinate(cellCoordinatesToUse);
         }
-
-        for (int i = 0; i < Random.Range(radialMaxSize*2, radialMaxSize * 2 + radialMaxSize / 2); i++)
+        for (int i = 0; i < Random.Range(radialMaxSize*2-1, radialMaxSize * 2+1); i++)
         {
             cellToUse.AddTileNoReform();
             cellToUse.cellBiome = Biome.HOME;
