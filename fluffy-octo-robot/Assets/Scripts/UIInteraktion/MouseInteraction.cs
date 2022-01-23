@@ -91,25 +91,44 @@ public class MouseInteraction : MonoBehaviour
                 (PlayersManager.Instance.IsGod || PlayersManager.Instance.IsSingle) &&
                 actionPoints.GetCurrentActionPoints() != 0
             ) {
+
                 // ber�hrte Cell finden
                 hoveredHex = SelectedHexCell();
 
-                if (hoveredHex != previouslyhoveredHex)
+                if (hoveredHex)
                 {
-                    // auf Cell Preview-Tile zeigen
-                    if (previouslyhoveredHex)
+                    int counter = 0;
+                    foreach (HexCoordinates hexCoordinates in hexGrid.goalCellCoordinates)
+                    {
+                        if (hoveredHex.coordinates.Equals(hexCoordinates))
+                        {
+                            counter++;
+                        }
+                    }
+
+                    if (!hoveredHex.coordinates.Equals(hexGrid.GetStartCellCoordiantes()) && counter == 0)
+                    {
+                        if (hoveredHex != previouslyhoveredHex)
+                        {
+                            // auf Cell Preview-Tile zeigen
+                            if (previouslyhoveredHex)
+                            {
+                                previouslyhoveredHex.ShowTilePreview(false);
+                            }
+                            if (hoveredHex)
+                            {
+                                hoveredHex.ShowTilePreview(true);
+                            }
+
+                            previouslyhoveredHex = hoveredHex;
+                        }
+
+                    } else if (previouslyhoveredHex)
                     {
                         previouslyhoveredHex.ShowTilePreview(false);
                     }
-                    if (hoveredHex)
-                    {
-                        hoveredHex.ShowTilePreview(true);
-                    }
-
-                    previouslyhoveredHex = hoveredHex;
-                }
-            }
-               
+                }  
+            } 
         }
     }
 
