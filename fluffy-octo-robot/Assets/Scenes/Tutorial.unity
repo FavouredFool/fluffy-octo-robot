@@ -1070,11 +1070,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11476820, guid: 7919987dcce6e459aa48526f95c4c988, type: 3}
       propertyPath: m_Text
-      value: 'To rotate the camera around the world, press A and D on your keyboard.
+      value: 'At the start of the game, you are being faced with a randomly generated
+        world with the character standing on their home-tile.
 
 
-        Some
-        heights are hard to judge unless you look at them from a different angle.'
+        To rotate
+        the camera around the world, press A and D on your keyboard.'
       objectReference: {fileID: 0}
     - target: {fileID: 11476820, guid: 7919987dcce6e459aa48526f95c4c988, type: 3}
       propertyPath: m_FontData.m_MinSize
@@ -2126,7 +2127,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11421782, guid: ca2098eda18954719933727edf727b2e, type: 3}
       propertyPath: m_Text
-      value: Controls
+      value: The World
       objectReference: {fileID: 0}
     - target: {fileID: 11421782, guid: ca2098eda18954719933727edf727b2e, type: 3}
       propertyPath: m_FontData.m_MinSize
