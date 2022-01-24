@@ -99,7 +99,6 @@ public class BattleSystem : NetworkBehaviour
                 break;
 
             case GameState.LOST:
-                Debug.Log("bad");
                 GameLost();
                 break;
 
